@@ -1,0 +1,327 @@
+<!--
+<div class="top-message" style="background: yellow; text-align: center; padding: 10px; font-size: 14px; font-weight: 600;">
+  Due to the overwhelming volume and COVID, USPS is experiencing extended delays in tracking and delivering packages.
+</div>
+-->
+
+
+{% include 'wh_calculate_discount' with item, hide_method: 'break' %}
+{% include 'header-bar' %}
+
+<header class="site-header" role="banner">
+  <div class="wrapper">
+
+    {% include 'header-top-menu' %}
+
+    {% if settings.nav_below_logo %}
+
+    <div class="grid--full">
+      <div class="grid__item mobile-adjsut-header header-container">
+        <div class="mobile-flypanel-container">
+          <a class="flypanels-button-left icon-menu" id="mobile-flypanel" data-panel="treemenu" href="#"><i class="fa fa-bars">+</i></a>
+        </div>
+        {% if template == 'index' %}
+        <h1 class="site-header__logo{% if settings.left_aligned_logo %} large--left{% endif %}" itemscope itemtype="http://schema.org/Organization">
+          {% else %}
+          <div class="h1 site-header__logo{% if settings.left_aligned_logo %} large--left{% endif %}" itemscope itemtype="http://schema.org/Organization">
+            {% endif %}
+            {% if settings.logo_use_image %}
+            <a href="/" class="logo-wrapper" itemprop="url">
+              <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+            </a>
+            {% else %}
+            <a href="/" itemprop="url">{{ shop.name }}</a>
+            {% endif %}
+            {% if template == 'index' %}
+            </h1>
+          {% else %}
+          </div>
+        {% endif %}
+        {% if settings.header_message != blank %}
+        <p class="header-message large--hide">
+          <small>{{ settings.header_message }}</small>
+        </p>
+        {% endif %}
+
+        <div class="header-search-box">
+          {% include 'search-bar' with 'header' %}
+          <a href="/pages/search-our-brands" class="search-button">Search Brands</a>
+        </div>
+
+        {% if shop.customer_accounts_enabled %}
+        <div class="header-accounts">
+          <ul class="header-bar__module header-bar__module--list account">
+            <li>{% include 'svg-definitions' with 'account' %}</li>
+            {% if customer %}
+            <li>
+              <a href="/account">{{ 'layout.customer.account' | t }}</a>
+            </li>
+            <!--               <li>
+{{ 'layout.customer.log_out' | t | customer_logout_link }}
+</li> -->
+            {% else %}
+            <li>
+              {{ 'layout.customer.log_in' | t | customer_login_link }}
+            </li>
+            <li>
+              {{ '/' }}
+            </li>
+            <li>
+              {{ 'layout.customer.create_account_res' | t | customer_register_link }}
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <div class="header-bar__module cart-link-container">
+          <span class="header-bar__sep" aria-hidden="true"></span>
+          <span class="tablet-search icon icon-search" aria-hidden="true"></span>
+          {% if customer.tags contains 'Wholesale' or customer.tags contains 'wholesale' %}
+          <a href="/cart" class="cart-page-link" onclick="location.href = '/cart';">
+            <span class="icon icon-cart header-bar__cart-icon" aria-hidden="true"></span>
+            <span class="cart-count header-bar__cart-count">{{ cart.item_count }}</span>
+          </a>
+          {% else %}
+          <a href="/cart" class="cart-page-link">
+            <span class="icon icon-cart header-bar__cart-icon" aria-hidden="true"></span>
+            <span class="cart-count header-bar__cart-count">{{ cart.item_count }}</span>
+            <!--             <span>{{ cart.total_price | money | replace: '$ ', '$' }}</span> -->
+          </a>
+          {% endif %}
+
+          {% if customer.tags contains 'Wholesale' or customer.tags contains 'wholesale' %}
+          {% else %}
+          <!--     hello world       -->
+          <div class="cart-drawer{% if cart.items.size == 0 %} empty{% endif %}">
+            <h4>Quick Cart<a href="/cart" class="edit-cart">Edit Cart</a></h4>
+            <form action="/cart" method="post" novalidate class="cart">
+              <div class="items-container-outer{% if cart.item_count > 2 %} bottom-shadow{% endif %}">
+                <div class="items-container">
+                  {% for item in cart.items %}
+                  {% include 'bold-cart-item' with item %}
+                  {% include 'wh_calculate_discount' with item, hide_method: 'skip' %}
+                  {% include 'wh_variant' with item.variant %}
+                  <!--COM Logic-->
+                  {% if item.product.title contains 'Cigar of the Month' %}
+                  	  {% assign cigarofmonth = 'true' %}
+                  {% endif %}
+                  <!--End-->
+                  <div class="cart-item{% if item.product.tags contains 'subscription_only' %} subscription_only{% endif %}" data-lineno="{{ forloop.index }}" data-id="{{ item.id }}" data-sellignpan="{{ item.product.selling_plan_groups[0].selling_plans[0].id }}">
+                    <select class="selling_plan_groups hide" style="display:none;">
+                    {% for allocation in item.product.variants[0].selling_plan_allocations %}
+                    <option data-freq="{{ allocation.selling_plan.options[0].value }}" value="{{ allocation.selling_plan.id }}">{{ allocation.selling_plan.options[0].value }}</option>
+                    {% endfor %}
+                    </select>
+                    <div class="cart-image">
+                      <img src="{{ item | img_url: 'medium' }}">
+                      <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="bold-ro-remove ajax cart__remove {{ bold_remove_class }}">
+                        <small>{{ 'cart.general.remove' | t }}</small>
+                      </a>
+                    </div>
+                    <div class="cart-info">
+                      <a href="{{ item.product.url }}">{{ item.product.title }}</a>
+                      <a href="{{ item.product.url }}">{{ item.title | remove: item.product.title | remove: '-' }}</a>
+                    </div>
+                    <div class="cart-price-per">
+                      {% if customer.tags contains 'Wholesale' or customer.tags contains 'wholesale' %}
+                      {{ wh_price | money | replace: '$ ', '$' }}/per
+                      {% else %}
+                      {{ bold_item_price | money | replace: '$ ', '$' }}
+                      {% endif %}
+                    </div>
+                    <div class="cart-qty">
+                      <div class="cart-quantity-button quantity">
+                        <input type="text" class="cart__quantity-selector" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0">
+                        <div class="quantity-buttons">
+                          <span class="plus">+</span>
+                          <span class="minus">-</span>
+                        </div>
+                      </div>
+                      <input type="submit" name="update" class="btn--secondary update-cart" value="Update">
+                    </div>
+                    <div class="cart-price">
+                      {% assign line_total = wh_price | times: item.quantity %}
+                      {% assign line_compare_at = item.variant.compare_at_price | times: item.quantity %}
+                      <small class="cart-item__original-price"><s>{{ line_compare_at | money | replace: '$ ', '$' }}</s></small>
+                      {% if customer.tags contains 'Wholesale' or customer.tags contains 'wholesale' %}
+                      {{ wh_price | times: item.quantity | money | replace: '$ ', '$' }}
+                      <!--                       <span class="savings">Save {{ line_compare_at | plus: 0.0 | minus: line_total | divided_by: line_compare_at | times: 100 | floor }}%</span> -->
+                      {% else %}
+                      {{ bold_item_line_price | money | replace: '$ ', '$' }}
+                      <span class="savings">Save {{ line_compare_at | plus: 0.0 | minus: bold_item_line_price | divided_by: line_compare_at | times: 100 | floor }}%</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% else %}
+                  <p>Your cart is currently empty.</p>
+                  <!--<p>Continue browsing <a href="/collections/all">here</a>.</p>-->
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="product_rp_cart_div" {% if cigarofmonth =='true' %} style="display:none;"{% endif %}>
+                <div class="bold-ro__product">
+                  <div class="bold-ro__recurring-title">Make this entire cart recurring?</div>
+                  <div class="subsc-valuec bold-ro__radio-div bold-ro__one-time-div">
+                    <label class="bold-ro__recurring-lbl" style="display:inline-block">
+                      <input type="radio" value="0" name="recurring_radio_btn" class="subsc-value" checked="">
+                      One-time Purchase
+                    </label>
+                  </div>
+                  <div class="subsc-valuec bold-ro__radio-div bold-ro__recurring-div bold-ro__sub bold-ro__bold-active">
+                    <label class="bold-ro__recurring-lbl">
+                      <input type="radio" value="1" name="recurring_radio_btn" class="subsc-value">
+                      Subscribe (Enjoy the Convenience!)
+                    </label>
+                    <div id="recurring-settings-container" style="display: none;">
+                      <div class="frequency_label">
+                        Deliver every
+                        <select class="frequency_num" name="frequency_num">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+                          <option value="8">8</option>
+                          <option value="9">9</option>
+                          <option value="10">10</option>
+                          <option value="11">11</option>
+                          <option value="12">12</option>
+                        </select>
+                        <select class="frequency_type" name="frequency_type">
+                          <option value="Week(s)">Week(s)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="cart-footer"{% if cart.items.size == 0 %} style="display:none;"{% endif %}>
+                <div class="total-container">
+                  <span>Subtotal</span>
+                  <span class="subtotal">
+                 	 {{ cart.total_price  | money | replace: '$ ', '$' }}
+                  </span>
+                </div>
+                <p>Shipping, taxes, and discounts will be calculated at checkout.</p>
+                {% comment %}
+                {% if template contains 'index' %}
+                <a href="javascript:void(0);" name="checkout" class="btn checkout new-button-checkout advance-checkout ">Checkout</a>
+                {% else %}
+                <input type="submit" name="checkout" class="btn checkout new-button-checkout" value="Checkout">
+                {% endif %}
+                {% endcomment %}
+                <input type="button" name="checkout" class="btn checkout new-button-checkout one-sub-checkout-btn" value="Checkout">
+              </div>
+            </form>
+            <span class="overlay"></span>
+          </div>
+          {% endif %}
+        </div>
+        {% if cart.items.size > 0 %}
+        <a href="javascript:void(0);" class="header-checkout-button new-checkout addtocart {% if template contains 'product' %}  checkout-button {% endif %}" name="checkout" >Checkout</a>
+        {% endif %}
+        
+        {% comment %}{% include 'bold-ro-price-fix' %}{% endcomment %}
+        <div class="header-bar__module cart-link-container">
+          <!--           <a href="/cart" class="cart-page-link">
+<span class="cart-count header-bar__cart-count">{{ cart.item_count }}</span>
+</a> -->
+        </div>
+
+        {% comment %}
+        <!-- \ Order toll-free M-F  / -->
+        <div class="header-toll-free main-toolfree">
+          Order toll-free M-F<strong>1-888-883-5596</strong>
+        </div>
+        <!-- / Order toll-free M-F  \ -->
+        {% endcomment %}
+
+      </div>
+    </div>
+    <div class="grid--full main-nav-custom">
+      <div class="grid__item">
+        {% include 'site-nav' %}
+      </div>
+    </div>
+
+    {% else %}
+
+    <div class="grid--full large--display-table">
+      <div class="grid__item large--one-third large--display-table-cell">
+
+        {% if template == 'index' %}
+        <h1 class="site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
+          {% else %}
+          <div class="h1 site-header__logo large--left" itemscope itemtype="http://schema.org/Organization">
+            {% endif %}
+            {% if settings.logo_use_image %}
+            <a href="/" class="logo-wrapper" itemprop="url">
+              <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+            </a>
+            {% else %}
+            <a href="/" itemprop="url">{{ shop.name }}</a>
+            {% endif %}
+            {% if template == 'index' %}
+            </h1>
+          {% else %}
+          </div>
+        {% endif %}
+        {% if settings.header_message != blank %}
+        <p class="header-message large--hide">
+          <small>{{ settings.header_message }}</small>
+        </p>
+        {% endif %}
+      </div>
+      <div class="grid__item large--two-thirds large--display-table-cell medium-down--hide">
+        {% include 'site-nav' %}
+      </div>
+    </div>
+
+    {% endif %}
+
+  </div>
+</header>
+
+{% schema %}
+{
+"name": "Header",
+"settings": [
+{
+"type": "text",
+"id": "top_message",
+"label": "Top Bar Message"
+},
+{
+"type": "text",
+"id": "top_message_wholesale",
+"label": "Top Bar Message Wholesale"
+},
+{
+"type": "text",
+"id": "top_message_link",
+"label": "Top Bar Button Text"
+},
+{
+"type": "text",
+"id": "top_message_href",
+"label": "Top Bar Button URL"
+}
+]
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    $('[name="checkout"]').on('click', BOLD.recurring_orders.app.cartWidget.checkRecurringCheckout.bind(BOLD.recurring_orders.app.cartWidget))
+  });
+</script>

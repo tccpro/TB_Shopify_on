@@ -1,0 +1,41 @@
+
+{% if settings.newsletter_form_action != blank %}
+  {% assign form_action = settings.newsletter_form_action %}
+{% else %}
+  {% assign form_action = '#' %}
+{% endif %}
+
+
+  <div class="ctct-embed-signup">
+     <div>
+         <span id="success_message" style="display:none;">
+             <div style="text-align:center;">Thanks for signing up!</div>
+         </span>
+         <form data-id="embedded_signup:form" class="ctct-custom-form Form" name="embedded_signup">
+             <input data-id="list:input" type="hidden" name="list" value="2">
+             <input data-id="source:input" type="hidden" name="source" value="EFD">
+             <input data-id="required:input" type="hidden" name="required" value="list,email">
+             <input data-id="url:input" type="hidden" name="url" value="">
+
+               <input data-id="Email Address:input" type="email" name="email" value="" maxlength="80">
+
+             <input type="submit" class="btn ctct-button Button--block Button-secondary" data-enabled="enabled" value="Sign Up">
+     
+         </form>
+     </div>
+  </div>
+  <script type='text/javascript'>
+     var localizedErrMap = {};
+     localizedErrMap['required'] = 		'This field is required.';
+     localizedErrMap['ca'] = 			'An unexpected error occurred while attempting to send email.';
+     localizedErrMap['email'] = 			'Please enter your email address in name@email.com format.';
+     localizedErrMap['birthday'] = 		'Please enter birthday in MM/DD format.';
+     localizedErrMap['anniversary'] = 	'Please enter anniversary in MM/DD/YYYY format.';
+     localizedErrMap['custom_date'] = 	'Please enter this date in MM/DD/YYYY format.';
+     localizedErrMap['list'] = 			'Please select at least one email list.';
+     localizedErrMap['generic'] = 		'This field is invalid.';
+     localizedErrMap['shared'] = 		'Sorry, we could not complete your sign-up. Please contact us to resolve this.';
+     localizedErrMap['state_mismatch'] = 'Mismatched State/Province and Country.';
+      localizedErrMap['state_province'] = 'Select a state/province';
+     localizedErrMap['selectcountry'] = 	'Select a country';
+  </script>

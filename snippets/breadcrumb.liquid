@@ -1,0 +1,97 @@
+{% comment %}
+  Documentation - http://docs.shopify.com/support/your-website/navigation/creating-a-breadcrumb-navigation
+{% endcomment %}
+{% assign breadcrumb__sep = '/' %}
+
+{% unless template == 'index' %}
+<nav class="breadcrumb" role="navigation" aria-label="breadcrumbs">
+  <a href="/" title="{{ 'general.breadcrumbs.home_link_title' | t }}">{{ 'general.breadcrumbs.home' | t }}</a>
+
+  {% if template contains 'product' and template != 'page.demo-product' %}
+
+    {% if collection %}
+      {% comment %}
+      <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+  
+      {% if collection.handle %}
+        {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+        {{ collection.title | link_to: url }}
+      {% endif %}
+      {% endcomment %}
+  
+    {% endif %}
+    {% if product.type %}
+      <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+
+      {{ product.type | link_to_type }}
+      {% comment %}
+  	  {% if collection.handle %}
+  		<a href="/collections/{{collection.handle}}">{{product.type}}</a>
+      {% else %}
+      	{{ product.type | link_to_type }}        
+      {% endif %}
+      {% endcomment %}
+
+    {% endif %}
+    {% if product.vendor %}
+      <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+      <!-- {{ product.vendor | link_to_vendor }} -->
+      {% if collection %}
+        {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+        {{ product.vendor | link_to: url }}
+      {% else %}
+        <a href="/collections/{{ product.vendor | handle }}" title="G.L. Pease">{{ product.vendor }}</a>
+      {% endif %}
+    {% endif %}
+  
+    <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+    <span>{{ product.title }}</span>
+
+  {% elsif template contains 'collection' and collection.handle %}
+
+    <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+    {% if current_tags %}
+      {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+      {{ collection.title | link_to: url }}
+      <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+      <span>{{ current_tags | join: " + " }}</span>
+    {% else %}
+      <span>{{ collection.title }}</span>
+    {% endif %}
+
+  {% elsif template == 'blog' %}
+
+    <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+    {% if current_tags %}
+      {{ blog.title | link_to: blog.url }}
+      <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+      <span>{{ current_tags | join: " + " }}</span>
+    {% else %}
+    <span>{{ blog.title }}</span>
+    {% endif %}
+
+  {% elsif template == 'article' %}
+
+    <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+    {{ blog.title | link_to: blog.url }}
+    <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+    <span>{{ article.title }}</span>
+
+  {% elsif template contains 'page' %}
+
+   <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+   <span>{{ page.title }}</span>
+  
+  {% elsif template contains 'cart' %}
+
+   <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+   <span>Cart</span>
+  
+  {% else %}
+
+   <span aria-hidden="true" class="breadcrumb__sep">{{ breadcrumb__sep }}</span>
+   <span>{{ page_title }}</span>
+
+  {% endif %}
+</nav>
+{% endunless %}

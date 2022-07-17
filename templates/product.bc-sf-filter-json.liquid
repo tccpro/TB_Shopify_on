@@ -1,0 +1,42 @@
+{% layout none %}
+{
+  "id": {{ product.id | json }},
+  "title": {{ product.title | json }},
+  "handle": {{ product.handle | json }},
+  "body_html": {{ product.description | json }},
+  "published_at": {{ product.published_at | json }},
+  "created_at": {{ product.created_at | json }},
+  "vendor": {{ product.vendor | json }},
+  "type": {{ product.type | json }},
+  "tags": {{ product.tags | json }},
+  "price": {{ product.price | json }},
+  "price_min": {{ product.price_min | json }},
+  "price_max": {{ product.price_max | json }},
+  "available": {{ product.available | json }},
+  "price_varies": {{ product.price_varies | json }},
+  "compare_at_price": {{ product.compare_at_price | json }},
+  "compare_at_price_min": {{ product.compare_at_price_min | json }},
+  "compare_at_price_max": {{ product.compare_at_price_max | json }},
+  "compare_at_price_varies": {{ product.compare_at_price_varies | json }},
+  "variants": {{ product.variants | json }},
+  "images": {{ product.images | json }},
+  "images_info": [
+				{% for image in product.images %}
+  					{"id": {{ image.id | json }},
+                    "width": {{ image.width | json }},
+                    "height": {{ image.height | json }},
+                    "position": {{ image.position | json }},
+					"src": {{ image.src | json }}
+					}
+		      {% if forloop.last != true %},{% endif %}
+        {% endfor %}
+				],
+  "featured_image": {{ product.featured_image | json }},
+  "options": {{ product.options | json }},
+  "options_with_values": {{ product.options_with_values | json }},
+  "url": {{ product.url | json }},
+  "skus": {{ product.skus | json }},
+  "template_suffix": {{ product.template_suffix | json }},
+  "collections": {{ product.collections | json }},
+  "metafields": []
+}

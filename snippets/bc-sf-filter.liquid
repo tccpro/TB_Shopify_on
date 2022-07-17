@@ -1,0 +1,73 @@
+{%- comment -%} Check if template is collection or search page  {%- endcomment -%}
+{%- assign bcsffilter_is_initfilter = false -%}
+{%- if template contains 'collection' or template contains 'search' -%}
+  {%- unless template contains 'bc-original' -%}
+    {%- assign bcsffilter_is_initfilter = true -%}
+  {%- endunless -%}
+{%- endif -%}
+
+<script>
+  /* Declare bcSfFilterConfig variable */
+  var bcSfFilterMainConfig = {
+    api: {
+      filterUrl: 'https://services.mybcapps.com/bc-sf-filter/filter',
+      searchUrl: 'https://services.mybcapps.com/bc-sf-filter/search',
+      suggestionUrl: 'https://services.mybcapps.com/bc-sf-filter/search/suggest',
+    },
+    shop: {
+      name: '{{ shop.name | escape }}',
+      url: '{{ shop.url }}',
+      domain: '{{ shop.permanent_domain }}',
+      currency: '{{ shop.currency }}',
+      money_format: '{{ shop.money_format | replace: "'", '"' | replace: "$", "&#36;" }}'
+    },
+    general: {
+      file_url: "{{ '' | file_url }}",
+      asset_url: "{{ 'bc-sf-filter.js' | asset_url }}",
+      collection_id: {{ collection.id | default: 0 }},
+      collection_handle: "{{ collection.handle }}",
+      {% if template contains 'collection' and collection.handle %}
+      collection_count: {{ collection.products_count  }},
+      {% endif %}
+      collection_tags: {{ current_tags | json }},
+      current_tags: {{ current_tags | json }},
+      default_sort_by: "{{ collection.default_sort_by }}",
+      swatch_extension: "png",
+      no_image_url: "{{ 'bc-sf-filter-no-image.gif' | asset_url }}",
+      search_term: "{{ search.terms | default: '' }}",
+      template: "{{ template }}",
+      {%- comment -%} Get currencies {%- endcomment -%}
+      currencies: [
+        {%- for currency in shop.enabled_currencies -%}
+        {{- currency.iso_code | json -}}{%- if forloop.last != true -%},{%- endif -%}        
+        {%- endfor -%}
+      ],
+      current_currency: {{- cart.currency.iso_code | json -}},
+      isInitFilter: {{- bcsffilter_is_initfilter | json -}}
+    },
+    {% if shop.metafields.bc-sf-filter.settings != blank %}
+    settings: {{ shop.metafields.bc-sf-filter.settings }},
+    {% endif %}
+  };
+  function mergeObject(obj1, obj2){
+    var obj3 = {};
+    for (var attr in obj1) { obj3[attr] = obj1[attr]; }
+    for (var attr in obj2) { obj3[attr] = obj2[attr]; }
+    return obj3;
+  }
+  if (typeof bcSfFilterConfig !== 'undefined') {
+    var bcSfFilterConfig = mergeObject(bcSfFilterConfig, bcSfFilterMainConfig); 
+  } else {
+    var bcSfFilterConfig = mergeObject({}, bcSfFilterMainConfig); 
+  }
+</script>
+
+<!-- Include Resources -->
+<script defer src="{{ 'bc-sf-filter-lib.js' | asset_url }}"></script>
+<script defer src="{{ 'bc-sf-search.js' | asset_url }}"></script>
+{%- if bcsffilter_is_initfilter == true -%}
+  <script defer src="{{ 'bc-sf-filter.js' | asset_url }}"></script>
+{%- endif -%}
+
+<!-- Initialize App -->
+<script defer src="{{ 'bc-sf-filter-init.js' | asset_url }}"></script>

@@ -1,0 +1,64 @@
+<!--<div class="flypanels-container preload">
+		<div class="offcanvas flypanels-left">
+			<div class="panelcontent" data-panel="treemenu">
+				<nav class="flypanels-treemenu" >
+					<ul>
+                      <li>{% include 'social-links' %}
+                        <a href="#" id="close-btn">X</a>
+                      </li>
+                      {% for link in linklists.main-menu.links %}
+                      {% assign child_list_handle = link.title | handleize %}
+                      {% assign has_child = link.url | split: '#' %}
+                      {% assign has_child_length = has_child | size %}
+                      {% if has_child_length > 1 %}
+                      <li class="haschildren">
+                        {% else %}
+                      <li>
+                        {%  endif %}
+                          <div>
+                            <a href="{{ link.url }}" class="link">{{ link.title }} </a>
+                            <a href="#" class="expand"><i class="fa fa icon"></i></a>
+                          </div>
+                      </li>
+                      {% endfor %}
+
+                      {% if shop.customer_accounts_enabled %}
+                        {% if customer %}
+                          <li>
+                            <div><a href="/account" class="link">{{ 'layout.customer.account' | t }}</a></div>
+                          </li>
+                          <li>
+                            {{ 'layout.customer.log_out' | t | customer_logout_link }}
+                          </li>
+                        {% else %}
+                          <li><div>
+                            {{ 'layout.customer.log_in' | t | customer_login_link }}
+                            </div>
+                          </li>
+                          {% if shop.customer_accounts_optional %}
+                            <li><div>
+                              {{ 'layout.customer.create_account' | t | customer_register_link }}
+                              </div>
+                            </li>
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+
+                      <li>
+                        {% if settings.header_search_enable %}
+                          <div>
+                            {% include 'search-bar' with 'header' %}
+                          </div>
+                        {% endif %}
+                      </li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+		
+  		<div class="flypanels-main">
+			<div class="flypanels-topbar">
+				<a class="flypanels-button-left icon-menu" id="mobile-flypanel" data-panel="treemenu" href="#"><i class="fa fa-bars">+</i></a>
+			</div>
+		</div>
+	</div>-->

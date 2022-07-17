@@ -1,0 +1,280 @@
+{% assign imagesize = '400x' %}
+{% assign header = '<h4>Related Products</h4>' %}
+{% assign titleweight = 5 %}
+{% assign tagweight = 1 %}
+{% assign ProdDisplay = 8 %}
+{% assign slideritems = 4 %}
+{% assign pb_displayVendor = true %}
+{% assign pb_displayPrice = true %}
+{% assign pb_displayRating = true %}
+{% assign pb_SearchScope = 3 %}
+
+{% assign pb_displayBuynow = false %}
+{% assign pb_displayBuynow_hover = false %}
+{% assign pb_BuynowText = 'Buy Now' %}
+{% assign pb_Accuracy = 3 %}
+{% assign pb_show_sale = true %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.theme.min.css">
+
+{% assign pb_matches_found = 0 %}
+{% assign matched_list = '' %}
+{% assign match_score = 0 %}
+{% assign pb_handle_match_value = 50 %}
+{% assign pb_coll_match_value = 25 %}
+{% assign pb_matches_checked = 0 %}
+
+
+{% if pb_Accuracy == 1 %}
+
+  {% assign pb_base_match_value = 1 %}
+  {% assign pb_check_max = 20 %}
+  {% assign pb_matches_req = 20 %}
+
+{% elsif pb_Accuracy == 2 %}
+
+ {% assign pb_base_match_value = 0 %}
+ {% assign pb_check_max = 50 %}
+ {% assign pb_matches_req  = authdisplay %}
+
+{% elsif pb_Accuracy == 3 %}
+
+ {% assign pb_base_match_value = 0 %}
+ {% assign pb_check_max = 1000 %}
+ {% assign pb_matches_req  = 1000 %}
+
+{% endif %}
+
+
+{% assign post_tags = article.tags %}
+{% assign post_author = article.author %}
+{% assign post_title = article.title | split: " " %}
+
+{% for tag in post_tags %}
+
+  {% assign tag_handle =  tag | handleize %}
+  {% assign prod = all_products[tag_handle] %}
+  {% unless prod == empty %}
+  	{% if prod.available %}
+	{% assign match_score = 0 %}
+      {% assign prods_found = prod_id_list| split: "," %}
+      {% assign prod_id_str = prod.id | downcase %}
+      {% unless prods_found contains prod_id_str %}
+		{% assign prod_id_list = prod_id_list | append: prod_id_str| append: "," %}
+		{% assign match_score = pb_handle_match_value %}
+		{% assign pb_matches_checked = pb_matches_checked | plus: 1 %}
+
+		{% unless tagweight == 0 %}
+
+          {% for prod_tag in prod.tags %}
+              {% if post_tags contains prod_tag %}
+                  {% assign match_score = match_score | plus: tagweight %}
+              {% endif %}
+          {% endfor %}
+
+		{% endunless %}
+
+		{% unless titleweight == 0 %}
+
+          {% assign prod_title_d =  prod.title | downcase %}
+          {% assign prod_title_arr = prod_title_d| split: " " %}
+          {% for t in prod_title_arr %}
+            {% assign t2 = t | strip %}
+            {% assign tag_d = tag | downcase %}
+            {% if tag_d == t2 %}
+              {% assign match_score = match_score | plus: tagweight %}
+            {% endif %}
+          {% endfor %}
+
+          {% if post_tags contains prod_title_d %}
+              {% assign match_score = match_score | plus: tagweight %}
+          {% endif %}
+
+		{% endunless %}
+
+		{% if match_score > 0 %}
+			{% capture prod_details %}
+				{% include 'pro-blogger.snippet.score_sorting' with score:match_score %}||{{ prod.id }}||{{ prod.handle }}||{{prod.title | escape }}||{{ prod.url | within: collections.all }}||{{ prod.featured_image.src | img_url: imagesize }}||{{ prod.price | money }}||{{prod.vendor }}||{% if prod.compare_at_price > prod.price %}{{prod.compare_at_price | money }} {% endif %}
+			{% endcapture %}
+			{% assign matched_list = matched_list | append: prod_details | append: "://:" %}
+			{% assign pb_matches_found = pb_matches_found | plus: 1 %}
+		{% endif %}
+	  {% endunless %}
+	{% endif %}
+  {% endunless %}
+
+ {% if pb_SearchScope > 1 %}
+	{% assign collectionofinterest = collections[tag_handle] %}
+	{% unless collectionofinterest == empty %}
+	{% unless pb_matches_found >= pb_matches_req %}
+    {% paginate collectionofinterest.products by pb_check_max %}
+    {% for prod in collectionofinterest.products limit: pb_check_max %}
+    {% if prod.available %}
+		{% unless pb_matches_found >= pb_matches_req %}
+
+		{% assign match_score = 0 %}
+
+      {% assign prods_found = prod_id_list| split: "," %}
+      {% assign prod_id_str = prod.id | downcase %}
+      {% unless prods_found contains prod_id_str %}
+		{% assign prod_id_list = prod_id_list | append: prod_id_str| append: "," %}
+		{% assign match_score = pb_coll_match_value %}
+		{% assign pb_matches_checked = pb_matches_checked | plus: 1 %}
+
+
+		{% unless tagweight == 0 %}
+          {% for prod_tag in prod.tags %}
+              {% if post_tags contains prod_tag %}
+                  {% assign match_score = match_score | plus: tagweight %}
+              {% endif %}
+          {% endfor %}
+
+		{% endunless %}
+
+		{% unless titleweight == 0 %}
+          {% assign prod_title_d =  prod.title | downcase %}
+          {% assign prod_title_arr = prod_title_d| split: " " %}
+          {% for t in prod_title_arr %}
+            {% assign t2 = t | strip %}
+            {% assign tag_d = tag | downcase %}
+            {% if tag_d == t2 %}
+              {% assign match_score = match_score | plus: tagweight %}
+            {% endif %}
+          {% endfor %}
+
+		{% endunless %}
+
+        {% if post_tags contains prod_title_d %}
+        	{% assign match_score = match_score | plus: tagweight %}
+        {% endif %}
+
+
+		{% if match_score > 0 %}
+			{% capture prod_details %}
+				{% include 'pro-blogger.snippet.score_sorting' with score:match_score %}||{{ prod.id }}||{{ prod.handle }}||{{prod.title | escape }}||{{ prod.url | within: collections.all }}||{{ prod.featured_image.src | img_url: imagesize }}||{{ prod.price | money }}||{{prod.vendor }}||{% if prod.compare_at_price > prod.price %}{{prod.compare_at_price | money }} {% endif %}
+			{% endcapture %}
+			{% assign matched_list = matched_list | append: prod_details | append: "://:" %}
+			{% assign pb_matches_found = pb_matches_found | plus: 1 %}
+		{% endif %}
+	  {% endunless %}
+{% endunless %}
+	{% endif %}
+{% endfor %}
+{% endpaginate %}
+	{% endunless %}
+	{% endunless %}
+ {% endif %}
+
+
+{% endfor %}
+
+
+
+{% assign match_arr = matched_list | split: "://:" %}
+
+{% if pb_SearchScope > 2 and match_arr.size < pb_matches_req %}
+
+{% paginate collections.all.products by pb_check_max %}
+{% for prod in collections.all.products limit: pb_check_max %}
+  {% if prod.available %}
+		{% assign match_score = 0 %}
+      {% assign prods_found = prod_id_list| split: "," %}
+      {% assign prod_id_str = prod.id | downcase %}
+      {% unless prods_found contains prod_id_str %}
+		{% assign prod_id_list = prod_id_list | append: prod_id_str| append: "," %}
+		{% assign match_score = pb_base_match_value %}
+		{% assign pb_matches_checked = pb_matches_checked | plus: 1 %}
+
+
+		{% assign prod_title_d =  prod.title | downcase %}
+		{% assign prod_title_arr = prod_title_d| split: " " %}
+
+	{% unless titleweight == 0 %}
+        {% if post_tags contains prod_title_d %}
+        	{% assign match_score = match_score | plus: tagweight %}
+        {% endif %}
+	{% endunless %}
+
+        {% for tag in post_tags %}
+
+          {% unless tagweight == 0 %}
+              {% if prod.tags contains tag %}
+                  {% assign match_score = match_score | plus: tagweight %}
+              {% endif %}
+          {% endunless %}
+
+
+
+            {% unless titleweight == 0 %}
+                  {% for t in prod_title_arr %}
+                    {% assign t2 = t | strip %}
+                    {% assign tag_d = tag | downcase %}
+
+                    {% if tag_d == t2 %}
+                      {% assign match_score = match_score | plus: tagweight %}
+                    {% endif %}
+
+                  {% endfor %}
+        {% endunless %}
+        {% endfor %}
+
+
+		{% if match_score > 0 %}
+			{% capture prod_details %}
+				{% include 'pro-blogger.snippet.score_sorting' with score:match_score %}||{{ prod.id }}||{{ prod.handle }}||{{prod.title | escape }}||{{ prod.url | within: collections.all }}||{{ prod.featured_image.src | img_url: imagesize }}||{{ prod.price | money }}||{{prod.vendor }}||{% if prod.compare_at_price > prod.price %}{{prod.compare_at_price | money }} {% endif %}
+			{% endcapture %}
+
+			{% assign matched_list = matched_list | append: prod_details | append: "://:" %}
+			{% assign pb_matches_found = pb_matches_found | plus: 1 %}
+		{% endif %}
+	  {% endunless %}
+
+	{% endif %}
+{% endfor %}
+{% endpaginate %}
+{% endif %}
+
+{% assign match_arr = matched_list | split: "://:" %}
+{% assign match_arr_sorted = match_arr | sort_natural  %}
+
+
+{{ 'problogger.css' | asset_url | stylesheet_tag }}
+{{ 'problogger-custom.css' | asset_url | stylesheet_tag }}
+
+{% if match_arr_sorted.size == 0 and ProdDisplay >= 1 %}
+{% else %}
+
+  <script type="text/javascript">
+
+    var related_products_slider_options = {"enabled": false, "slider_display": 4, "slider_autoplay_enabled": true};
+
+  </script>
+  <div id="related_products_header" class="{% if pb_mid_display %}pb_mid_content_related_products_header {% endif %}" style="display: none">{{ header }}</div>
+  <div id="related_products_slider" class="owl-carousel {% if pb_mid_display %}pb_mid_content_related_products {% endif %}">
+
+  {% assign Slider_Items = 0 %}
+  {% for product in match_arr_sorted %}
+    {% assign product_details = product | split: "||" %}
+
+    {% assign ProdId = product_details[2] %}
+    {% assign ProdHandle = product_details[3] %}
+    {% assign ProdTitle = product_details[4] %}
+    {% assign ProdURL = product_details[5] %}
+    {% assign ProdImg = product_details[6] %}
+    {% assign ProdPrice = product_details[7] %}
+    {% assign ProdVendor = product_details[8] %}
+    {% assign ProdComp_Price = product_details[9] | strip %}
+
+    {% include 'pro-blogger.snippet.related-item' with isarticle:false %}
+
+    {% assign Slider_Items = Slider_Items | plus: 1 %}
+    {% if Slider_Items == ProdDisplay %}
+      {% break %}
+    {% endif %}
+
+  {% endfor %}
+
+  </div>
+  {% endif %}

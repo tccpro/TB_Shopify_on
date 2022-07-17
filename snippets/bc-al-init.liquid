@@ -1,0 +1,176 @@
+{%- if template contains 'collection' or template contains 'search' -%}
+  {%- assign bc_settings = shop.metafields.bc-sf-filter.settings -%}
+  {%- if bc_settings contains 'actionlist' -%}
+    {%- comment -%} Check enable {%- endcomment -%}
+    {%- assign bc_qv_enable = bc_settings | split: 'qvEnable":' | last | split: ',' | first | strip -%}
+    {%- assign bc_atc_enable = bc_settings | split: 'atcEnable":' | last | split: ',' | first | split: '}' | first | strip -%}
+    {%- if bc_qv_enable == 'true' or bc_atc_enable == 'true' -%}      
+      <script>
+        var bcAlShopParams = {
+          shop: {
+            name: '{{ shop.name | escape }}',
+            url: '{{ shop.url }}',
+            domain: '{{ shop.permanent_domain }}',
+            currency: '{{ shop.currency }}',
+            money_format: '{{ shop.money_format | replace: "'", '"' }}'
+          }
+        };
+        {%- comment -%} Get style {%- endcomment -%}
+        {%- assign bc_al_style = bc_settings | split: 'alStyle":' | last | split: ',' | first | replace: '"','' | strip -%}
+          {%- case bc_al_style -%}
+          {%- when 'bc-al-style1' -%}
+            bcAlParams = {
+              settings: {
+                alPosition: 'bc-al-bottom-v',
+                alStyle: 'bc-al-style1',
+                alSortManual: ['qv','atc'],
+                alType: 'bc-al-only-icon',
+                alEffect: 'bc-al-effect-transition-right',
+                alShape: 'bc-al-style-rectangle',
+                qvEnable: {{ bc_qv_enable }},
+                qvDisableBelowScreen: 767,
+                qvEnableCartForm: true,
+                qvType: 'bc-qv-only-icon',
+                atcEnable: {{ bc_atc_enable }},
+                atcDisableBelowScreen: 0,
+                atcType: 'bc-atc-only-icon',
+                atcEffect: 'bc-addtocart-effect-fade',
+                atcDisplay: 'bc-addtocart-display-hover'
+              }
+            };
+          {%- when 'bc-al-style2' -%}
+            bcAlParams = {
+              settings: {
+                alPosition: 'bc-al-bottom-h',
+                alEnable: true,
+                alStyle: 'bc-al-style2',
+                alSortManual: ['qv','atc'],
+                alType: 'bc-al-only-icon',
+                alEffect: 'bc-al-effect-transition-right',
+                alShape: 'bc-al-style-rectangle',
+                qvEnable: {{ bc_qv_enable }},
+                qvDisableBelowScreen: 767,
+                qvEnableCartForm: true,
+                qvType: 'bc-qv-only-icon',
+                atcEnable: {{ bc_atc_enable }},
+                atcDisableBelowScreen: 0,
+                atcType: 'bc-atc-only-icon',
+                atcEffect: 'bc-addtocart-effect-fade',
+                atcDisplay: 'bc-addtocart-display-hover'
+              }
+            };
+          {%- when 'bc-al-style3' -%}
+            bcAlParams = {
+              settings: {
+                alPosition: 'bc-al-bottom-h-full',
+                alEnable: true,
+                alStyle: 'bc-al-style3',
+                alSortManual: ['qv','atc'],
+                alType: 'bc-al-only-icon',
+                alEffect: 'bc-al-effect-transition-bottom',
+                alShape: 'bc-al-style-rectangle',
+                qvEnable: {{ bc_qv_enable }},
+                qvDisableBelowScreen: 767,
+                qvEnableCartForm: true,
+                qvType: 'bc-qv-only-icon',
+                atcEnable: {{ bc_atc_enable }},
+                atcDisableBelowScreen: 0,
+                atcType: 'bc-atc-only-icon',
+                atcEffect: 'bc-addtocart-effect-fade',
+                atcDisplay: 'bc-addtocart-display-hover'
+              }
+            };
+            {%- when 'bc-al-style4' -%}
+            bcAlParams = {
+              settings: {
+                alPosition: 'bc-al-bottom-h-full',
+                alEnable: true,
+                alStyle: 'bc-al-style4',
+                alSortManual: ['atc','qv'],
+                alType: 'bc-al-icon-text',
+                alEffect: 'bc-al-effect-transition-bottom',
+                alShape: 'bc-al-style-rectangle',
+                qvEnable: {{ bc_qv_enable }},
+                qvDisableBelowScreen: 767,
+                qvEnableCartForm: true,
+                qvType: 'bc-qv-only-icon',
+                atcEnable: {{ bc_atc_enable }},
+                atcDisableBelowScreen: 0,
+                atcType: 'bc-atc-icon-text',
+                atcEffect: 'bc-addtocart-effect-fade',
+                atcDisplay: 'bc-addtocart-display-hover'
+              }
+            };
+            {%- when 'bc-al-style5' -%}
+            bcAlParams = {
+              settings: {
+                alPosition: 'bc-al-middle',
+                alEnable: true,
+                alStyle: 'bc-al-style5',
+                alSortManual: ['qv','atc'],
+                alType: 'bc-al-only-icon',
+                alEffect: 'bc-al-effect-transition-bottom',
+                alShape: 'bc-al-style-cirle',
+                qvEnable: {{ bc_qv_enable }},
+                qvDisableBelowScreen: 767,
+                qvEnableCartForm: true,
+                qvType: 'bc-qv-only-icon',
+                atcEnable: {{ bc_atc_enable }},
+                atcDisableBelowScreen: 0,
+                atcType: 'bc-atc-only-icon',
+                atcEffect: 'bc-addtocart-effect-fade',
+                atcDisplay: 'bc-addtocart-display-hover'
+              }
+            };
+            {%- when 'bc-al-style6' -%}
+            bcAlParams = {
+              settings: {
+                alPosition: 'bc-al-middle',
+                alEnable: true,
+                alStyle: 'bc-al-style6',
+                alSortManual: ['qv','atc'],
+                alType: 'bc-al-only-text',
+                alEffect: 'bc-al-effect-transition-bottom',
+                alShape: 'bc-al-style-cirle',
+                qvEnable: {{ bc_qv_enable }},
+                qvDisableBelowScreen: 767,
+                qvEnableCartForm: true,
+                qvType: 'bc-qv-only-text',
+                atcEnable: {{ bc_atc_enable }},
+                atcDisableBelowScreen: 0,
+                atcType: 'bc-atc-only-text',
+                atcEffect: 'bc-addtocart-effect-fade',
+                atcDisplay: 'bc-addtocart-display-hover'
+              }
+            };
+          {%- else -%}
+          bcAlParams = {
+              settings: {
+                alPosition: 'bc-al-bottom-h-full',
+                alEnable: true,
+                alStyle: 'bc-al-style4',
+                alSortManual: ['atc','qv'],
+                alType: 'bc-al-icon-text',
+                alEffect: 'bc-al-effect-transition-bottom',
+                alShape: 'bc-al-style-rectangle',
+                qvEnable: {{ bc_qv_enable }},
+                qvDisableBelowScreen: 767,
+                qvEnableCartForm: true,
+                qvType: 'bc-qv-only-icon',
+                atcEnable: {{ bc_atc_enable }},
+                atcDisableBelowScreen: 0,
+                atcType: 'bc-atc-icon-text',
+                atcEffect: 'bc-addtocart-effect-fade',
+                atcDisplay: 'bc-addtocart-display-hover'
+              }
+            };
+          {%- endcase -%}
+          if(typeof bcSfFilterParams == 'undefined'){
+            var bcSfFilterParams = {{ bc_settings }};
+          } 
+      </script>
+      <script defer src="{{ 'bc-al-lib.min.js' | asset_url }}"></script>
+      <script defer src="{{ 'bc-al-init.js' | asset_url }}"></script>
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}

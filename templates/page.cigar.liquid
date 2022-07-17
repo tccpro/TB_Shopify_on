@@ -1,0 +1,61 @@
+<div class="main-container">
+
+  <!-- \ Static Banner / -->
+  <div class="cigar-page">
+  <div class="home-banner-mobile">
+  <div class="static-banner">
+  <a href="#"><img src="{{ 'cigar-banner.jpg' | file_url }}" alt=""></a>
+  </div>
+  <!-- / Static Banner \ -->
+  <div class="clear"></div>  
+  </div>
+   <div class="home-category-section-main cigar-cont">
+  <div class="home-category-section"><a href="#"><img class="lazyload" src="{{ 'lazy.gif' | asset_url }}" data-src="{{ 'cigar-left-single.jpg' | file_url }}" alt=""></a></div>
+  <div class="home-category-section mdl"><div class="home-category-section-col-1"><a href="#"><img class="lazyload" src="{{ 'lazy.gif' | asset_url }}" data-src="{{ 'cigar-right-fst.jpg' | file_url }}" alt=""></a></div><div class="home-category-section-col-2"><a href="#"><img src="{{ 'cigar-right-snd.jpg' | file_url }}" alt=""></a></div></div>
+  </div>
+    <div class="clear"></div>
+    <div class="cigar-links-wrap">
+    <div class="cigar-heading">
+      <h2>Cigars</h2>
+      </div>
+      <div class="cigars-wrap">
+      <div class="cigars-cate">
+        <ul>
+          <li><a href="collections/strength">Strength</a></li>
+          {% for link in linklists.Strength.links %}
+              <li>{{ link.title | link_to: link.url }}</li>
+          {% endfor %}
+        </ul>
+
+
+      </div>
+        <div class="cigars-cate cigars-cate-m">
+           <ul>
+          <li><a href="collections/strength">Country of Origin</a></li>
+          {% for link in linklists.country-of-origin.links %}
+              <li>{{ link.title | link_to: link.url }}</li>
+          {% endfor %}
+        </ul>
+
+      </div>
+        <div class="cigars-cate">
+           <ul>
+          <li><a href="#">Wrapper Types</a></li>
+          {% for link in linklists.wrapper-types.links %}
+              <li>{{ link.title | link_to: link.url }}</li>
+          {% endfor %}
+          </ul>
+      </div>
+      </div>
+
+    </div>
+    <div class="cigar-detail">
+      <p>Experience the Flavor Explosion of Premium Flavored Cigar Wraps</p>
+      <p>Do you want something a little different than a regular cigar? Are you looking for something really flavorful and satisfying to smoke? Here at BnB Tobacco, we have a range of blunt wraps 
+  online in numerous flavor profiles and strengths. Our cigar wraps come from some of the best manufacturers in the industry, and they will definitely give you a jolt of flavor that is 
+  unmatched. If you don’t want to take our word for it, then try it for yourself to see just how amazing the flavor truly is! We carry numerous brands to suit all tastes, and our products are 
+  deeply discounted to ensure that our customers get a ton of value for their money. Browse our website to check out the amazing selection. </p>
+    </div>
+
+  </div>
+</div>

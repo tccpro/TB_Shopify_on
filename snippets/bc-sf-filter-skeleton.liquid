@@ -1,0 +1,15 @@
+{%- assign bc_settings = shop.metafields.bc-sf-filter.settings -%}
+{% if bc_settings contains 'showPlaceholder":' %}
+	{%- assign bc_placeholder_enable = bc_settings | split: 'showPlaceholder":' | last | split: ',' | first | split: '}' | first | strip -%}
+{% else %}
+	{%- assign bc_placeholder_enable = 'true' -%}
+{% endif %}
+
+{% if bc_placeholder_enable == 'true' %}
+  {% case type %}
+    {% when 'button' %}
+      <button class="bc-sf-filter-skeleton-button"><span></span></button>
+    {% else %}
+      <span class="bc-sf-filter-skeleton-text bc-sf-filter-skeleton-width{{- width -}}"></span>
+  {% endcase %}
+{% endif %}

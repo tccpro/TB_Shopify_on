@@ -1,0 +1,8 @@
+{% layout none %}{% capture output %}[
+{% paginate collection.products by 1000 %}
+{% for product in collection.products %}
+{"id":{{product.id}},"title":{{product.title | json}},"handle":"{{product.handle}}","tags":{{product.tags | json}},"variants":[{% for variant in product.variants %}{"id":{{variant.id}},"qty":{{variant.inventory_quantity}},"title":{{variant.title | json}},"policy":{{variant.inventory_policy | json}}}{% unless forloop.last %},{% endunless %}{% endfor %}],"collection_ids":[{% for c in product.collections %}{{c.id}}{% unless forloop.last %},{% endunless %}{% endfor %}]}
+{% unless forloop.last %},{% endunless %}
+{% endfor %}
+{% endpaginate %}
+]{% endcapture %}{{ output | strip_newlines }}

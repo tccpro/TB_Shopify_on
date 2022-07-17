@@ -1,0 +1,41 @@
+<div class="main-container">
+
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ page.title }}</h1>
+  </header>
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+  <div class="rte clearfix truncated">
+    {{ page.content | truncate: 100 }}
+    
+    <a class="read-more" href="#">Read more</a>
+  </div>
+  
+  <div class="rte clearfix">
+    {{ page.content }}
+  </div>
+
+  {% assign brand_collections = page.metafields.Brands.brand_collection | strip_html | split: ';' %}
+
+  <ul class="collection-grid">
+
+    {% for brand in brand_collections %}
+      {% assign handle = brand | strip %}
+      {% assign brand_collection = collections[handle] %}
+
+      <li class="collection-item">  <!-- search-brand-item -->
+        <a href="{{ brand_collection.url }}"><img class="lazyload" src="{{ 'lazy.gif' | asset_url }}" data-src="{{ brand_collection.image | img_url: 'small'}}"></a>
+        <h4>{{ brand_collection.title | link_to: brand_collection.url }}</h4>
+      </li>
+
+    {% endfor %} 
+
+  </ul>
+</div>
+
+<br/>
+{% section 'featured-products_np' %}
+{% section 'featured-products_np2' %}

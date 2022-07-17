@@ -1,0 +1,43 @@
+<!-- BEGIN_CF_RECAPTCHA_PATCH -->
+<script>
+  /**
+  * A patch that removes Shopify's recaptcha onsubmit handler.
+  * 
+  * Developed by Helium Development <support@heliumdev.com>
+  */
+  (function() {
+    var msBetweenEachLoop = 200;
+    var maxTime = 5000;
+    var cfPatchIntervalId = setInterval(function() {
+      var cfFormsWithBug = document.querySelectorAll('form[data-cf-form][onsubmit]');
+      if (!cfFormsWithBug || !cfFormsWithBug.length) return;
+      for (var i = 0; i < cfFormsWithBug.length; i++) {
+        cfFormsWithBug[i].setAttribute('onsubmit', null);
+      }
+    }, msBetweenEachLoop);  
+    setTimeout(function() {
+      clearInterval(cfPatchIntervalId);
+    }, maxTime);
+  })();
+</script>
+<!-- END_CF_RECAPTCHA_PATCH -->
+
+<div id="customer-fields" {% unless customer %}data-registration="true"{% endunless %}>
+  {% form 'create_customer' %}
+    <input type="hidden" name="shop" value="{{ shop.permanent_domain }}">
+    <div class="fields"><!-- Fields loaded from server --></div>
+    <div class="form-footer"></div>
+    <script>
+      var Customr = {
+        baseUrl: "https://customr.heliumdev.com",
+        {% if customer %}
+          shopifyCustomer: {
+            id: {{ customer.id }},
+            token: {{ customer.metafields.customr_auth.token | json }}
+          }
+        {% endif %}
+      };
+    </script>
+    <script src="https://cdn-customr.heliumdev.com/assets/v2/embed.js"></script>
+  {% endform %}
+</div>

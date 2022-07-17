@@ -1,0 +1,55 @@
+<!-- Floating Cart -->
+<div id="compare-cart">
+<script>
+  var product_handle;
+  var proId=[];
+  {% if template contains 'product' %}
+  var product_handle = '{{ product.handle }}';
+  {% endif %}
+  
+  function fillCart() {
+    append_flag = true;
+    $("div.com-item-div").remove();
+    for (var i=0; i<pro_com_arr.length; i++) {
+      
+      Shopify.getProduct(pro_com_arr[i].replace(/"/g, ""), function(data) {
+        var com_html = "";
+        var com_html1="";
+        if (data.images.length > 0) {
+          var pro_image = "<a href='/products/"+data.handle+"'><img style='width:100%' src='"+data.images[0]+"' /></a>";
+        } else {
+          var pro_image = "<a href='/products/"+data.handle+"'><img style='width:100%' src='https://cdn.shopify.com/s/images/admin/no-image-large.gif' /></a>";
+        }
+        
+        data.price = Shopify.formatMoney(data.price, "{{ shop.money_with_currency_format }}");
+        handle = '"'+data.handle+'"';
+        var short_title = $.trim(data.title).substring(0, 55).split(" ").slice(0, -1).join(" ") + "...";
+       
+        if (! $('#ca-'+data.handle).length){
+          
+          com_html += '<div id="ca-'+data.handle+'" class="compare-item">';
+          com_html += '<a class="pp-link" href="/products/'+data.handle+'">';
+          com_html += '<img class="thumbnail" src="'+data.images[0]+'" style="margin-top: 5px;">';
+          com_html += '</a>';
+          com_html += '<div class="summery"><a href="/products/'+data.handle+'">'+short_title+'</a><a class="money" href="/products/'+data.handle+'">'+data.price+'</a></div>';
+          com_html += "<span title='Remove' class='delete' onclick='removeComPro(this, "+handle+","+data.id+")'>X</span>";
+          com_html += '</div>';
+          
+          ca_makeHTML(com_html);
+          proId.push(data.id); 
+          update_url(proId);
+        }  
+       $(".chk-addtocompare_"+data.handle).prop("checked",true)
+       
+      });
+    }
+    
+    
+  }
+      
+</script>
+  <div id="com_contents"></div>
+</div>
+{% capture store_url %}https://shopiapps.in/compare_product/com_inc.php?shop={{shop.permanent_domain}}{% endcapture %}
+
+<script src="{{ store_url }}" defer="defer" type="text/javascript"></script>

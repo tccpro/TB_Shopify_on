@@ -1,0 +1,194 @@
+<div class="main-container">
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">
+      {{ page.title }}
+    </h1>
+  </header>
+  
+  <div id="page" class="row">
+    <div class="span12 details">
+      <style>
+        .first-td { background-color: rgba(255, 255, 255, 0.7) !important; width:10%; padding-left:10px !important; border-left:1px solid #ccc;font-weight:bold; }
+        .content-td { width:22%; border-left:1px solid #ccc;  }
+        .title-content-td { width:22%; border-left:1px solid #ccc; font-size:14px; font-weight:bold; }
+        tr:last-child td { border-bottom: 1px solid #ccc; }
+        table tr td:last-child { border-right:1px solid #ccc; padding-right: 10px !important; }
+        #com_contents table .item-amt {color: #b12929 !important; font-weight: bold; }
+        tr:hover {background-color: rgba(255, 255, 255, 0.2) !important;}
+        #com_contents table { font-size:13px !important; color:#000 !important; background: rgba(255, 255, 255, 0.7) !important;}
+        .content-td {border-left: 1px solid #000 !important ;}
+        .title-content-td {border-left: 1px solid #000 !important;}
+        .remove-col { color: #ff0000 !important; }
+      </style>
+      <script>
+        if (typeof jQuery === 'undefined') {
+          document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"><\/script>');
+        }
+      </script>
+
+      <script>
+
+        var pro_handle=[];
+        var new_data = [];
+        new_data["Id"] = new Array();
+        new_data["Image"] = new Array();
+        new_data["Title"] = new Array();
+        new_data["Price"] = new Array();
+        new_data["Description"] = new Array();
+        new_data["Vendor"] = new Array(); 
+        new_data["Available"] = new Array(); 
+        new_data["Remove"] = new Array(); 
+        var pro_com_arr = new Array();
+
+        $(document).ready(function () {
+
+
+
+
+          if ($js.cookie('pro_com_arr') !=  undefined && $js.cookie('pro_com_arr') != "") {
+            var old_pro = $js.cookie('pro_com_arr');
+            old_pro = old_pro.split(',');
+            pro_com_arr = old_pro;
+          }
+
+          var com_html = "";
+          var url=location.href
+          var ids=url.split("?");
+          console.log(ids[1]);
+          if(ids[1] != "" && ids[1] != undefined){
+            $js("#com_contents").html('<div style="text-align:center"><img src="//shopiapps.in/compare_product/image/comparing_gif.gif"></div>');
+            $.ajax({
+              dataType:'json',
+              url: '//shopiapps.in/compare_product/get-product.php?proId='+atob(ids[1])+'&shop='+Shopify.shop,
+              success: function(dat){
+                $.each(dat, function(index, element) {
+                  pro_handle.push(element.handle);
+                  getCompareProduct(element.handle, function() {
+                    setTimeout(function () {ComparePageHtml()},1000);
+                  });
+                });
+              },
+              error:function(dat){
+                console.log(dat);
+              }
+            });
+          }else{
+              $("#com_contents").html('Please Select Any Product to Compare');
+          }
+
+        });
+        function getCompareProduct(handle , callback)
+        {
+
+          Shopify.getProduct(handle.replace(/"/g, ""), function(data) {
+
+            $js.cookie("pro_com_arr", pro_handle, { expires : 3650, path: '/' });
+            pro_com_arr=pro_handle;
+            fillCart();
+            setTimeout(function () { $(".compare-cart-wrapper").show() }, 2000);
+
+            if (data.images.length > 0) {
+              var pro_image = "<a href='/products/"+data.handle+"'><img style='width:100%' src='"+data.images[0]+"' /></a>";
+            } else {
+              var pro_image = "<a href='/products/"+data.handle+"'><img style='width:100%' src='https://cdn.shopify.com/s/images/admin/no-image-large.gif' /></a>";
+            }
+
+            data.price = "<span class='item-amt'>"+Shopify.formatMoney(data.price, "{{ shop.money_with_currency_format }}")+"</span>"
+                                                                       var nhandle = "'"+data.handle+"'";
+                                                                       //remove_link = '<a class="remove-col" href="javascript:void(0);" onclick="removeCol('+i+', '+handle+')">Remove'+i+'</a>';
+                                                                       if (data.available == true) { 
+              data.available = "Yes"; 
+            } else {
+              data.available = "No";
+            }
+
+            addToArr(data.id, "Id");
+            addToArr(pro_image, "Image");
+            addToArr(data.title, "Title");
+            addToArr(data.price, "Price");
+            addToArr(data.description, "Description");
+            addToArr(data.vendor, "Vendor");
+            addToArr(data.available, "Available");
+            addToArr(nhandle, "Remove");
+
+          });
+          callback();
+        }
+        function ComparePageHtml()
+        {     
+
+          setTimeout(function () {
+            var w = (pro_handle.length*20)+20;
+            com_html = "<table style='width:"+w+"% !important; margin:0 auto;'>";
+            for(rows in new_data) {
+              com_html += "<tr>";
+              for (var i=0; i<pro_handle.length; i++) {
+                if (i == 0){
+                  if (rows == "Remove") {
+                    com_html += "<td class='first-td'>&nbsp;</td>";
+                  } else {
+                    com_html += "<td class='first-td'>"+rows+"</td>";
+                  }
+                }
+                var content_class = "";
+                if (rows == "Title") {
+                  content_class = "title-content-td";
+                } else {
+                  content_class = "content-td";
+                }
+                if (rows == "Id") {
+                  content_class = "Id-td";
+                } 
+
+                if (rows == "Remove") {
+                  com_html += '<td class="'+content_class+' col-'+i+'"><a class="remove-col" id="ca_remove_'+new_data['Id'][i]+'" href="javascript:void(0);" onclick="removeCol('+i+', '+new_data[rows][i]+', '+new_data['Id'][i]+')">Remove</a></td>';
+                } else {
+                  com_html += "<td class='"+content_class+" col-"+i+"'>"+new_data[rows][i]+"</td>";
+                }
+              }
+              com_html += "</tr>";
+            }
+
+            com_html += "</table>";
+
+            $(".Id-td").parent().hide();
+            $js("#com_contents").html(com_html);
+            $(".Id-td").parent().remove();
+
+          }, 1000);
+        }
+
+        function addToArr(val, key) {
+          new_data[key].push(val);
+        }
+        function removeCol(num, handle, id) {
+          var url=location.href
+          var ids=url.split("?");
+          var values = atob(ids[1]).split(',');
+          for(var i = 0 ; i < values.length ; i++) {
+            if(values[i] == id) {
+              values.splice(i, 1);
+            }
+          }
+          window.history.pushState('', '', '?'+btoa(values));
+          $js(".col-"+num).remove();
+          $js("#ca-"+handle).remove();
+
+          var i = pro_com_arr.indexOf(handle);
+          pro_com_arr.splice(i, 1);
+          $js.cookie("pro_com_arr", pro_com_arr, { expires : 3650, path: '/' })
+
+          /*if(!pro_com_arr.length){
+            $("#com_contents").html('Please Select Any Product to Compare');
+            $(".compare-cart-wrapper").hide();
+          }*/
+        }
+
+      </script>
+      <div id="com_contents"><div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

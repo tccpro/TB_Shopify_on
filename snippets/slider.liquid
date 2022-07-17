@@ -1,0 +1,37 @@
+<div class="flexslider main-slider">
+  <ul class="slides">
+    {% for i in (1..6) %}
+      {% capture slide %}slide_{{ i }}{% endcapture %}
+      {% capture slide_link %}slide_{{ i }}_link{% endcapture %}
+      {% capture slide_img %}slide_{{ i }}.jpg{% endcapture %}
+      {% capture slide_alt %}slide_{{ i }}_alt{% endcapture %}
+      {% if settings[slide] %}
+        <li data-thumb="{{ slide_img | asset_url }}">
+          <a href="{{ settings[slide_link] }}" class="slide-link">
+            {{ slide_img | asset_url | img_tag: settings[slide_alt] }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+<!-- / Mobile Banner \ -->
+<div class="flexslider mobile-slider">
+  <ul class="slides">
+    {% for i in (1..6) %}
+      {% capture slide %}mobile_slide_{{ i }}{% endcapture %}
+      {% capture slide_link %}mobile_slide_{{ i }}_link{% endcapture %}
+      {% capture slide_img %}mobile-slide_{{ i }}.jpg{% endcapture %}
+      {% capture slide_alt %}mobile_slide_{{ i }}_alt{% endcapture %}
+      {% if settings[slide] %}
+        <li data-thumb="{{ slide_img | asset_url }}">
+          <a href="{{ settings[slide_link] }}" class="slide-link">
+            {{ slide_img | asset_url | img_tag: settings[slide_alt] }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+
+

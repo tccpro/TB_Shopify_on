@@ -1,0 +1,19 @@
+{% include 'wh_calculate_discount' with product %} 
+{% layout none %}
+
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'large--one-third medium-down--one-half' %}
+{% endunless %}
+
+{% unless current_collection == blank %}
+  {% assign current_collection = collection %}
+{% endunless %}
+
+{% assign sold_out = true %}
+{% assign sold_out_text = 'products.product.sold_out' | t %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+ 
+{% assign grid_item_width = 'small--one-half medium--one-half large--one-quarter' %}
+{% include 'product-grid-item' %}

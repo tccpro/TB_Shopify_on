@@ -1,0 +1,202 @@
+/* make categories list styles easy to turn off */
+.category-list.show-styled li.relative-level-0 {
+    margin-left: 0;
+}
+
+.category-list.show-styled li.relative-level-1 {
+    margin-left: 1.0em;
+}
+
+.category-list.show-styled li.relative-level-2 {
+    margin-left: 2.0em;
+}
+
+.category-list.show-styled li.relative-level-3 {
+    margin-left: 3.0em;
+}
+
+.category-list.show-styled li.relative-level-4 {
+    margin-left: 4.0em;
+}
+
+.category-list.show-styled li.relative-level-gt4 {
+    margin-left: 5.0em;
+}
+
+/* by default when styled, hide them all then select subset to show */
+.category-list.show-styled li {
+    display: none;
+    list-style-type: none;
+}
+
+/* by default when styled, don't show product count on categories with 0 products */
+.category-list.show-styled span.pc-zero-hide {
+    display: none;
+}
+
+.category-list.show-styled.show-nopc span.pc {
+    display: none;
+}
+
+/**
+ * Ways of visualising the tree, set in Shopify liquid 'include' tag
+ */
+
+/* always show all cats */
+.category-list.show-styled.show-all li {
+    display: list-item;
+}
+
+
+
+/* show-pathback [default] */
+
+/* always show top-level cats */
+.category-list.show-styled.show-pathback li.level-0 {
+    display: list-item;
+}
+
+/* all supercatpeers show direct children, not their grandchildren */
+.category-list.show-styled.show-pathback li.supercatpeer {
+    display: list-item;
+}
+
+/* all cats on current path (supercats and activecat), activecatpeers and direct children and indirect children (grandchildren) */
+.category-list.show-styled.show-pathback li.supercat, .category-list.show-styled.show-pathback li.activecat, .category-list.show-styled.show-pathback li.activecatpeer, .category-list.show-styled.show-pathback li.subcat {
+    display: list-item;
+}
+
+
+
+/* show-pathdirect */
+
+/* always show top-level cats */
+.category-list.show-styled.show-pathdirect li.level-0 {
+    display: list-item;
+}
+
+/* all supercatpeers show direct children, not their grandchildren */
+.category-list.show-styled.show-pathdirect li.supercatpeer {
+    display: list-item;
+}
+
+/* all cats on current path (supercats and activecat), activecatpeers and direct children only */
+.category-list.show-styled.show-pathdirect li.supercat, .category-list.show-styled.show-pathdirect li.activecat, .category-list.show-styled.show-pathdirect li.activecatpeer, .category-list.show-styled.show-pathdirect li.subcatdirect {
+    display: list-item;
+}
+
+
+
+/* show-activedown */
+
+/* show top-level cats if there's no active category */
+.category-list.show-styled.show-activedown.no-active-cat li.level-0 {
+    display: list-item;
+}
+
+/* show active, all generations of children */
+.category-list.show-styled.show-activedown li.activecat, .category-list.show-styled.show-activedown li.subcat {
+    display: list-item;
+}
+
+
+
+/* show-peersactivedown */
+
+/* show top-level cats if there's no active category */
+.category-list.show-styled.show-peersactivedown.no-active-cat li.level-0 {
+    display: list-item;
+}
+
+/* show active, all generations of children and active category peers */
+.category-list.show-styled.show-peersactivedown li.activecat, .category-list.show-styled.show-peersactivedown li.activecatpeer, .category-list.show-styled.show-peersactivedown li.subcat {
+    display: list-item;
+}
+
+
+
+/* show-activedowndirect */
+
+/* show top-level cats if there's no active category */
+.category-list.show-styled.show-activedowndirect.no-active-cat li.level-0 {
+    display: list-item;
+}
+
+/* show active and all generations of children */
+.category-list.show-styled.show-activedowndirect li.activecat, .category-list.show-styled.show-activedowndirect li.subcatdirect {
+    display: list-item;
+}
+
+
+
+/* show-peersactivedowndirect */
+
+/* show top-level cats if there's no active category */
+.category-list.show-styled.show-peersactivedowndirect.no-active-cat li.level-0 {
+    display: list-item;
+}
+
+/* show active and all generations of children */
+.category-list.show-styled.show-peersactivedowndirect li.activecat, .category-list.show-styled.show-peersactivedowndirect li.activecatpeer, .category-list.show-styled.show-peersactivedowndirect li.subcatdirect {
+    display: list-item;
+}
+
+
+
+/* show-activeupdown */
+
+/* show top-level cats if there's no active category */
+.category-list.show-styled.show-activeupdown.no-active-cat li.level-0 {
+    display: list-item;
+}
+
+/* show active and all generations of children */
+.category-list.show-styled.show-activeupdown li.supercat, .category-list.show-styled.show-activeupdown li.activecat, .category-list.show-styled.show-activeupdown li.subcat {
+    display: list-item;
+}
+
+
+
+/* show-activeupdowndirect */
+
+/* show top-level cats if there's no active category */
+.category-list.show-styled.show-activeupdowndirect.no-active-cat li.level-0 {
+    display: list-item;
+}
+
+/* show active and all generations of children */
+.category-list.show-styled.show-activeupdowndirect li.supercat, .category-list.show-styled.show-activeupdowndirect li.activecat, .category-list.show-styled.show-activeupdowndirect li.subcatdirect {
+    display: list-item;
+}
+
+
+
+/* show-down */
+
+/* show top-level cats if there's no active category */
+.category-list.show-styled.show-down.no-active-cat li.level-0 {
+    display: list-item;
+}
+
+/* show all generations of children */
+.category-list.show-styled.show-down li.subcat {
+    display: list-item;
+}
+
+
+
+/* show-nodups */
+
+/* remove duplicates and all their children */
+.category-list.show-styled.show-nodups li.activeduplicat, .category-list.show-styled.show-nodups li.subduplicat {
+    display: none;
+}
+
+
+/* show-hide-catpc-zero */
+
+/* hide categories that have zero products and zero sub-categories */
+.category-list.show-styled.show-hide-catpc-zero li.catpc-zero {
+    display: none;
+}
+

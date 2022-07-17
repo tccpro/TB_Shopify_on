@@ -1,0 +1,186 @@
+<div class="main-container">
+
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ page.title }}</h1>
+  </header>
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+  <div class="rte clearfix">
+    <div class="search-brand-filter">
+      <ul>
+        <li><a href="javascript:void(0)" class="active brand-search-group" data-value="all">All Brands</a></li>
+        <li><a href="javascript:void(0)" data-value="#-G" class="brand-search-group"># - G</a></li>
+        <li><a href="javascript:void(0)" data-value="H-N" class="brand-search-group">H - N</a></li>
+        <li><a href="javascript:void(0)" data-value="O-Z" class="brand-search-group">O - Z</a></li>
+      </ul>
+      <div class="brand-search-box">
+        <form action="" method="get" class="clearfix" role="">
+          <button type="submit" class="btn search-icon">
+            <span class="icon icon-search" aria-hidden="true"></span>
+          </button>
+          <input type="text" name="" value="" size="75" class="brand-search-input isp_ignore" placeholder="Filter by brand name">
+        </form>
+      </div>
+    </div>
+    {% assign maxLimit = 250 %}
+    {% assign total_brands = page.metafields.Brands.search_page_brands | strip_html | split:';' | uniq | sort %}
+    <ul class="search-brand-grid">
+	  {% assign listCount = 0 %}
+      {% for brand in total_brands  %}
+      	{% assign total_brands_title = total_brands_title  | append: collections[brand].title | append: ', '  %}     
+        {% if listCount > maxLimit %}
+        <li class="" style="display:none;"><a href="/collections/{{ brand }}" title="">{{ collections[brand].title }}</a></li>
+        {% else %}
+        <li class=""><a href="/collections/{{ brand }}" title="">{{ collections[brand].title }}</a></li>
+        {% endif %}
+      {% assign listCount = listCount | plus:1 %}
+      {% endfor %}
+    </ul>
+    {% assign total_brands_title = total_brands_title | strip_html | split:',' %}
+    
+  </div>
+  
+  <script type="text/javascript">
+    var jsonData = {{ total_brands | json }};
+    var jsonDataTitle = {{ total_brands_title | json }};
+    
+    jsonDataTitle = jsonDataTitle.map(function(title) {
+      return title.trim();
+    })
+    
+    var totalList = $('.search-brand-grid li');
+    var maxLimit = 250;
+    function loadData()
+    {
+      var htmlData = "";
+      var count = 0;
+      var txt = $('.brand-search-input').val().toLowerCase();
+      for (i = 0; i < jsonData.length; i++) {
+        if(txt!="")
+        {
+          if(jsonDataTitle[i].toLowerCase().indexOf(txt) > -1)
+          {
+            if(count < maxLimit)
+              htmlData +='<li class=""><a href="/collections/'+jsonData[i]+'" title="'+jsonDataTitle[i]+'">'+jsonDataTitle[i]+'</a></li>';
+            else
+              htmlData +='<li class="" style="display:none;"><a href="/collections/'+jsonData[i]+'" title="'+jsonDataTitle[i]+'">'+jsonDataTitle[i]+'</a></li>';
+         	count = count + 1;
+          }else{ $('.search-brand-grid').html("<li style='width:100%;display:block;padding: 12px;'>Your search <strong style='color:#000;'>"+txt+"</strong> didn't match any results.</li>"); } 
+        }else
+        {
+          if(i < maxLimit)
+            htmlData +='<li class=""><a href="/collections/'+jsonData[i]+'" title="'+jsonDataTitle[i]+'">'+jsonDataTitle[i]+'</a></li>';
+          else
+            htmlData +='<li class="" style="display:none;"><a href="/collections/'+jsonData[i]+'" title="'+jsonDataTitle[i]+'">'+jsonDataTitle[i]+'</a></li>';
+        }
+      } 
+      $('.search-brand-grid').html("");
+      $('.search-brand-grid').append(htmlData);
+      totalList = $('.search-brand-grid li');
+      maxLimit = 250;
+    }
+    function searchBrands(obj,search)
+    {
+	  if(search == "single")
+      {
+        var htmlData = "";
+        var count = 0;
+        var txt = obj.val().toLowerCase();
+        $('.search-brand-grid').html("");
+        
+        $.each(jsonData, function( index, value ) {
+          if(jsonDataTitle[index].toLowerCase().indexOf(txt) > -1)
+          {
+            if(count < maxLimit)
+              htmlData +='<li class=""><a href="/collections/'+jsonData[index]+'" title="'+jsonDataTitle[index]+'">'+jsonDataTitle[index]+'</a></li>';
+            else
+               htmlData +='<li class="" style="display:none;"><a href="/collections/'+jsonData[index]+'" title="'+jsonDataTitle[index]+'">'+jsonDataTitle[index]+'</a></li>';
+            count = count + 1;
+          }else{ $('.search-brand-grid').html("<li style='width:100%;display:block;padding: 12px;'>Your search <strong style='color:#000;'>"+txt+"</strong> didn't match any results.</li>"); } 
+        });
+        if(htmlData){$('.search-brand-grid').html("");$('.search-brand-grid').append(htmlData);}
+        
+        totalList = $('.search-brand-grid li');
+        maxLimit = 250;
+        $('.brand-search-group').removeClass('active');
+        $('.brand-search-group').first().addClass('active');
+         /*$(".search-brand-grid li").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });*/
+      }
+      if(search == "group")
+      {
+        var count = 0;
+        var htmlData = "";
+        var txt = $('.brand-search-input').val().toLowerCase();
+        if(obj == "#-G"){ var searchTexts = ['0','1','2','3','4','5','6','7','8','9','$','a','b','c','d','e','f','g']; } 
+        else if(obj == "H-N"){ var searchTexts = ['h','i','j','k','l','m','n']; }
+        else if(obj == "O-Z"){ var searchTexts = ['o','p','q','r','s','t','u','v','w','x','y','z']; }
+        $('.search-brand-grid').html("");
+        $.each(jsonData, function( index, value ) {
+          if(txt !="")
+          {
+            if($.inArray(jsonDataTitle[index].toLowerCase().charAt(0),searchTexts) > -1 && jsonDataTitle[index].toLowerCase().indexOf(txt) > -1)
+            {
+               if(count < maxLimit)
+                htmlData +='<li class=""><a href="/collections/'+jsonData[index]+'" title="'+jsonDataTitle[index]+'">'+jsonDataTitle[index]+'</a></li>';
+              else
+                 htmlData +='<li class="" style="display:none;"><a href="/collections/'+jsonData[index]+'" title="'+jsonDataTitle[index]+'">'+jsonDataTitle[index]+'</a></li>';
+              count = count + 1;
+            }else{ $('.search-brand-grid').html("<li style='width:100%;display:block;padding: 12px;'>Your search <strong style='color:#000;'>"+txt+"</strong> didn't match any results.</li>"); }
+          }else
+          {
+            console.log('v index:', index);
+            if($.inArray(jsonDataTitle[index].toLowerCase().charAt(0),searchTexts) > -1)
+            {
+               if(count < maxLimit)
+                htmlData +='<li class=""><a href="/collections/'+jsonData[index]+'" title="'+jsonDataTitle[index]+'">'+jsonDataTitle[index]+'</a></li>';
+              else
+                 htmlData +='<li class="" style="display:none;"><a href="/collections/'+jsonData[index]+'" title="'+jsonDataTitle[index]+'">'+jsonDataTitle[index]+'</a></li>';
+              count = count + 1;
+            }else{ $('.search-brand-grid').html("<li style='width:100%;display:block;padding: 12px;'>Your search <strong style='color:#000;'>"+txt+"</strong> didn't match any results.</li>"); }
+            
+          }
+        });
+        if(htmlData){$('.search-brand-grid').html("");$('.search-brand-grid').append(htmlData);}
+        totalList = $('.search-brand-grid li');
+        maxLimit = 250;
+        /*$(".search-brand-grid li").filter(function() {
+          $(this).toggle( $.inArray($(this).text().toLowerCase().charAt(0),searchTexts) > -1)
+        });*/
+      }
+    }
+    
+    function loadMoreList(maxLimit)
+    {
+      totalList.slice( 0, maxLimit ).fadeIn();
+    }
+    function onScroll()
+    {
+      var currentHeight = ($(document).height() - $(window).height())-100;
+      if($( window ).width() < 480){currentHeight = currentHeight - 1000; }else if($( window ).width() < 768){ currentHeight = currentHeight - 600;}
+      if ($(window).scrollTop() >= currentHeight) {
+        maxLimit = maxLimit + 250;
+        if(maxLimit >jsonData.length) maxLimit = jsonData.length;
+        loadMoreList(maxLimit);
+      }
+    }
+    $(document).ready(function(){
+      $(document).on('touchmove', onScroll); // for mobile
+      $(window).on('scroll', onScroll); 
+      
+      $(".brand-search-input").on("keyup input", function() {
+         searchBrands($(this),'single');
+      });
+      $(".brand-search-group").on("click touchstart", function() {
+        $('.brand-search-group').removeClass('active');
+        $(this).addClass('active');
+        if($(this).attr('data-value') == "all"){ loadData(); }else{ searchBrands($(this).attr('data-value'),'group');}
+      });
+     
+    });
+  </script>
+</div>

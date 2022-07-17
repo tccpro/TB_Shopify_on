@@ -1,0 +1,53 @@
+{% comment %}
+  List out your main-menu linklist (default)
+
+  More info on linklists:
+    - http://docs.shopify.com/themes/liquid-variables/linklists
+{% endcomment %}
+
+<!-- vvvvvv {{ linklists.nested-main-menu.links.size }} -->
+<ul class="horizontal-mega-menu site-nav{% unless settings.nav_below_logo %} large--text-right{% endunless %}" id="AccessibleNav">
+  {% for link in linklists.nested-main-menu.links %}
+    {% comment %}
+      Create a dropdown menu by naming a linklist the same as a link in the parent nav
+
+      More info on dropdowns:
+        - http://docs.shopify.com/manual/your-website/navigation/create-drop-down-menu
+    {% endcomment %}
+    {% assign child_list_handle = link.title | handleize %}
+    {% if link.links != blank %}
+      <!-- has links -->
+      <li class="mega-menu-item{% if link.active %} site-nav--active{% endif %}" aria-haspopup="true">
+        <a href="{{ link.url }}" class="site-nav__link">
+          {{ link.title }}
+          <span class="Icon">
+            <canvas class="Icon-canvas" width="1" height="1"></canvas>
+            {% include 'icon-down-arrow' %}
+          </span>
+        </a>
+        <ul class="mm-submenu simple">
+          {% for childlink in link.links %}
+            <li{% if childlink.active %} class="site-nav--active"{% endif %}>
+              <span class="mm-submenu-title">{{ childlink.title | escape }}</span>
+              
+              {% if childlink.links != blank %}
+              <ul class="mm-submenu-linklist">
+                {% for childchildlink in childlink.links %}
+                  <li{% if childchildlink.active %} class="site-nav--active"{% endif %}>
+                    <a href="{{ childchildlink.url }}" class="site-nav__link">{{ childchildlink.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% else %}
+      <!-- does not have links -->
+      <li {% if link.active %}class="site-nav--active"{% endif %}>
+        <a href="{{ link.url }}" class="site-nav__link">{{ link.title }}</a>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>

@@ -1,0 +1,46 @@
+<div class="article grid__item {{ grid_item_width }}">
+
+  {% if article.image %}
+  <img class="lazyload" src="{{ 'Spin-1s-75px.gif' | asset_url }}" data-src="{{ article.image | img_url: '500x' }}">
+  {% endif %}
+  
+  <div class="blog-info">
+  
+    <h2><a href="{{ article.url }}">{{ article.title }}</a></h2>
+    <p class="blog-date">
+      by {{ article.author }} &bull; <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+      {% comment %}
+        <span class="meta-sep">&#8226;</span>
+        {{ article.author }}
+      {% endcomment %}
+    </p>
+    
+    {% if article.tags.size > 0 %}
+    <p class="tags">
+      {% for tag in article.tags %}
+        <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %} <span class="meta-sep">&#8226;</span> {% endunless %}
+      {% endfor %}
+    </p>
+    {% endif %}
+
+    {% comment %}
+      Add a surrounding div with class 'rte' to anything that will come from the rich text editor.
+      Since this is just a listing page, you can either use the excerpt or truncate the full article.
+    {% endcomment %}
+    <div class="rte">
+      {% if article.image %}
+        {% assign image_alt = article.title | escape %}
+        <p>
+<!--           {{ article | img_url: '1024x1024' | img_tag: image_alt, 'article__image' | link_to: article.url }}  -->
+          <a href="{{ article.url }}" class="read-more">{{ 'blogs.article.read_more' | t }}</a>
+        </p>
+      {% endif %}
+      {% if article.excerpt.size > 0 %}
+        {{ article.excerpt }}
+      {% else %}
+        <p>{{ article.content | strip_html | truncate: 100 }} <a href="{{ article.url }}" class="read-more">{{ 'blogs.article.read_more' | t }}</a></p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>

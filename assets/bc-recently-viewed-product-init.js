@@ -1,0 +1,1 @@
+var bcRecentProduct = new BCRecentProduct(); bcRecentProduct.init(bcSfFilterParams,bcRvParams);

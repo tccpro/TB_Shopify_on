@@ -1,0 +1,52 @@
+<div class="main-container">
+
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ page.title }}</h1>
+  </header>
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+  <div class="rte clearfix truncated">
+    {{ page.content | truncate: 100 }}
+    
+    <a class="read-more" href="#">Read more</a>
+  </div>
+  
+  <div class="rte clearfix">
+    {{ page.content }}
+  </div>
+
+  {% assign brand_collections = page.metafields.Brands.brand_collection | strip_html | split: ';' %}
+
+  <ul class="collection-grid">
+
+    {% for brand in brand_collections %}
+      {% assign handle = brand | strip %}
+      {% assign brand_collection = collections[handle] %}
+
+      <li class="collection-item">  <!-- search-brand-item -->
+        <a href="{{ brand_collection.url }}"><img class="lazyload" src="{{ 'lazy.gif' | asset_url }}" data-src="{{ brand_collection.image | img_url: 'small'}}"></a>
+        <h4>{{ brand_collection.title | link_to: brand_collection.url }}</h4>
+      </li>
+
+    {% endfor %} 
+
+  </ul>
+</div>
+
+<br/>
+{% section 'featured-products' %}
+{% section 'featured-products2' %}
+{% section 'featured-products3' %}
+<div class="main-container">
+  	<div class="rte clearfix">
+      <p>The cannabis industry has gone through immense innovation that has changed how many people look at and understand cannabis products in recent years. Some of the most ingenious and popular CBD brands are featured here. We've curated them here to enable you to browse the best CBD brands easily and quickly.</p>
+      <p> CBD is a natural compound that has been found to have a wealth of many health benefits. It can help manage chronic pain, anxiety, and insomnia and may even help assist those suffering from cancer treatments. CBD is such a versatile product with no currently known side effects, making it one of the most popular additions to health and well-being in recent years.</p> 
+      <p>At BnB Tobacco, we constantly strive to provide both the highest-quality tobacco products and alternatives to tobacco products for all of our customer's needs. Here you'll find our vast inventory of CBD products including: CBD and CBG smokeables, hemp rolling papers, wraps, cones, and CBD flowers, all from today's most popular brands. 
+      Shop from the best CBD brands like Versa, Hazen, Cannadips, Chief Stix Hemp, Hempzilla, Hempzone, High Hemp, Green and Wild, Pure HempSmokes, Wild Help, and many others, many more. Additionally, to ensure your search is even easier, you'll find the most recent CBD, CGB and Hemp products added to the side, our best-selling Hemp Wraps, and our best CBD and CGB selling smokes.</p> 
+      <p>When you shop our CBD brands here at BnB Tobacco, don't forget to sign up for our Customer Loyalty Program. It's free! When you're part of the loyalty program, every CBD product purchase will earn you points toward redeeming amazing deals for your next purchase with us. Are you looking for the best deals wholesale? Check out our Wholesale Registration page to sign up today. If approved, you can enjoy a 2% EFT discount and free shipping (within our shipping policy) on orders of $1,999.</p> 
+      <p>When you shop at BnB, shop in the confidence that every product is of exceptional quality at the most competitive prices online, every customer is essential to us, and we are committed to ensuring excellence in all we do. Questions for us? Please feel free to reach out and contact us today. It would be our pleasure to help.</p>
+ 	</div>
+</div

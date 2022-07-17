@@ -1,0 +1,171 @@
+<style>
+  .footer-container {
+    padding-top: 30px;
+    padding-right: calc(calc(100% - 1440px) / 2);
+    padding-left: calc(calc(100% - 1440px) / 2);
+    background-image: url('{{ "footer_bg.png" | asset_url }}');
+  }
+</style>
+
+<footer class="site-footer small--text-center" role="contentinfo">
+<div class="footer-mobile">
+
+    <div class="grid-uniform">
+
+    <div class="grid__item">
+
+    <div class="footer-container lazyload wrapp-box" >
+    <div class="footer-links-listing">
+    <div class="footer-links-listing-inner">
+
+      {% comment %}
+        Calculate the number of footer columns shown
+      {% endcomment %}
+      {% assign num_footer_columns = 0 %}
+      {% if settings.footer_blog_enable %}
+        {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+      {% endif %}
+      {% if settings.footer_quicklinks_enable %}
+        {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+      {% endif %}
+      {% if settings.footer_second_menu_enable %}
+        {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+      {% endif %}
+      {% if settings.footer_social_enable %}
+        {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+      {% endif %}
+      {% if settings.footer_contact_enable %}
+        {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+      {% endif %}
+      {% if settings.footer_newsletter_enable %}
+        {% assign num_footer_columns = num_footer_columns | plus: 1 %}
+      {% endif %}
+
+      {% case num_footer_columns %}
+        {% when 0 %}
+        {% when 1 %}
+          {% assign footer_column_width = 'text-center' %}
+        {% when 2 %}
+          {% assign footer_column_width = 'large--one-half medium--one-half' %}
+        {% when 3 %}
+          {% assign footer_column_width = 'large--one-third medium--one-third' %}
+        {% when 4 %}
+          {% assign footer_column_width = 'large--one-quarter medium--one-half' %}
+        {% when 5 %}
+          {% assign footer_column_width = 'large--one-fifth medium--one-half' %}
+        {% when 6 %}
+          {% assign footer_column_width = 'large--one-sixth medium--one-half' %}
+      {% endcase %}
+
+<div class="footer-links">
+<h4>{{ 'layout.footer.shop-by-department' | t }}</h4>
+<ul>
+{% for link in linklists.shop-by-department.links %}
+ <li>{{ link.title | link_to: link.url }}</li>
+{% endfor %}
+</ul>
+</div>
+<div class="footer-links">
+<h4>{{ 'layout.footer.deals-and-steals' | t }}</h4>
+<ul>
+{% for link in linklists.deals-and-steals.links %}
+ <li>{{ link.title | link_to: link.url }}</li>
+{% endfor %}
+</ul>
+</div>
+
+<div class="footer-links">
+<h4>{{ 'layout.footer.customer-support' | t }}</h4>
+<ul>
+{% for link in linklists.customer-support.links %}
+ <li>{{ link.title | link_to: link.url }}</li>
+{% endfor %}
+</ul>
+</div>
+
+<div class="footer-links">
+<h4>{{ 'layout.footer.about' | t }}</h4>
+<ul>
+{% for link in linklists.about.links %}
+ <li>{{ link.title | link_to: link.url }}</li>
+{% endfor %}
+</ul>
+</div>
+
+<div class="footer-links">
+<h4>{{ 'layout.footer.more-info' | t }}</h4>
+<ul>
+{% for link in linklists.more-info.links %}
+ <li>{{ link.title | link_to: link.url }}</li>
+{% endfor %}
+</ul>
+</div>
+
+  {% comment %}
+  <div class="footer-links footer-social">
+    <h4>{{ 'layout.footer.social_title' | t }}</h4>
+    {% comment %}
+      Loop through the social network links
+    {% endcomment %}
+    {% include 'social-links' %}
+  </div>
+  {% endcomment %}
+      
+  <div class="footer-links footer-newsletter">
+    <h4>{{ 'layout.footer.newsletter_title' | t }}</h4>
+    <p>{{ 'layout.footer.newsletter_caption' | t }}</p>
+    {% include 'newsletter-form' %}
+
+    <div class="footer-social-meida">
+      {% include 'social-links' %}
+    </div>
+  </div>
+</div>
+</div>
+
+      <!-- Only display on home page-->
+      {% if template == 'index' %} 
+        <div class="foter-copyright-inner">
+              <p class="site-footer__links">
+              <p align="left">Our goal back in 2009 was to bring the same quality, integrity, and premium tobacco products of a favorite corner shop to the online world. Over a decade later, our mission to provide a tobacco and cigar boutique experience remains. At the same time, we continue to always strive for an inventory full of nothing less than today's premium brands.</p><br/>
+              <p align="left">Welcome to BnB tobacco shop, where the perfect mix of delectable pipe-tobacco waits to be discovered, where your new collectible pipe will be found, your ideal cigar, cigarette, or flawless hemp, CBD, and CBG product awaits you.</p><br/>
+              <p>Our products remain at wholesale prices while their quality remains premium, and we ensure fast shipping and consistently excellent customer service. We constantly add the widest variety of products tailored to your discerning tastes as a tobacco store so that there is something for everyone.</p><br/>
+          	  <p>Are you searching for a great alternative to tobacco products? You've also come to the right place! Whether you're working on quitting, lowering your nicotine cravings, or looking to try hemp, CBD, and CBG items, we've got a collection of these too. Are you a collector of fine tobacco pipes and enjoy relaxing after a hard day with a pipe filled with aromatic, premium tobacco blends? We're happy to announce that we have collections for both featuring the most popular brands in the industry today.</p><br/>
+              <p>Whether you have been searching for pipes and cigars, nicotine alternatives, tobacco, cigarettes, or tobacco alternatives, our tobacco shop will have something for everyone. We've curated our most significant collections here on our home page to make it easier than ever for you to browse our exceptional stock quickly. Simply choose a category, from Premium Cigars to pipes, click, and you'll be taken to our fine collections, where convenient filters can help you pinpoint exactly what you seek.</p><br/>
+              <p>Furthermore, in thanks to our invaluable customers, we provide a Loyalty program to say thanks and reward our customers for shopping with us. Sign up before purchasing an item and receive 100 points for free, then earn points for special offers and redeem them to enjoy exclusive BnB Tobacco shop deals. In addition to our Loyalty program, check out our Wholesale options and register today to enjoy our one-of-a-kind wholesale deals and opportunities.</p>
+              <p>Want to know more about us? Do you have questions about any of our fine tobacco store products? Please feel free to reach out and contact us at any time. It would be our pleasure to have our expert customer service representatives assist you with anything you need. Welcome to BnB, and happy shopping!</p><br/>
+         </div>
+    	{% endif %}
+          
+          
+
+       <div class="foter-copyright">
+         <div class="foter-copyright-inner">
+           <p class="site-footer__links">&copy; {{ 'now' | date: "%Y" }} BnB Enterprise &nbsp;&nbsp;&bull;&nbsp;&nbsp; <a target="_blank" href="https://goo.gl/maps/vbsUcDi2rMq">44621 Guilford Drive Suite 130 Ashburn, VA 20147</a> &nbsp;&nbsp;&bull;&nbsp;&nbsp; <a href="tel:18888835596">1-888-883-5596</a></p>
+<!--            {{ settings.footer_contact_text }} -->
+           <br/>
+           <p>
+           You must be 21 years or older to buy our products in accordance with current FDA regulations. We are committed to providing our services only to people who are of the proper age, and to protecting our youth as best as we possibly can.
+           <p/>
+         </div>
+       </div>
+      
+    </div>
+</div>
+</div>
+  </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": []
+}
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

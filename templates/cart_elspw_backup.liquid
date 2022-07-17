@@ -1,0 +1,378 @@
+{% comment %}
+  This is your /cart template.
+{% endcomment %}
+
+
+<div class="main-container{% if cart.item_count > 0 %} cart{% endif %}">
+{% if cart.item_count > 0 %}
+
+<header class="section-header">
+  {% include 'breadcrumb' %}
+  <h1 class="section-header__title">
+    Cart
+  </h1>
+</header>
+
+  <form action="/cart" method="post" novalidate class="cart clearfix">
+
+    <!--<div class="section-header">
+      <h1 class="section-header__title">{{ 'cart.general.title' | t }}</h1>
+    </div>-->
+    
+    {% if cart.announcements.size > 0 %}
+      <ul class="note">
+        {% for announcement in cart.announcements %}
+          <li>{{ announcement }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if cart.errors.size > 0 %}
+      <ul class="note errors">
+        {% for error in cart.errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <div class="cart-wrapper-wrapper">
+    
+      <div class="cart-wrapper">
+        <div class="cart-table">
+            <div class="theader">
+                <div class="cart-row header">
+                    <div class="cell res-add">Product</div>
+                    <div class="cell mob-cart">Item #</div>
+                    <div class="cell mob-cart">Options</div>
+                    <div class="cell res-add1 ">Per</div>
+                    <div class="cell">Qty</div>
+                    <div class="cell">Cost</div>
+                </div>
+            </div> <!-- theader -->
+            <div class="tbody">
+            {% comment %}
+          Loop through products in the cart
+        {% endcomment %}
+        <script>mixed_cart = false;</script>
+        {% for item in cart.items %}
+{% include 'bold-cart-item' with item %}
+   
+          {% assign prod_index = forloop.index0 %}
+          <input type="hidden" name="product_id[{{ forloop.index0 }}]" value="{{ item.product.id }}">
+          <input type="hidden" name="variant_id[{{ forloop.index0 }}]" value="{{ item.variant.id }}">
+          <input type="hidden" name="quantity[{{ forloop.index0 }}]" value="{{ item.quantity }}">
+
+          <div class="cart-row">
+
+                  <div class="cell res-add">
+
+                    <div class="image-remove">
+                      <a href="{{ item.url | within: collections.all }}" class="cart__image">
+                        {% comment %}
+                          More image size options at:
+                            - http://docs.shopify.com/themes/filters/product-img-url
+                        {% endcomment %}
+                        <img src="{{ item | img_url: 'medium' }}" alt="{{ item.title | escape }}">
+                      </a>
+
+                      <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class=" cart__remove">
+                        <small>{{ 'cart.general.remove' | t }}</small>
+                      </a>
+                    </div>
+
+                    <a href="{{ item.url }}" class="h5 title">
+                      {{ item.product.title }}
+                      <span>{{ item.variant.title }}</span>
+                    </a>
+
+                    {% unless item.variant.title contains 'Default' %}
+                      <br>
+                      <!-- <small>{{ item.variant.title }}</small> -->
+                    {% endunless %}
+
+                    {% comment %}
+                      <p>{{ item.vendor }}</p>
+                    {% endcomment %}
+
+                    {% comment %}
+                      Optional, loop through custom product line items if available
+
+                      For more info on line item properties, visit:
+                        - http://docs.shopify.com/support/your-store/products/how-do-I-collect-additional-information-on-the-product-page-Like-for-a-monogram-engraving-or-customization
+                    {% endcomment %}
+
+                  </div>
+
+                <!-- </div> -->
+              <!-- </div> -->
+
+              <!-- <div class="grid__item large-one-half">
+                <div class="grid--full cart__row--table-large"> -->
+
+                  <div class="cell mob-cart">
+
+                    <span class="h5">{{ item.variant.id }}</span>
+                  </div>
+                  <div class="cell mob-cart">
+                    <span class="h5">{{ item.variant.title }}</span>
+                    <span>{{ product.variants | first }}</span>
+                  </div>
+                   <div class="cell res-add1">
+                   <span class="h5">{{ item.price | money | replace: '$ ', '$' }}</span>
+                  </div>
+
+                  <div class="cell">
+                    <div class="cart-quantity-button quantity">
+                      <input type="text" class="cart__quantity-selector" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0">
+                      <div class="quantity-buttons">
+                        <span class="plus">+</span>
+                        <span class="minus">-</span>
+                      </div>
+                    </div>
+                    <input type="submit" name="update" class="btn--secondary update-cart" value="Update">
+                  </div>
+
+                  <div class="cell res-add2">
+
+                    <span class="h5">
+                      {% assign line_compare_at = item.variant.compare_at_price | times: item.quantity %}
+                      {% if line_compare_at > item.line_price %}
+                        <small class="cart-item__original-price"><s>{{ line_compare_at | money | replace: '$ ', '$' }}</s></small>
+<!--                         <small class="cart-item__original-price"><s>{{ item.original_line_price | money | replace: '$ ', '$' }}</s></small> -->
+                      {% endif %}
+                      {{ item.line_price | money | replace: '$ ', '$' }}
+<!--                       <span class="savings">Save {{ line_compare_at | plus: 0.0 | minus: item.line_price | divided_by: line_compare_at | times: 100 | floor }}%</span> -->
+                    </span>
+
+                    {% if item.original_line_price != ro_line_item_price %}
+                      {% for discount in item.discounts %}
+                        <small class="cart-item__discount">
+                          {{ discount.title }}
+                        </small>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+
+                  <div class="cell bold">
+                    {% if item.properties.size > 0 and false %}
+                      
+{% for p in item.properties %}
+                        {% unless p.last == blank or p.first == "subscription_id" or p.first == "shipping_interval_frequency" or p.first == "shipping_interval_unit_type" %}
+                          {{ p.first }}:
+
+                          {% comment %}
+                            Check if there was an uploaded file associated
+                          {% endcomment %}
+                          {% if p.last contains '/uploads/' %}
+                            <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+                          {% else %}
+                            {{ p.last }}
+                          {% endif %}
+
+                          <br>
+                        {% endunless %}
+                      {% endfor %}
+                    {% else %}
+                    {% endif %}
+                    
+   
+                    
+                  </div>
+            
+               <!--  </div>
+              </div> -->
+
+
+          </div> <!-- cart-row -->
+        {% endfor %}
+
+
+
+
+
+
+
+            </div> <!-- tbody -->
+
+        </div>
+      </div>
+      
+      
+      <div class="information">
+        <h4>Important Information</h4>
+        <ul>
+          <li>Virginia law does not require the collection of state excise taxes on purchases made by non-Virginia customers and/or retailers. It is the sole responsibility of each purchaser to comply with any and all applicable laws of your particular jurisdiction regarding the payment of taxes.</li>
+          <li>You must be 21 years or older to buy our products in accordance with current FDA regulations. We are committed to providing our services only to people who are of the proper age, and to protecting our youth as best as we possibly can.</li>
+        </ul>
+      </div>
+
+    </div>
+    
+    
+    
+    <div class="cart-summary">
+      
+      <div class="total">
+        <div class="header">Subtotal</div>
+        <div class="total-inner">
+{% assign compare_at_subtotal = 0 %}
+{% for item in cart.items %}
+  {% assign line_compare_at = item.variant.compare_at_price | times: item.quantity %}
+  {% assign compare_at_subtotal = compare_at_subtotal | plus: line_compare_at %}
+{% endfor %}
+          
+          <span class="h2 cart__subtotal">
+            <span class="wh-original-cart-total" style="text-decoration: line-through;">{{ compare_at_subtotal | money | replace: '$ ', '$' }}</span>
+            {{ cart.total_price  | money | replace: '$ ', '$' }}
+            <span class="savings">Save {{ compare_at_subtotal | minus: cart.total_price  | money | replace: '$ ', '$' }}</span>
+          </span>
+          <p>Shipping, taxes, and discounts will be calculated at checkout.</p>
+        </div>
+      </div>
+<!--       <div class="product_rp_cart_div"></div> -->
+      <div class="cart-buttons">
+        <input type="submit" name="checkout" class="btn checkout" value="{{ 'cart.general.checkout' | t }}">
+
+{% if shop.metafields.wh_net.enabled %}{% if customer.tags contains 'whnet' %}<div style="margin-top:30px;"><p>{{shop.metafields.wh_net.wh_net_text}}</p><a id="wh-30-open" class="btn checkout">{{shop.metafields.wh_net.wh_net_button_text}}</a></div>{% endif %}{% endif %}
+
+        <a class="btn checkout cart-keep-shoping" href="/collections/all">Keep Shopping</a>
+        <!-- (c) 2005, 2019. Authorize.Net is a registered trademark of CyberSource Corporation --> <div class="AuthorizeNetSeal"> <script type="text/javascript" language="javascript">var ANS_customer_id="ff0f76e8-8ad7-4f23-8cb7-a1790658c7d1";</script> <script type="text/javascript" language="javascript" src="//verify.authorize.net:443/anetseal/seal.js" ></script> </div> 
+      </div>
+    </div>
+    
+    <input name="shopify_customer_id" type="hidden" value="{{ customer.id }}" > 
+    <input name="email" type="hidden" value="{{ customer.email }}" > 
+    <input name="address1" type="hidden" value="{{ customer.default_address.address1 }}" > 
+    <input name="address2" type="hidden" value="{{ customer.default_address.address2 }}" > 
+    <input name="city" type="hidden" value="{{ customer.default_address.city }}" > 
+    <input name="company" type="hidden" value="{{ customer.default_address.company }}" > 
+    <input name="country" type="hidden" value="{{ customer.default_address.country }}" > 
+    <input name="first_name" type="hidden" value="{{ customer.default_address.first_name }}" > 
+    <input name="last_name" type="hidden" value="{{ customer.default_address.last_name }}" > 
+    <input name="phone" type="hidden" value="{{ customer.default_address.phone }}" > 
+    <input name="province" type="hidden" value="{{ customer.default_address.province }}" > 
+    <input name="zip" type="hidden" value="{{ customer.default_address.zip }}" >
+
+  </form>
+
+{% else %}
+  {% comment %}
+    The cart is empty
+  {% endcomment %}
+  <h2>{{ 'cart.general.title' | t }}</h2>
+  <p>{{ 'cart.general.empty' | t }}</p>
+  <p>{{ 'cart.general.continue_browsing_html' | t }}</p>
+{% endif %}
+  
+</div>
+<script>
+  
+  $('[name="recurring_radio_btn"].one_time_radio_btn').click(function(e) {
+    e.stopPropagation();
+  });
+  
+  function addEventsForBold() {
+    $('.recurring_div').off('click.custom_for_bold');
+    $('.recurring_div label, .recurring_div [name="recurring_radio_btn"]').off('click.custom_for_bold');
+    $('.frequency_num, .frequency_type').off('click.custom_for_bold');
+    
+    $('.recurring_div').each(function() {
+      var $form = $(this).closest('form');
+      var $tabinPrice = $form.find('.cart__subtotal, .subtotal').clone();
+      console.log('$tabinPrice after:', $form, $tabinPrice);
+      
+      $tabinPrice.find('span').remove();
+      
+      console.log('$tabinPrice after:', $tabinPrice.text());
+      
+      var percentage = $(this).find('label').text().match(/\s([0-9]{1,2})%/);
+//       var productPrice = parseFloat($tabinPrice.text().match(/(?<=\$)[0-9]+.[0-9]{2}/)[0]);
+      var productPrice = parseFloat($tabinPrice.text().match(/\$[0-9]+.[0-9]{2}/)[0].replace('$', ''));
+      
+      if (percentage) {
+        percentage = parseInt(percentage[1])/100;
+      }
+
+      if (percentage && productPrice) {
+        $form.find('.subscribe-savings').remove();
+        $(this).append('<div class="subscribe-savings">$'+(productPrice*(1-percentage)).toFixed(2)+'<span class="savings">Save '+(percentage*100)+'%<br> off of $'+productPrice+'</span></div>');
+      }
+      
+    });
+    
+    $('.recurring_div').on('click.custom_for_bold', function() {
+      var $form = $(this).closest('form');
+      var $tabinPrice = $form.find('.tabin-price');
+      var $tabinMSP = $form.find('.tabin-msp');
+      
+      if ($(this).data('radio') === 'selected') {
+        $(this).data('radio', 'unselected');
+        $(this).parent().find('[name="recurring_radio_btn"].one_time_radio_btn').click();
+        
+        $tabinPrice.removeClass('crossed-out');
+        $form.find('.subscribe-savings').removeClass('selected');
+      } else {
+        $(this).data('radio', 'selected');
+        
+        $tabinPrice.addClass('crossed-out');
+        $form.find('.subscribe-savings').addClass('selected');
+      }
+    });
+
+    $('.recurring_div label, .recurring_div [name="recurring_radio_btn"]').on('click.custom_for_bold', function(e) {
+      e.preventDefault();
+    });
+
+    $('.frequency_num, .frequency_type').on('click.custom_for_bold', function(e) {
+      e.stopPropagation();
+    });
+  }
+  
+  var checkForBoldCount = 0;
+  
+  function checkForBold() {
+    if ($('.recurring_div').length > 0 && $('.frequency_num').length > 0) {
+      console.log('founded');
+      addEventsForBold();
+      setTimeout(addEventsForBold, 500);
+    } else {
+      if (checkForBoldCount < 150) {
+        setTimeout(checkForBold, 100);
+      }
+      checkForBoldCount++;
+    }
+  }
+  
+  checkForBold();
+  
+  var $ = jQuery.noConflict();
+  $(document).ready(function(){
+    $(window).on("resize", function(event){
+      if($(this).width() <=768 ){
+    	$('.res-add').attr('colspan','3');
+    	$('.res-add1').attr('colspan','3');   
+		$('.res-add1').attr('colspan','1'); 
+      } else{
+        $('.res-add').removeAttr('colspan');
+    	$('.res-add1').removeAttr('colspan');
+		$('.res-add1').removeAttr('colspan');
+      }
+    });
+    
+    if( $(window).width() <= 768 ){
+        $('.res-add').attr('colspan','3');
+    	$('.res-add1').attr('colspan','3');
+		$('.res-add1').attr('colspan','1'); 
+    }
+    
+    if (document.referrer && document.referrer.indexOf('/cart') === -1) {
+      $('.checkout.cart-keep-shoping').attr('href', document.referrer);
+    }
+  });
+</script>
+
+
+
+
+
+
+

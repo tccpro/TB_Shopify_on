@@ -1,0 +1,45 @@
+{% comment %}api_v6{% endcomment %}
+{% assign wh_v_compare_at_price = wh_variant.compare_at_price %}
+{% if wh_v_compare_at_price == blank or wh_v_compare_at_price == 0  %}
+  {% assign wh_v_compare_at_price = wh_variant.price %}
+{% endif %}
+
+{% assign wh_v_price = wh_v_compare_at_price | times: wh_discount_value %}
+{% if wh_v_price > wh_variant.price  %}
+  {% assign wh_v_price = wh_variant.price %}
+{% endif %}
+
+{% if v_discount_tag %}
+
+  {% for sp in set_prices_array %}
+    {% assign sp_arr = sp | split: '--' %}
+    {% assign sp_tag = sp_arr | first %}
+
+    {% if v_discount_tag == sp_tag %}
+
+      {% assign sp_var_arr = sp_arr | last | split: '^' %}
+      {% for value in sp_var_arr %}
+        {% assign val_split = value | split: '-' %}
+        {% assign variant_id = val_split | first | times: 1 %}
+        {% if variant_id == wh_variant.id %}
+          {% assign meta_set_price = val_split | last |times: 1 %}
+          {% assign set_v_price = meta_set_price %}
+          {% if set_v_price %}
+            {% assign wh_v_price = set_v_price %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+  {% endfor %}
+
+{% endif %}
+
+{% if wh_discount_value == 1 and set_v_price == null %}
+  {% assign wh_v_compare_at_price = wh_variant.compare_at_price %}
+  {% assign wh_v_price = wh_variant.price %}
+{% endif %}
+{% comment %}
+<!-- variant.compare_at_price{{wh_variant.compare_at_price}} : wh_v_compare_at_price {{wh_v_compare_at_price}} : set_v_price {{set_v_price}}-->
+<!-- variant.price {{wh_variant.price}} : wh_v_price {{wh_v_price }} -->
+{% endcomment %}

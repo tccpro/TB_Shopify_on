@@ -1,0 +1,143 @@
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'large--one-third medium-down--one-half' %}
+{% endunless %}
+
+{% unless current_collection == blank %}
+  {% assign current_collection = collection %}
+{% endunless %}
+
+{% assign on_sale = false %}
+{% assign sale_text = 'products.product.sale' | t %}
+{% if product.compare_at_price > product.price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% assign sold_out_text = 'products.product.sold_out' | t %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+  {% include 'bold-product' with product, hide_action: 'skip' %}
+
+<div class="list-item box grid__item {{grid_item_width}}{% if sold_out %} sold-out{% endif %}{% if on_sale %} on-sale{% endif %}" data-handle="{{product.handle}}">
+  
+
+  
+  <div class="product-grid-item">
+    {% if product.metafields.inventory.ShappifySale == "true" and false %}
+    <span class="on-sale">Sale</span>
+    {% endif %}
+    
+    {% include 'shappify-sales-icon-collection' %}
+    <span class="grid-link__image ab-grid-link__image--product clearfix">
+      {% if on_sale and settings.collections_show_sale_circle and product.discount_value == 1 and set_price == null %}
+        <span class="badge badge--sale">
+          <span class="badge__text{% if sale_text.size > 7 %} badge__text--small{% endif %}">{{ 'products.product.sale' | t }}</span>
+        </span>
+      {% endif %}
+      {% if sold_out and settings.collections_show_sold_out_circle %}
+        <span class="badge badge--sold-out">
+          <span class="badge__text{% if sold_out_text.size > 9 %} badge__text--small{% endif %}">{{ 'products.product.sold_out' | t }}</span>
+        </span>
+      {% endif %}
+      <span class="img grid-link__image-centered">
+        <a href="{{ product.url }}">
+          <img class="lazyload"
+               src="{{ 'Spin-1s-75px.gif' | asset_url }}"
+               data-expand = "-5"
+               data-src="{{ product.featured_image.src | img_url: '200x' }}"
+               alt="{{ product.featured_image.alt | escape }}">
+        </a>
+      </span>
+    </span>
+	<div class="block">
+      <h4><a href="{{ product.url }}">{{ product.title }}</a></h4>
+      <div class="prices">
+        <span class="prices-container">
+          {% if product.price_varies %}
+          <div class="price">{{ product.price_min | money | replace: '$ ', '$' }} - {{ product.price_max | money | replace: '$ ', '$' }}</div>
+            <div class="yotpo bottomLine"
+              data-product-id="{{ product.id }}">
+            {%- assign yotpo_offload_content = shop.metafields.yotpo.yotpo_offload_content %}
+             {%- assign time_now = 'now' | date: '%s' %}
+             {%- assign yotpo_live_time = shop.metafields.yotpo.yotpo_live | date: '%s' %}
+             {%- assign diff_seconds_from_live = time_now | minus: yotpo_live_time %}
+             {%- assign yotpo_bottomline_last_updated = product.metafields.yotpo.bottomline_update_time | date: '%s' %}
+             {%- assign diff_seconds_from_last_bottomline_update = time_now | minus: yotpo_bottomline_last_updated %}
+             {%- if yotpo_live_time and diff_seconds_from_live < 86400 or yotpo_bottomline_last_updated and diff_seconds_from_last_bottomline_update < 86400 -%}
+               {%- assign yotpo_bottomline_obsolete = false %}
+             {%- else %}
+               {%- assign yotpo_bottomline_obsolete = true %}
+             {%- endif %}
+             {%- if yotpo_offload_content == 'yes' and yotpo_bottomline_obsolete != true -%}
+               {{ product.metafields.yotpo.bottomline }}
+             {%- endif %}
+            </div>
+<!--           <div class="compare-price">{{ product.compare_at_price_min | money | replace: '$ ', '$' }} - {{ product.compare_at_price_max | money | replace: '$ ', '$' }}</div> -->
+          {% else %}
+            <div class="price">{{ product.price | money | replace: '$ ', '$' }}</div>
+                       <div class="yotpo bottomLine"
+                data-product-id="{{ product.id }}">
+              {%- assign yotpo_offload_content = shop.metafields.yotpo.yotpo_offload_content %}
+               {%- assign time_now = 'now' | date: '%s' %}
+               {%- assign yotpo_live_time = shop.metafields.yotpo.yotpo_live | date: '%s' %}
+               {%- assign diff_seconds_from_live = time_now | minus: yotpo_live_time %}
+               {%- assign yotpo_bottomline_last_updated = product.metafields.yotpo.bottomline_update_time | date: '%s' %}
+               {%- assign diff_seconds_from_last_bottomline_update = time_now | minus: yotpo_bottomline_last_updated %}
+               {%- if yotpo_live_time and diff_seconds_from_live < 86400 or yotpo_bottomline_last_updated and diff_seconds_from_last_bottomline_update < 86400 -%}
+                 {%- assign yotpo_bottomline_obsolete = false %}
+               {%- else %}
+                 {%- assign yotpo_bottomline_obsolete = true %}
+               {%- endif %}
+               {%- if yotpo_offload_content == 'yes' and yotpo_bottomline_obsolete != true -%}
+                 {{ product.metafields.yotpo.bottomline }}
+               {%- endif %}
+              </div>
+<!--           <div class="compare-price">{{ product.compare_at_price | money | replace: '$ ', '$' }}</div> -->
+          {% endif %}
+        </span>
+        <span class="reviews-container">
+          <div><a href="{{ product.url }}">{{ product.variants.size }} {{ product.variants.size | pluralize: 'Option', 'Options' }}</a></div>
+          {% if product.variants.size > 1 or product.title contains 'Cigar of the Month' %}
+            <a href="{{ product.url }}" class="btn">Shop Now</a>
+          {% else %}
+            <form action="/cart/add" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="id" value="{{ product.variants[0].id }}">
+              {% if product.available == false %}
+              <button type="submit" name="add" disabled class="btn soldout">
+                <span>Sold Out</span>
+              </button>
+              {% else %}
+              <button type="submit" name="add" class="btn">
+                <span>Add</span>
+              </button>
+              {% endif %}
+            </form>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+<!--     <a class="btn" href="{{ product.url }}">Shop Now</a> -->
+  </div>
+  
+  {% if template contains 'grid_no_layout' or 'search' %}
+  
+  <script>
+    $('document').ready(function(){	
+   var str = '{% for tag in product.tags %}{{ tag | escape }} developer {% endfor %}';
+   var newString = str.replace(/[^A-Z0-9]/ig, "-");
+    var split_string =  newString.split("-developer-");
+      //var replace_string =  newString.replace("-developer-", "&nbsp;");
+      
+     //var newString1=  newString.replace("_developer_"," ");
+     var newString1 =  split_string.join("  ");
+      //alert(ss);
+      
+   $('#id-{{forloop.index}}').addClass(newString1);
+    })
+  </script>
+  
+  {% endif %}
+  
+</div>

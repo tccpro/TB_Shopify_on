@@ -1,0 +1,31 @@
+{% if cart.item_count > 0 %}
+    <script>
+      $(document).ready(function(){
+        var check_variant_in_localStorage = localStorage.getItem("navidium_variant");
+        if(check_variant_in_localStorage != null && check_variant_in_localStorage != undefined){
+              var variantID = check_variant_in_localStorage;
+            var params = {
+              type: "POST",
+              url: "/cart/change.js",
+              data: "quantity=0&id=" + variantID,
+              dataType: "json",
+              success: function (data) {
+                console.log(data);
+                localStorage.removeItem("clear_protection");
+                localStorage.removeItem("reloaded");
+                localStorage.removeItem("navidium_variant");
+                localStorage.removeItem("navidium_variant_price");
+                localStorage.removeItem('navidium_reload');
+                location.reload();
+              },
+              error: function (error) {
+                console.log('Hello Error'+error);
+              }
+            };
+            $.ajax(params);
+        }
+      });
+    </script>
+{% endif %}
+
+{%comment%} Add this to theme.liquid, at the end of the file:   {% include 'navidium-checker' %} {%endcomment%}

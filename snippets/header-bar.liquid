@@ -1,0 +1,147 @@
+{% include 'wh_calculate_discount' with item, hide_method: 'break' %}
+<div class="header-bar main-header-bar">
+  <div class="wrapper">
+    <div class="large--display-table">
+      {% comment %}
+      <div class="header-bar__left large--display-table-cell">
+        <ul class="header-top-nav">
+        {% for link in linklists.header-top-menu.links %}
+           <li class="nav-{{ link.title | handle }}">{{ link.title | link_to: link.url }}</li>
+        {% endfor %}
+        </ul>
+
+        {% if settings.header_message == blank %}
+          {% if cart.announcements.size > 0 %}
+            <div class="header-bar__module header-bar__message">
+              {{ cart.announcements.first }}
+            </div>
+          
+          {% endif %}
+        {% else %}
+          <div class="header-bar__module header-bar__message">
+            {{ settings.header_message }}
+          </div>
+        {% endif %}
+      </div>
+      {% endcomment %}
+
+      <!-- \ Find us on  / -->{% comment %}
+      <div class="header-social-meida">
+      {% include 'social-links' %}
+      </div>
+      <!-- / Find us on  \ -->{% endcomment %}
+      
+      <a class="cigar-devil-link" href="https://www.cigardevil.com/" target="_blank" title="Cigar Devil">
+        <img src="https://cdn.shopify.com/s/files/1/1045/5578/files/logo_cigardevil.png?2139020444272238990" alt="Cigar devil logo" />
+      </a>
+      
+      <div class="header-message">
+        {% if customer.tags contains 'Wholesale' or customer.tags contains 'wholesale' %}
+          {{ section.settings.top_message_wholesale }}        
+        {% else %}
+          {{ section.settings.top_message }}
+        {% endif %}
+        
+        {% if section.settings.top_message_href != blank and section.settings.top_message_link != blank %}
+        <a href="{{ section.settings.top_message_href }}" class="btn">{{ section.settings.top_message_link }}</a>
+        {% endif %}
+      </div>
+      
+      <div class="header-bar__right large--display-table-cell header-right-custom">
+        {% include 'svg-definitions' with 'phone' %}
+        Order by phone M-F <strong><a href="tel:18888835596">1.888.883.5596</a></strong>
+
+        {% if settings.header_search_enable %}
+          {% unless settings.header_message == blank and cart.announcements.size == 0 %}
+            <div class="header-bar__module header-bar__search">
+              {% include 'search-bar' with 'header' %}
+            </div>
+          {% endunless %}
+        {% endif %}
+      </div>
+<!--      <div class="header-toll-free mobile-tollfree">
+       <span>Order toll-free M-F</span><strong>1-888-883-5596</strong>
+     </div> -->
+    </div>
+  </div>
+</div>
+  {% comment %}
+  <div class="wrapper mobile-nav-custom">
+    <button type="button" class="mobile-nav-trigger" id="MobileNavTrigger">
+      <span class="icon icon-hamburger" aria-hidden="true"></span>
+      {{ 'layout.navigation.menu' | t }}
+    </button>
+    <div class="flypanels-topbar">
+        <a class="flypanels-button-left icon-menu" id="mobile-flypanel" data-panel="treemenu" href="#"><i class="fa fa-bars">+</i></a>
+      <p>MENU</p>
+    </div>
+    <a href="/cart" class="cart-page-link mobile-cart-page-link">
+      <span class="icon icon-cart header-bar__cart-icon" aria-hidden="true"></span>
+      Cart
+      <span class="cart-count {% if cart.item_count == 0 %} hidden-count{% endif %}">{{ cart.item_count }}</span>
+    </a>
+     <div class="cart-drawer">
+       <form action="/cart" method="post" novalidate class="cart">
+         {% for item in cart.items %}
+{% include 'wh_calculate_discount' with item, hide_method: 'skip' %}
+           <div class="cart-item" data-id="{{ item.id }}">
+             <div class="cart-image"><img src="{{ item | img_url: 'medium' }}"></div>
+             <div class="cart-info">
+               <a href="{{ item.product.url }}">{{ item.title }}</a>
+               <span>Qty: <input type="number" class="cart__quantity-selector" name="updates[]" id="updates_{{ item.id }}" value="{{ item.quantity }}" min="0"></span>
+             </div>
+             <div class="cart-price">{{ wh_price | money | replace: '$ ', '$' }}</div>
+           </div>
+         {% else %}
+           <p>Your cart is currently empty.</p>
+           <p>Continue browsing <a href="/collections/all">here</a>.</p>
+         {% endfor %}
+         <div class="cart-footer"{% if cart.items.size == 0 %} style="display:none;"{% endif %}>
+           <div class="total-container">
+             <a href="/cart">Edit Cart</a>
+             <span>Sub-Total: {{ cart.total_price | money }}</span>
+           </div>
+
+           <input type="submit" name="update" class="btn--secondary update-cart" value="Update Cart">
+           <input type="submit" name="checkout" class="btn checkout" value="Checkout">
+         </div>
+       </form>
+     </div>
+  </div>
+  {% endcomment %}
+{% include 'mobile-nav' %}
+<div class="header-bar mobile-header-bar">
+  <div class="mobile-top-header">
+    {% if shop.customer_accounts_enabled %}
+    <ul class="header-bar__module header-bar__module--list">
+      {% if customer %}
+      <li class="no-contact">
+        <a href="tel:8888835596">
+       888-883-5596
+        </a>
+      </li >
+        <li class="create-mobile">
+          <a href="/account">{{ 'layout.customer.account' | t }}</a>
+        </li>
+        <li class="login-mobile">
+          {{ 'layout.customer.log_out' | t | customer_logout_link }}
+        </li>
+      {% else %}
+      <li class="no-contact">
+         <a href="tel:8888835596">
+        888-883-5596
+        </a>
+      </li>
+       <li class="login-mobile">
+          {{ 'layout.customer.create_account_res' | t | customer_register_link }}
+        </li>
+        <li class="create-mobile">
+          {{ 'layout.customer.log_in_res' | t | customer_login_link }}
+        </li>
+
+
+      {% endif %}
+    </ul>
+    {% endif %}
+  </div>
+</div>

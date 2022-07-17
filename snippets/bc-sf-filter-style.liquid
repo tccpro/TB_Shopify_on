@@ -1,0 +1,210 @@
+{%- comment -%} BC Style Setting {%- endcomment -%}
+{%- assign bc_settings = shop.metafields.bc-sf-filter.settings -%}
+{%- if bc_settings contains 'style":{' -%}
+  {%- assign bc_style = bc_settings | split: 'style":{' | last | split: '}' | first | split: ',' -%}
+  {%- if bc_style != blank -%}
+    <style data-id="bc-sf-filter-style" type="text/css">
+      #bc-sf-filter-options-wrapper .bc-sf-filter-option-block .bc-sf-filter-block-title h3,
+      #bc-sf-filter-tree-h .bc-sf-filter-option-block .bc-sf-filter-block-title a {
+        {%- if bc_style[0] != nil and bc_style[0] != blank -%}
+          {%- assign bc_title_color = bc_style[0] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+          {%- if bc_title_color != blank -%}
+          color: {{ bc_title_color }} !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[1] != nil and bc_style[1] != blank -%}
+          {%- assign bc_title_font_size = bc_style[1] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_title_font_size != blank -%}
+          font-size: {{ bc_title_font_size }}px !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[2] != nil and bc_style[2] != blank -%}
+        {%- assign bc_title_font_weight = bc_style[2] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_title_font_weight != blank -%}
+          font-weight: {{ bc_title_font_weight }} !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[3] != nil and bc_style[3] != blank -%}
+          {%- assign bc_title_text_transform = bc_style[3] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_title_text_transform != blank -%}
+          text-transform: {{ bc_title_text_transform }} !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[4] != nil and bc_style[4] != blank -%}
+          {%- assign bc_title_font_family = bc_style[4] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_title_font_family != blank -%}
+          font-family: "{{ bc_title_font_family }}" !important;
+          {%- endif -%}
+        {%- endif -%}
+      }
+      #bc-sf-filter-options-wrapper .bc-sf-filter-option-block .bc-sf-filter-block-content ul li a,
+      #bc-sf-filter-tree-h .bc-sf-filter-option-block .bc-sf-filter-block-content ul li a {
+        {%- if bc_style[5] != nil and bc_style[5] != blank -%}
+          {%- assign bc_content_color = bc_style[5] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+          {%- if bc_content_color != blank -%}
+          color: {{ bc_content_color }} !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[6] != nil and bc_style[6] != blank -%}
+          {%- assign bc_content_font_size = bc_style[6] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_content_font_size != blank -%}
+          font-size: {{ bc_content_font_size }}px !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[7] != nil and bc_style[7] != blank -%}
+          {%- assign bc_content_font_family = bc_style[7] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_content_font_family != blank -%}
+          font-family: "{{ bc_content_font_family }}" !important;
+          {%- endif -%}
+        {%- endif -%}
+      }
+      #bc-sf-filter-tree-mobile button {
+        {%- if bc_style[8] != nil and bc_style[8] != blank -%}
+          {%- assign bc_mobilebtn_color = bc_style[8] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+          {%- if bc_mobilebtn_color != blank -%}
+          color: {{ bc_mobilebtn_color }} !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[9] != nil and bc_style[9] != blank -%}
+          {%- assign bc_mobilebtn_font_size = bc_style[9] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_mobilebtn_font_size != blank -%}
+          font-size: {{ bc_mobilebtn_font_size }}px !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[10] != nil and bc_style[10] != blank -%}
+          {%- assign bc_mobilebtn_font_weight = bc_style[10] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_mobilebtn_font_weight != blank -%}
+          font-weight: {{ bc_mobilebtn_font_weight }} !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[11] != nil and bc_style[11] != blank -%}
+          {%- assign bc_mobilebtn_text_transform = bc_style[11] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_mobilebtn_text_transform != blank -%}
+          text-transform: {{ bc_mobilebtn_text_transform }} !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[12] != nil and bc_style[12] != blank -%}
+          {%- assign bc_mobilebtn_font_family = bc_style[12] | split: ':' | last | replace: '"','' | strip -%}
+          {%- if bc_mobilebtn_font_family != blank -%}
+          font-family: "{{ bc_mobilebtn_font_family }}" !important;
+          {%- endif -%}
+        {%- endif -%}
+        {%- if bc_style[13] != nil and bc_style[13] != blank -%}
+          {%- assign bc_mobilebtn_bkg = bc_style[13] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+          {%- if bc_mobilebtn_bkg != blank -%}
+          background: {{ bc_mobilebtn_bkg }} !important;
+          {%- endif -%}
+        {%- endif -%}
+      }
+    </style>
+  {%- endif -%}
+{%- endif -%}
+{%- comment -%} BC Lib CSS {%- endcomment -%}
+{%- comment -%} <!-- MOVE TO services.scss -->{{ 'bc-sf-filter.scss.css' | asset_url | stylesheet_tag }}{%- endcomment -%}
+{%- comment -%} BC AL Style {%- endcomment -%}
+<!--start-bc-al-css-->
+{%- if template contains 'collection' or template contains 'search' -%}
+  {%- if bc_settings contains 'actionlist' -%}
+    {%- comment -%} Check enable {%- endcomment -%}
+    {%- assign bc_qv_enable = bc_settings | split: 'qvEnable":' | last | split: ',' | first | strip -%}
+    {%- assign bc_atc_enable = bc_settings | split: 'atcEnable":' | last | split: ',' | first | split: '}' | first | strip -%}
+    {%- if bc_qv_enable == 'true' or bc_atc_enable == 'true' -%}
+      {{ 'bc-al-lib.scss.css' | asset_url | stylesheet_tag }}
+
+      {%- assign bc_al_style = bc_settings | split: 'actionlist":{' | last | split: '}' | first | split: ',' -%}
+      {%- if bc_al_style != blank -%}
+      <style data-id="bc-al-style" type="text/css">
+        .bc-quickview-btn {
+          {%- if bc_al_style[0] != nil and bc_al_style[0] != blank -%}
+            {%- assign bc_qv_bkg = bc_al_style[0] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_qv_bkg != blank -%}
+            background: {{ bc_qv_bkg }};
+            {%- endif -%}
+          {%- endif -%}
+          {%- if bc_al_style[1] != nil and bc_al_style[1] != blank -%}
+            {%- assign bc_qv_color = bc_al_style[1] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_qv_color != blank -%}
+            color: {{ bc_qv_color }};
+            {%- endif -%}
+          {%- endif -%}
+          {%- if bc_al_style[2] != nil and bc_al_style[2] != blank -%}
+          {%- assign bc_qv_border_color = bc_al_style[2] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_qv_border_color != blank -%}
+            border-color: {{ bc_qv_border_color }};
+            {%- endif -%}
+          {%- endif -%}
+        }
+        .bc-quickview-btn:hover {
+          {%- if bc_al_style[3] != nil and bc_al_style[3] != blank -%}
+            {%- assign bc_qv_hover_bkg = bc_al_style[3] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_qv_hover_bkg != blank -%}
+            background: {{ bc_qv_hover_bkg }};
+            {%- endif -%}
+          {%- endif -%}
+          {%- if bc_al_style[4] != nil and bc_al_style[4] != blank -%}
+            {%- assign bc_qv_hover_color = bc_al_style[4] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_qv_hover_color != blank -%}
+            color: {{ bc_qv_hover_color }};
+            {%- endif -%}
+          {%- endif -%}
+          {%- if bc_al_style[5] != nil and bc_al_style[5] != blank -%}
+          {%- assign bc_qv_hover_border_color = bc_al_style[5] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_qv_hover_border_color != blank -%}
+            border-color: {{ bc_qv_hover_border_color }};
+            {%- endif -%}
+          {%- endif -%}
+        }
+        .bc-addtocart-btn {
+          {%- if bc_al_style[6] != nil and bc_al_style[6] != blank -%}
+            {%- assign bc_atc_bkg = bc_al_style[6] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_atc_bkg != blank -%}
+            background: {{ bc_atc_bkg }};
+            {%- endif -%}
+          {%- endif -%}
+          {%- if bc_al_style[7] != nil and bc_al_style[7] != blank -%}
+            {%- assign bc_atc_color = bc_al_style[7] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_atc_color != blank -%}
+            color: {{ bc_atc_color }};
+            {%- endif -%}
+          {%- endif -%}
+          {%- if bc_al_style[8] != nil and bc_al_style[8] != blank -%}
+          {%- assign bc_atc_border_color = bc_al_style[8] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_atc_border_color != blank -%}
+            border-color: {{ bc_atc_border_color }};
+            {%- endif -%}
+          {%- endif -%}
+        }
+        .bc-addtocart-btn:hover {
+          {%- if bc_al_style[9] != nil and bc_al_style[9] != blank -%}
+            {%- assign bc_atc_hover_bkg = bc_al_style[9] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_atc_hover_bkg != blank -%}
+            background: {{ bc_atc_hover_bkg }};
+            {%- endif -%}
+          {%- endif -%}
+          {%- if bc_al_style[10] != nil and bc_al_style[10] != blank -%}
+            {%- assign bc_atc_hover_color = bc_al_style[10] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_atc_hover_color != blank -%}
+            color: {{ bc_atc_hover_color }};
+            {%- endif -%}
+          {%- endif -%}
+          {%- if bc_al_style[11] != nil and bc_al_style[11] != blank -%}
+          {%- assign bc_atc_hover_border_color = bc_al_style[11] | split: ':' | last | replace: '"','' | replace: '||',',' | strip -%}
+            {%- if bc_atc_hover_border_color != blank -%}
+            border-color: {{ bc_atc_hover_border_color }};
+            {%- endif -%}
+          {%- endif -%}
+        }
+      </style>
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+<!--end-bc-al-css-->
+
+<!-- Start Widgets Slider CSS -->
+{%- assign bc_rv_enable = bc_settings | split: 'recentlyViewedEnable":' | last | split: ',' | first | strip -%}
+{%- assign bc_mp_enable = bc_settings | split: 'mostPopularEnable":' | last | split: ',' | first | strip -%}
+{%- if bc_rv_enable == 'true' or bc_mp_enable == 'true' -%}
+  {{ 'bc-widget-slider.scss.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+<!-- End Widgets Slider CSS -->

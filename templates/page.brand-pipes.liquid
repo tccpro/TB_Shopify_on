@@ -1,0 +1,58 @@
+<div class="main-container">
+
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ page.title }}</h1>
+  </header>
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+  <div class="rte clearfix truncated">
+    {{ page.content | truncate: 100 }}
+    
+    <a class="read-more" href="#">Read more</a>
+  </div>
+  
+  <div class="rte clearfix">
+    {{ page.content }}
+  </div>
+
+  {% assign brand_collections = page.metafields.Brands.brand_collection | strip_html | split: ';' %}
+
+  <ul class="collection-grid">
+
+    {% for brand in brand_collections %}
+      {% assign handle = brand | strip %}
+      {% assign brand_collection = collections[handle] %}
+
+      <li class="collection-item">  <!-- search-brand-item -->
+        <a href="{{ brand_collection.url }}"><img class="lazyload" src="{{ 'lazy.gif' | asset_url }}" data-src="{{ brand_collection.image | img_url: 'small'}}"></a>
+        <h4>{{ brand_collection.title | link_to: brand_collection.url }}</h4>
+      </li>
+
+    {% endfor %}
+
+  </ul>
+</div>
+<div class="main-container">
+  	<div class="rte clearfix">
+<p>Do you have fond memories of a grandpa or family member who quietly smoked a pipe in contemplation and enjoyed the rich, aromatic smell? Maybe you didn't, but you've always admired owning an elegant pipe and the idea of quiet moments. You aren't alone! Smoking pipes is as much of a ritual as relaxation, a certain satisfaction that can be had when the right pipe has the right tobacco for a wonderful, fragrant tobacco scent paired with a favorite cup of coffee or tea, or after a meal, or anytime.</p>
+<p>Whether you are brand new to tobacco pipes or an experienced pipe smoker, searching for the right place to start or find premium tobacco pipes—you've finally found that place! 
+Here you will find a selection of brands that create exquisite smoking pipes in a wide variety of elegance and style to suit beginner and expert pipe smokers alike. 
+On this page, you'll find:</p>
+
+<p>Peterson</p>
+<p>As the oldest continuously operating briar pipe factory in the world, Peterson has a certain tradition to uphold, a legacy of craftsmanship dating back over 150 years. Whether you're browsing for your very first pipe or are a seasoned collector in search of a rare gem, know that every pipe in their catalog carries with it that same preservation of tradition. A Peterson pipe isn't just a utilitarian tool; it's a piece of history you can carry with you in your travels, a faithful companion to accompany you through all that life offers</p>
+
+<p>Rossi</p>
+<p>Named after the historic Ferdinando Rossi from Milan, one of the most important wholesalers of tobacco-related goods at the time and one of the first to found Fabbrica di Pipe di Radica Rossi in 1886. Initiating the production of briar pipes in Italy soon became one of the industry's most famous and important pipe makers. 
+Rossi's original ideas and masterful pipes, and his attention to even the most minor of details, are still going strong in each of Rossi's magnificent tobacco pipes. </p>
+
+<p>Savinelli</p>
+<p>In 1876 in Milan, Italy, Achille Savinelli opened one of the first shops exclusively focused on tobacco and smoking accessories. At that time, it was a groundbreaking move as the Italian Government held a tobacco monopoly. Achille was convinced briar pipes represented the future of pipe smoking and heavily influenced Ferdinando Rossi as his commitment to premium craftsmanship in briar pipes changed the industry's entire face away from clay meerschaum. 
+All three brands of our tobacco pipes are richly steeped in history, known for their exceptional quality, durability, and gorgeous designs. We'll have what you need when it comes to finding a pipe with a perfect draw, a generous bowl, and a satisfying smoking experience. If you're unsure where to begin, simply click on any brand name pipe to load a page that will present all pipes available under Corleone, Rossi, or Savinelli.  Once the page is loaded, you'll notice our convenient filter to the side, where you can search by brand, finish, and material to assist in your shopping.</p> 
+<p>However, before you purchase your new favorite pipe, don't forget to register to take advantage of our customer loyalty program! As a means to say thank you for shopping with us, when you register, you earn 100 points and continue earning points for every purchase with us after that to redeem for one-of-a-kind discounts.</p>
+<p>Want to know more about our smoking pipes? Do you have questions for us? Feel free to reach out to us via our website's Contact Us form, or live chat with us Monday to Friday, 9 AM to 6 PM EST. We'd love to help!</p>
+  </div>
+</div>

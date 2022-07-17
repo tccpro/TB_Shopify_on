@@ -1,0 +1,11 @@
+{% assign csp_variant = 0 %}
+
+{% if variant.metafields.shappify_csp.csp_isparent == "1" and variant.metafields.shappify_csp.csp_tag == tag %}
+	{% assign csp_variant = 1 %}
+{% elsif variant.metafields.shappify_csp.csp_isparent == "0" %}
+	{% assign csp_variant = 0 %}
+{% elsif variant.metafields.shappify_csp.csp_isparent == "1" and variant.metafields.shappify_csp.csp_tag != tag %} 
+    {% assign csp_variant = 0 %}
+{% else %} 
+	{% assign csp_variant = 1 %}
+{% endif %}

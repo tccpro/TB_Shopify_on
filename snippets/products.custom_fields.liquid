@@ -1,0 +1,13 @@
+{% comment %}
+  DO NOT MODIFY THIS FILE DIRECTLY. YOU CAN COPY AND PASTE INTO A NEW SNIPPET.
+  THIS FILE WILL BE OVERWRITTEN.
+{% endcomment %}
+<div class="custom-fields-wrapper">
+
+            {% if product.metafields.custom_fields.strength != blank %}
+            <div class="custom-field custom-field__strength">
+                <h3 class="custom-field--title">Strength</h3>
+                <div class="custom-field--value">{{ product.metafields.custom_fields.strength }}</div>
+              </div>
+            {% endif %}
+</div>

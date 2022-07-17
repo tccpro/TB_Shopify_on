@@ -1,0 +1,19 @@
+<div data-algolia-position="[[ params.productPosition ]]" data-algolia-queryid="[[ queryID ]]" data-algolia-objectid="[[ objectID ]]" class="aa-product">
+  <div class="aa-product-picture" style="background-image: url('[[# helpers.thumbImage ]][[/ helpers.thumbImage ]]')"></div>
+  <div class="aa-product-text">
+    <p class="aa-product-title">
+      [[# helpers.fullHTMLTitle ]][[/ helpers.fullHTMLTitle ]]
+    </p>
+    <p class="aa-product-info">
+      [[# product_type ]]
+        [[& _highlightResult.product_type.value ]]
+      [[/ product_type ]]
+      [[# vendor ]]
+        [[# helpers.by ]] [[& _highlightResult.vendor.value ]] [[/ helpers.by ]]
+      [[/ vendor ]]
+    </p>
+    <p class="aa-product-price">
+      [[# helpers.autocompletePrice ]][[/ helpers.autocompletePrice ]]
+    </p>
+  </div>
+</div>

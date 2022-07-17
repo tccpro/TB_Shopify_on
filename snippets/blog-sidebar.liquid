@@ -1,0 +1,84 @@
+<h4>Search Articles</h4>
+
+<form class="search-input">
+  <input name="q" type="text">
+  <input type="hidden" name="view" value="article">
+  <input type="hidden" name="type" value="article">
+  <button type="submit">
+    Search
+  </button>
+</form>
+
+<script>
+  (function() {
+    function performSearch(e) {
+      e.preventDefault();
+      var $button = $(this);
+      
+      $button.addClass('is-loading');
+      
+      $.ajax({
+        type: 'POST',
+        url: '/search',
+        data: $('form.search-input').serialize(),
+        success: function(response) {
+          console.log(response);
+          $button.removeClass('is-loading');
+          
+          $('.search-article').remove();
+          
+          $('.search-input').after(response);
+        }
+      });
+    }
+    
+    $('.search-input button').click(performSearch);
+    
+    $(document).on('click', '.pagination.search-article a', function(e) {
+      e.preventDefault();
+      var $button = $(this);
+      
+//       $button.addClass('is-loading');
+      
+      $.ajax({
+        type: 'GET',
+        url: $button.attr('href'),
+        success: function(response) {
+          console.log(response);
+          
+          $('.search-article').remove();
+          
+          $('.search-input').after(response);
+        }
+      });
+    });
+    
+  })();
+</script>
+
+<h4>{{ 'blogs.sidebar.recent_articles' | t }}</h4>
+
+{% for article in blogs[blog.handle].articles limit:8 %}
+  <p>
+    <a href="{{ article.url }}">{{ article.title }}</a>
+    <br>
+    <time pubdate datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+      <em class="text-light">{{ article.published_at | date: format: 'month_day_year' }}</em>
+    </time>
+  </p>
+{% endfor %}
+
+{% comment %}
+{% if blog.all_tags.size > 0 %}
+  <h4>{{ 'blogs.sidebar.categories' | t }}</h4>
+  <ul>
+    {% for tag in blog.all_tags %}
+      {% if current_tags contains tag %}
+      <li>{{ tag }}</li>
+      {% else %}
+      <li>{{ tag | link_to_tag: tag }}</li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endcomment %}

@@ -1,0 +1,67 @@
+html body::before {
+  background-color: white;
+}
+
+#shopify-section-header { 
+  background-color: rgb(40, 12, 5) !important;
+}
+
+
+.main-index {
+  border-radius: 5px;
+  overflow: hidden;
+  padding: 15px;
+  margin-right: -15px;
+  margin-left: -15px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  margin-bottom: -25px;
+}
+
+.shopify-section.featured-collections {
+  box-shadow: 1px 1px 10px rgb(0 0 0 / 30%);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.shopify-section.featured-products {
+  box-shadow: 1px 1px 10px rgb(0 0 0 / 30%);
+  margin-top: 25px;
+  border-radius: 5px;
+  overflow: hidden;  
+}
+
+.shopify-section.featured-products .bg-hook.lazyloaded {
+  background-color: #280C05;
+}
+
+.flypanels-main {
+  background-color: white;
+}
+
+.main-container.product  {
+  margin-top: 20px;
+  margin-right: -25px;
+  margin-left: -25px;
+  padding: 0px 25px 0px;
+}
+
+.ab-single-product {
+  border-radius: 5px;
+  /* box-shadow: 1px 1px 10px rgba(0,0,0,0.3); */
+}
+
+.reviews-outer.lazyloaded {
+  border-radius: 5px;
+  margin-top: 25px;
+}
+
+.border-cx {
+  border: solid 1px #dedede;
+} 
+
+.footer-container {
+  border-radius: 0px;
+}
+
+

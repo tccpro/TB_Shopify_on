@@ -1,0 +1,40 @@
+<div class="main-container">
+
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ page.title }}</h1>
+  </header>
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+  <div class="rte clearfix">
+    {{ page.content }}
+  </div>
+
+  {% for i in (1..10) %}
+    {% capture brand_page %}brand_page_{{ i }}{% endcapture %}
+    {% capture temp_collections %}brand_page_{{ i }}_collections{% endcapture %}
+
+    {% if settings[brand_page] == page.handle %}
+      {% assign brand_collections = settings[temp_collections] %}
+    {% endif %}
+  {% endfor %}
+
+  {% assign brand_collections = brand_collections | split: ';' %}
+
+  <ul class="collection-grid">
+
+    {% for brand in brand_collections %}
+      {% assign handle = brand | strip %}
+      {% assign brand_collection = collections[handle] %}
+
+      <li class="collection-item">
+        <a href="{{ brand_collection.url }}"><img src="{{ brand_collection.image | img_url: 'small'}}"></a>
+        <h4>{{ brand_collection.title | link_to: brand_collection.url }}</h4>
+      </li>
+
+    {% endfor %}
+
+  </ul>
+</div>

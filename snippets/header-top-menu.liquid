@@ -1,0 +1,19 @@
+<div class="top-bar-menu">
+
+  <div class="header-social-meida">
+    {% include 'social-links' %}
+  </div>
+  
+  <ul>
+    {% for link in linklists.header-top-menu.links %}
+    {% assign link_handle = link.title | handle %}
+    <li>
+      {% include 'svg-definitions' with link_handle %}
+      <a href="{{ link.url }}">{{ link.title }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  <!-- \ Search  / -->
+
+  <!-- / Search  \ -->
+</div>

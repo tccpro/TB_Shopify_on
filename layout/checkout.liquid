@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+
+  <div class="top-message" style="background: yellow; text-align: center; padding: 10px; font-size: 14px; font-weight: 600;">
+    We are no longer able to Ship to the State of California or Vermont due to the numerous legal requirements.
+  </div>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
+
+
+    <title>{{ page_title }}</title>
+
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+    <style>
+      .shipping-info{
+        padding-top:10px;
+      }
+      .checkout-age .section__header{
+        margin-top: 3em;
+      }
+      .checkout-age.error .section__content{
+        padding: 10px;
+        border-color: #f45b4f;
+        -webkit-box-shadow: 0 0 0 1px #f45b4f;
+        box-shadow: 0 0 0 2px #f45b4f;
+        /* border: 2px solid #f45b4f; */
+        border-radius: 5px;
+      }
+      .button-overlay {
+        content: "";
+        left: -5%;
+        top: -5%;
+        width: 110%;
+        height: 110%;
+        background: transparent;
+        z-index: 999;
+        position: absolute;
+      }
+      .error .field__message--error{display:block;}
+    </style>
+
+   
+    <!--Age Checker-->
+    {% unless customer.tags contains "AgeVerified" %}
+    <noscript><meta http-equiv="refresh" content="0;url=https://agechecker.net/noscript"></noscript>
+    <script>
+      (function(w,d) {
+        var config = {
+          key: "NeCtpqyFQl91uOLCPPyrOvRA1j5mGeR3",
+          name: "{{shop.name}}",
+          element: "div[data-step=payment_method] form .step__footer button",
+          prescan: true
+        };
+
+
+
+        // If the customer already had information put in before,
+        // Shopify directs them straight to the payment method. This disallows AgeChecker from
+        // grabbing the information it needs, so this code below checks to see if the user is on the payment method,
+        // but agechecker doesn't have the information it needs. If so, it will redirect the user to the
+        // contact information page to allow AgeChecker to collect the information it needs.
+        var find = function() {
+          if(document.querySelector("div[data-step='payment_method']")) {
+            if(!localStorage.getItem('ac_prescan')) {
+              document.querySelector('a[data-trekkie-id="breadcrumb_contact_information_link"]').click();
+            }
+          }
+          else
+            setTimeout(find, 100);
+        }
+        setTimeout(find, 100);
+
+        w.AgeCheckerConfig=config;if(config.path&&(w.location.pathname+w.location.search).indexOf(config.path)) return;
+        var h=d.getElementsByTagName("head")[0];var a=d.createElement("script");a.src="https://cdn.agechecker.net/static/popup/v1/popup.js";a.crossOrigin="anonymous";
+        a.onerror=function(a){w.location.href="https://agechecker.net/loaderror";};h.insertBefore(a,h.firstChild);
+      })(window, document);
+    </script>
+    {% endunless %}
+    <!--End Age Checker-->
+
+  </head>
+  <body>
+    {{ skip_to_content }}
+
+    <div class="banner" data-header>
+      <div class="wrap">
+        {{ content_for_logo }}
+      </div>
+    </div>
+
+    {{ order_summary_toggle }}
+
+    <div class="content" data-content>
+      <div class="wrap">
+        <div class="main" role="main">
+          <div class="main__header">
+            {{ content_for_logo }}
+            {{ breadcrumb }}
+            {{ alternative_payment_methods }}
+          </div>
+          <div class="main__content">
+            {{ content_for_layout }}
+          </div>
+          
+<!--           Navidium app -->
+          {%- include 'navidium-widget-v6' -%}
+          
+          <div class="main__footer">
+            {{ content_for_footer }}
+          </div>
+        </div>
+        <div class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{ tracking_code }}
+    <script type="text/javascript">
+      (function(d) {
+        if (document.addEventListener) document.addEventListener('ltkAsyncListener', d);
+        else {
+          e = document.documentElement;
+          e.ltkAsyncProperty = 0;
+          e.attachEvent('onpropertychange', function(e)
+
+                        {
+            if (e.propertyName == 'ltkAsyncProperty') {
+              d();
+            }
+
+          });
+        }
+      })(function()
+         {
+        _ltk.SCA.CaptureEmail('checkout_email');
+      }
+        );
+    </script>
+
+    <!-- Listrak Analytics - Javascript Framework -->
+    <script type="text/javascript">
+      var biJsHost = (("https:" == document.location.protocol) ? "https://" : "http://");
+      (function(d, s, id, tid, vid)
+
+       {
+        var js, ljs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = biJsHost + "cdn.listrakbi.com/scripts/script.js?m=" + tid + "&v=" + vid;
+        ljs.parentNode.insertBefore(js, ljs);
+      }
+      )(document, 'script', 'ltkSDK', 'fQEz84RiVCwl', '1');
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    {% if checkout.shipping_address.country != 'United States' %}
+    <script>
+      $('.section--shipping-method .section__header').append('<p class="shipping-info"><b>We are not responsible for Lost Orders or Orders that are held by customs</b>. All duties and/or taxes are the responsibility of the customer.  Shipping Insurance is highly recommended.</p>');
+    </script>
+    {% else %}
+    <script>
+      $('.section--shipping-method .section__header').append('<p class="shipping-info"><b>UPS</b> now requires <b>Adult Signature</b> on all tobacco and hemp related shipments.</p>');
+      $('.section--shipping-method .section__header').append('<p class="shipping-info"><b>Small Filtered Cigars</b> cannot be Shipped UPS.</p>');
+    </script>
+    {% endif %}
+    {% if customer %}
+
+    {% else %}
+    {% comment %}
+    <script>
+      var checkout_condition = `<div class="checkout-age">
+                                  <div class="section__header">
+                                  <h2 class="section__title">
+                                  Confirm your age (21 or older)
+                                        </h2>
+                                        </div>
+                                  <div class="section__content">
+                                  <div class="checkbox-wrapper">
+                                  <div class="checkbox__input">
+                                  <input name="checkout[buyer_accepts_marketing]" type="hidden" value="0">
+                                  <input class="input-checkbox" type="checkbox" value="1" name="checkout_age_18" id="checkout_age_18">
+                                        </div>
+                                  <label class="checkbox__label" for="checkout_age_18">
+                                  BnB Tobacco does not sell products to anyone under the age of 21. By checking the box, you are confirming you are of legal age.
+                                        </label>
+                                        </div>
+                                        </div>
+                                  <p class="field__message field__message--error">Please confirm you're of legal age.</p>
+                                        </div>`;
+      //       alert(checkout_condition);
+      setTimeout(function(){
+        $(".section--contact-information").after(checkout_condition);
+        var Errlength=$("form.edit_checkout").find(".field--error").length;
+        if(Errlength>0){
+          $(".checkout-age").addClass("error");
+        }
+        $('[data-step="contact_information"] .step__footer,.section--shipping-address').append("<div class='button-overlay'></div>");
+        $("body").on("click",".button-overlay",function(){
+          //           alert(123);
+          $(".checkout-age").addClass("error");
+          //           $("html,body").animate({scrollTop:200}, 500);
+        });
+        $('.input-checkbox[name="checkout_age_18"]').change(function(){
+          if($(this).is(':checked')){
+            $(".button-overlay").hide();
+            $(".checkout-age").removeClass("error");
+          }else{
+            $(".button-overlay").show();
+            $(".checkout-age").addClass("error");
+          }
+        });
+      },200);
+    </script>
+    {% endcomment %}
+
+    {% endif %}
+    
+    <script src="https://cdn-widgetsrepository.yotpo.com/v1/loader/-WpVfycV8AAyyV2IaGtXMw" async></script>
+    <div class="yotpo-widget-instance" data-yotpo-instance-id="86930"></div>
+    
+    <!-- LOYALTY CODE START CHECKOUT MODULE  -->
+      <script src="https://cdn-widgetsrepository.yotpo.com/v1/loader/-WpVfycV8AAyyV2IaGtXMw" async></script>
+      <!-- Initial CSS to hide the module -->
+      <style type="text/css">
+          .yotpo-checkout-hide {
+              display: none;
+          }
+      </style>
+      <!-- module inside container -->
+      <div class="yotpo-refer-popup-container yotpo-checkout-hide">
+      <div class="yotpo-widget-instance" data-yotpo-instance-id="86074"></div>
+      </div>
+      <!-- JS to handle module initiation -->
+      <script type="text/javascript">
+          window.location.href.indexOf("loyalty_thank_you") !== -1
+              ? document
+                    .querySelector(".yotpo-checkout-hide")
+                    .classList.remove("yotpo-checkout-hide")
+              : "";
+      </script>
+      <!-- LOYALTY CODE END -->
+   
+
+
+    
+  </body>
+</html>
+<!-- 
+<style>
+.boxshadow .content-box {overflow: hidden;}
+{% unless customer.tags contains 'Wholesale' or customer.tags contains 'wholesale' %}
+[data-gateway-group="manual"] {
+display: none !important;
+}
+{% endunless %}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+{% unless customer.tags contains 'Wholesale' or customer.tags contains 'wholesale' %}
+$('[data-gateway-group="manual"]').hide();
+{% else %}
+if ($('.payment-due__price').data('checkout-payment-due-target') < 119999) {
+$('.radio__label__primary[data-shipping-method-label-title="Free Shipping"]').closest('.content-box__row').remove()
+$('.section--shipping-method .input-radio').first().prop('checked', true);
+}
+{% endunless %}
+</script> -->

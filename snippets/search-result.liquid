@@ -1,0 +1,126 @@
+{% include 'wh_calculate_discount' with item, hide_method: 'break' %}
+{% include 'wh_calculate_discount' with item %} 
+
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'large--one-third medium-down--one-half' %}
+{% endunless %}
+
+{% unless current_collection == blank %}
+  {% assign current_collection = collection %}
+{% endunless %}
+
+{% assign on_sale = false %}
+{% assign sale_text = 'items.item.sale' | t %}
+{% if item.compare_at_price > wh_price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% assign sold_out_text = 'items.item.sold_out' | t %}
+{% if item.available %}
+  {% assign sold_out = false %}
+{% endif %}
+ 
+
+<div class="list-item box grid__item small--one-half medium--one-half large--one-quarter on-sale">
+  
+    <span class="grid-link__image ab-grid-link__image--product">
+      {% if on_sale and settings.collections_show_sale_circle and wh_discount_value == 1 and set_price == null %}
+        <span class="badge badge--sale">
+          <span class="badge__text">{% if item.compare_at_price > wh_price %}
+          Sale
+            {% endif %}
+          </span>
+        </span>
+      {% endif %}
+      {% if sold_out and settings.collections_show_sold_out_circle %}
+        <span class="badge badge--sold-out">
+          <span class="badge__text{% if sold_out_text.size > 9 %} badge__text--small{% endif %}">{{ 'items.item.sold_out' | t }}</span>
+        </span>
+      {% endif %}
+      <span class="img grid-link__image-centered">
+        <a href="{{ item.url }}">
+        <img src="{{ item.featured_image.src | img_url: 'grande' }}" alt="{{ item.featured_image.alt | escape }}">
+        </a>      
+      </span>
+    </span>
+	<div class="block">
+      <p style="display:none" class="date">{{ item.published_at |  date:'%m/%d/%Y' | remove: " -0400" | truncate: 10,"" }}</p>
+      <p style="display:none" class="like"> {% capture price %}{{ wh_price | money }}{% endcapture %}
+      {% if on_sale %}
+	 
+      
+      {% endif %}
+	
+{% if customer.tags.size > 0 %}
+      {% if item.price_varies %}{{ 'items.general.from_html' | t: price: price }}{% else %}{{ price }}{% endif %}</p>
+{% else %}
+      {% if product.price_varies %}{{ 'items.general.from_html' | t: price: price }}{% else %}{{ price }}{% endif %}</p>
+{% endif %}
+								
+      <p class="title"><a href="{{ item.url }}">{{ item.title }}</a></p>
+								{% comment %}
+      <p class="grid-link__title grid-link__vendor">{{ item.vendor }}</p>
+    {% endcomment %}
+								<p class="desc">An arch is a structure that spans a space and supports a load. Arches appeared as early as the 2nd millennium BC in Mesopotamian brick architecture and their systematic use started with the Ancient Romans who were the first to apply the technique to a wide range of structures.</p>
+								  <p class="grid-link__meta">
+      {% if item.object_type == 'product' %}
+{% if customer.tags.size > 0 %}
+
+    {% if wh_compare_at_price > wh_price %}
+      <label class="reg_retail">Reg. Retail :</label>
+
+          <s class=grid-link__sale_price>{{ wh_compare_at_price_max | money }}</s>
+          <br/>
+          <label class="our_retail">Our Price :</label>
+          {{ wh_price | money }}
+        {% else %}
+        <br/>
+         <label class="our_retail">Our Price :</label>
+            {{ wh_price | money }}
+
+        {% endif %}
+
+{% else %}
+
+      {% if wh_compare_at_price > wh_price %}
+      <label class="reg_retail">Reg. Retail :</label>
+
+          <s class=grid-link__sale_price>{{ wh_compare_at_price_max | money }}</s>
+          <br/>
+          <label class="our_retail">Our Price :</label>
+          {{ wh_price | money }}
+        {% else %}
+        <br/>
+         <label class="our_retail">Our Price :</label>
+            {{ wh_price | money }}
+
+        {% endif %}
+
+{% endif %}
+    {% endif %}
+    </p>
+      <script>
+    $('document').ready(function(){	
+   var str = '{% for tag in item.tags %}{{tag}} developer {% endfor %}';
+   var newString = str.replace(/[^A-Z0-9]/ig, "-");
+    var split_string =  newString.split("-developer-");
+      //var replace_string =  newString.replace("-developer-", "&nbsp;");
+      
+     //var newString1=  newString.replace("_developer_"," ");
+     var newString1 =  split_string.join("  ");
+      //alert(ss);
+      
+   $('#id-{{forloop.index}}').addClass(newString1);
+    })
+  </script>
+								 <p class="theme">
+									<span id="id-{{forloop.index}}" class=""></span>
+									
+								</p>							
+								<a class="shop_now" href="{{ item.url }}">Shop Now</a>
+								{% include 'add-to-compare' %}
+							</div>
+</div>
+
+          

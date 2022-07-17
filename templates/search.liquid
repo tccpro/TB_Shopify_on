@@ -1,0 +1,104 @@
+<div class="main-container collection">
+
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="bc-sf-search-result-header"></h1>
+  </header>
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+
+
+  <div class="rte clearfix">
+    {% section 'search-template-bc-sf-filter' %}
+  </div>
+
+
+  <style>
+    .container {
+      width: 100% !important;
+      margin: 0 auto;
+    }
+    .main-container.collection h3.sidebar-header {
+      background: #DEDEDE;
+      color: #1F0802;
+      font-family: "trajan pro";
+      padding: 22px 0 19px;
+      text-align: center;
+    }
+    .main-container.collection .section-header {
+      margin: 0;
+      padding: 30px 25px 20px;
+    }
+    .grid-link__image-centered {
+      /* height: 250px; */
+      display: inherit;
+    }
+    .bc-sf-filter-product-item-image-link {
+      position: relative;
+      display: block;
+      margin-bottom: 0;
+    }
+    #bc-sf-filter-products a img {
+      max-height: 200px;
+    }
+    .bc-sf-filter-grid-width-3 {
+      margin-top: 25px;
+    }
+    div#bc-sf-filter-products {
+      padding: 25px;
+      margin: 0 0 0 -25px;
+      width: calc(100% + 25px);
+      display: flex;
+      flex-wrap: wrap;
+    }
+    #bc-sf-filter-bottom-pagination ul {
+      margin: 25px 0 auto;
+    }
+    
+    .mobile-sidebar-tabs {
+      display: none;
+    }
+    
+    @media only screen and (min-width: 769px){
+      .bc-sf-filter-grid-width-3:nth-child(4n+1){
+        clear: both;
+      }
+      .bc-sf-filter-grid-width-3:nth-child(3n+1){
+        clear: inherit;
+      } 
+    }
+    @media (max-width: 768px){
+      .mobile-sidebar-tabs {
+        display: block;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #DEDEDE;
+        text-align: center;
+      }
+      .mobile-sidebar-tabs .sidebar-header {
+        display: inline-block;
+        margin: 0 4px;
+        background: #DEDEDE;
+        line-height: 1;
+        padding: 20px 20px 17px !important;
+        border-radius: 5px;
+      }
+      h3.sidebar-header {
+        border-top: 1px solid #B7B7B7;
+        display: none;
+      }
+      .bc-sf-filter-right-col {
+        border-left: 0 solid #DEDEDE;
+      }
+      div#bc-sf-filter-products {
+        padding: 25px;
+        margin: 0 0 0 -10px;
+        width: calc(100% + 25px);
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .bc-sf-filter-wrapper-page{padding:0 !important;}
+    }
+  </style>
+</div>

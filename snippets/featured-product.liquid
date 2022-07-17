@@ -1,0 +1,47 @@
+{% include 'wh_calculate_discount' with product %} 
+{% unless settings.home_featured_product == blank %}
+
+  {% assign product = all_products[settings.home_featured_product] %}
+ {% include 'wh_calculate_discount' with product %}
+
+  <div class="grid product-single">
+    <div class="product-single__hero large--display-table">
+
+      <div class="grid__item large--one-half large--display-table-cell">
+        {% comment %}
+          <h3>{{ product.vendor }}</h3>
+        {% endcomment %}
+        <h1>{{ product.title }}</h1>
+
+        <div class="product-single__prices">
+          <span id="ProductPrice" class="product-single__price" itemprop="price">
+            {{ wh_price | money }}
+          </span>
+          {% if wh_compare_at_price_max > wh_price %}
+            <s id="ComparePrice" class="product-single__sale-price">
+              {{ wh_compare_at_price_max | money }}
+            </s>
+          {% endif %}
+        </div>
+
+        <div class="product-description rte" itemprop="description">
+          {{ product.description | strip_html | truncatewords: 50 }}
+        </div>
+
+        <hr class="hr--small hr--clear">
+
+        <a href="{{ product.url }}" class="btn medium-down--hide">{{ 'home_page.sections.view_product' | t }}</a>
+
+      </div>
+
+      <div class="grid__item large--one-half large--display-table-cell">
+        <a href="{{ product.url }}" class="product-single__photos">
+          {% assign featured_image = product.featured_image %}
+          <img class="lazyload" src="{{ 'lazy.gif' | asset_url }}" data-src="{{ featured_image | img_url: '1024x1024' }}" alt="{{ featured_image.alt | escape }}">
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+{% endunless %}

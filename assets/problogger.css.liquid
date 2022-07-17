@@ -1,0 +1,232 @@
+/* Do not modify this file as it will be overwritten in future upgrades - use the problogger-custom.scss.liquid file instead */
+
+
+/* OWL Slider Settings */
+
+.owl-item {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.owl-theme .owl-controls .owl-page span {
+  background: 0 0;
+  border: 2px solid #685858;
+  width: 10px;
+  height: 10px;
+  display: block;
+  border-radius: 100%;
+  margin: 0 4px;
+}
+
+.owl-theme .owl-controls .owl-page.active span {
+  background: #685858;
+  border-color: #685858;
+}
+
+.owl-theme .owl-controls {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+
+.owl-carousel .owl-item a {
+  text-decoration: none;
+  color: inherit;
+  position: unset;
+}
+
+.owl-carousel .owl-item a:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
+.owl-carousel .owl-item a::after {
+  border-bottom: 0px;
+}
+
+/* Image Management */
+
+.pb_image_wrapper {
+  position: relative;
+}
+
+.pb_image_wrapper:after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+
+.pb_image_wrapper img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* Sale Icon */
+
+.pb-image-hover-sale {
+  position: absolute;
+  width: 20%;
+  transform: translate(-50%, -50%);
+  top: 12%;
+  right: -10%;
+}
+
+.pb-image-hover-sale svg {
+  width: 100%;
+  fill: #EA0606;
+  stroke: white;
+  position: relative;
+}
+
+#related_articles_slider img {
+  object-fit: cover;
+}
+
+#related_products_slider img {
+  object-fit: contain;
+}
+
+#related_product_articles_slider img {
+  object-fit: cover;
+}
+
+/* Text Management */
+
+.pb-text-wrapper {
+  display: grid; 
+  padding-left: 2px;
+  padding-right: 2px; 
+  grid-row-gap: 6px;
+  margin-top: 8px;
+}
+
+.pb-text-title {
+  width: 100%;
+  text-align: center;
+}
+
+.pb-text-title-header {
+  margin-bottom: 0px !important; 
+}
+
+.pb-text-vendor {
+  width: 100%;
+  text-align: center; 
+  font-size: 14px; 
+}
+
+.pb-text-rating {
+  width: 100%;
+  text-align: center; 
+}
+
+.pb-text-rating .spr-badge-caption {
+  font-size: 8px;
+  display: none;
+}
+
+.pb-text-price {
+  width: 100%;
+  text-align: center; 
+}
+
+.pb_on_sale {
+  text-decoration: line-through;
+  color: #EA0606;
+  margin-right: 4px;
+}
+
+.pb-buy-button {
+  width: 100%;
+  text-align: center; 
+  margin-top: 6px;
+}
+
+/* Headers */
+
+#related_products_header {
+  margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+#related_articles_header  {
+  margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+#related_product_articles_header { 
+  margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+#related_products_slider {
+  margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+#related_articles_slider  {
+  margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+#related_product_articles_slider { 
+  margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+/* Buttons */
+
+.pb-buy-button .btn {
+  font-size: 12px;
+  padding-left: 24px;
+  padding-right: 24px; 
+}
+
+.related_articles-btn-all {
+  width: 100%;
+  text-align: center; 
+  display: inline-block;
+}
+
+.pb-image-hover {
+  transition: .5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.pb_image_wrapper { 
+  position:relative;
+}
+
+.pb_image_wrapper:hover .pb-image-hover {
+  opacity: 1;
+}
+
+.pb-image-hover .btn {
+  font-size: 12px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.pb_image_wrapper:hover img {
+  opacity: 1;
+}
+
+/* Mid Content Display */
+
+.pb_mid_content_related_products {
+  padding-bottom: 16px;
+  border-bottom: 1px solid;
+}
+
+.pb_mid_content_related_products_header {
+  padding-top: 16px;
+  border-top: 1px solid;
+}
+

@@ -1,0 +1,10 @@
+{% if shop.metafields.elspw['enabled'] == '1' %}
+<script>
+(function () {
+if(window.location.href.indexOf('/checkouts/')===-1) return;
+var loadScript=function(e,t){var a=document.createElement("script");a.type="text/javascript",a.readyState?a.onreadystatechange=function(){"loaded"!=a.readyState&&"complete"!=a.readyState||(a.onreadystatechange=null,t())}:a.onload=function(){t()},a.src=e,document.getElementsByTagName("head")[0].appendChild(a)};
+window.Elspw = { params: { id: '63b3fbb5950da3f62f2081991175ebbc', cart: {}, button: '[data-step="contact_information"] [type=submit]' } };
+loadScript('https://s3.amazonaws.com/els-apps/product-warnings/js/checkout.js', function () {});
+})();
+</script>
+{% endif %}

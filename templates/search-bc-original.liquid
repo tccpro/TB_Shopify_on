@@ -1,0 +1,530 @@
+{% assign products_per_row = settings.collections_products_per_row %}
+{% assign rows = settings.collections_rows %}
+{% assign total_products = products_per_row | times: rows %}
+
+{% assign total_pages = search.results_count | divided_by: total_products %}
+{% assign page_modulo = search.results_count | modulo: total_products %}
+{% unless page_modulo == 0 %}
+  {% assign total_pages = total_pages | plus: 1 %}
+{% endunless %}
+
+<div class="main-container collection clearfix">
+  <div class="ab-collections">
+    <div class="collection-banner-mobile"><a href="#"> <img src="{{ 'category-banner.jpg' | file_url }}" alt=""></a></div>
+
+    <header class="section-header section-header--large">
+      {% include 'breadcrumb' %}
+      <h1 class="section-header__title">
+        {% if search.performed and search.results_count > 0 %}
+          Search results for "{{ search.terms }}"
+        {% elsif search.results_count == 0 %}
+          No results for "{{ search.results_count }}"
+        {% else %}
+          No results
+        {% endif %}
+      </h1>
+    </header>
+  
+  
+  
+    {% if collection.description != blank %}
+    <div class="rte rte--header">
+      {{ collection.description }}
+    </div>
+    <hr class="hr--clear hr--small">
+      {% endif %}
+    <div class="grid-uniform grid-link__container">
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    {{ 'jplist.core.min.js' | asset_url | script_tag }}
+    {{ 'jplist.sort-bundle.min.js' | asset_url | script_tag }}
+    {{ 'jplist.textbox-filter.min.js' | asset_url | script_tag }}
+    {{ 'jplist.pagination-bundle.min.js' | asset_url | script_tag }}
+    {{ 'jplist.history-bundle.min.js' | asset_url | script_tag }}
+    {{ 'jplist.filter-toggle-bundle.min.js' | asset_url | script_tag }}
+    {{ 'jplist.list-grid-view.min.js' | asset_url | script_tag }}
+    {{ 'modernizr.js' | asset_url | script_tag }}
+    {% for tag in collections.all.tags %} 
+    <script>
+      $('document').ready(function(){	
+        // alert();
+     var str = '{{tag | escape}}';
+                     var newString = str.replace(/[^A-Z0-9]/ig, "-");
+       // alert(newString);
+               $('input[rel=reldata_{{forloop.index}}]').attr('data-path','.'+newString);
+                 $('input[rel=reldata_{{forloop.index}}]').attr('id',newString);
+                 $('label[rel=reldata_{{forloop.index}}]').attr('for',newString);
+
+      })
+    </script>
+    {% endfor %}
+<script>
+  $('document').ready(function(){	
+    //$('.text-shadow').fadeOut();
+    setTimeout(function(){ 
+      $('#floatBarsG').fadeOut();
+      $('.jplist-panel.box.panel-top.sidebar').fadeIn();
+      $('.text-shadow').fadeIn();
+      $('#demo').jplist({				
+          itemsBox: '.list' 
+          ,itemPath: '.list-item' 
+          ,panelPath: '.jplist-panel'	
+      });
+
+      $(".jplist-view").click(function(){
+        $(".jplist-view").removeClass('active');
+        $(this).addClass('active');
+      }); 
+    }, 5000);
+  });
+</script>
+<!-- font libs -->
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+{{ 'jplist.demo-pages.min.css' | asset_url | stylesheet_tag }}
+{{ 'jplist.core.min.css.css' | asset_url | stylesheet_tag }}
+{{ 'jplist.textbox-filter.min.css' | asset_url | stylesheet_tag }}
+{{ 'jplist.pagination-bundle.min.css' | asset_url | stylesheet_tag }}
+{{ 'jplist.filter-toggle-bundle.min.css' | asset_url | stylesheet_tag }}
+{{ 'jplist.list-grid-view.min.css' | asset_url | stylesheet_tag }}
+
+
+<div id="demo" class="box jplist" style="margin: 0;">
+				
+					
+  <div class="sidebar">
+    <h3 class="sidebar-header">View</h3>
+    <!-- items per page dropdown -->
+    <!-- views -->
+    <div class="jplist-views ab-list-views" data-control-type="views" data-control-name="views" data-control-action="views" data-default="jplist-grid-view">
+      <div class="view-div">
+        <div class="jplist-drop-down items-per-page" data-control-type="items-per-page-drop-down" data-control-name="paging" data-control-action="paging"><div class="jplist-dd-panel"> {{total_products}} </div>
+          <ul style="display: none;">
+            <li class="active"><span data-number="{{total_products}}" data-default="true">{{total_products}}</span></li>
+            <li><span data-number="{{total_products | times: 2}}">{{total_products | times: 2}}</span></li>
+            <li><span data-number="{{total_products | times: 4}}">{{total_products | times: 4}}</span></li>
+    <!--         <li><span data-number="all"> View All </span></li> -->
+          </ul>
+          <i class="fa fa-angle-down" aria-hidden="true"></i>
+        </div>
+      </div>
+      <button type="button" class="jplist-view jplist-list-view" data-type="jplist-list-view"><i class="fa fa-list" aria-hidden="true"></i></button>
+      <button type="button" class="jplist-view jplist-grid-view active" data-type="jplist-grid-view"><i class="fa fa-th" aria-hidden="true"></i></button>
+      <button type="button" class="jplist-view jplist-thumbs-view" data-type="jplist-thumbs-view"><i class="fa fa-th-large" aria-hidden="true"></i></button>
+    </div>
+    <h3 class="sidebar-header">Sort By</h3>
+    <!-- sort dropdown -->         
+    <div class="sort-div clearfix">
+      <div class="jplist-drop-down sort-by" data-control-type="sort-drop-down" data-control-name="sort" data-control-action="sort" data-datetime-format="{month}/{day}/{year}"><div class="jplist-dd-panel">Sort by</div> <!-- {year}, {month}, {day}, {hour}, {min}, {sec} -->
+        <ul style="display:none;">
+          <li class=""><span data-path="default">Sort by</span></li>
+          <li><span data-path=".title" data-sort="title" data-order="asc" data-type="text">Title A-Z</span></li>
+          <li><span data-path=".title" data-sort='{"desc":"title"}' data-order="desc" data-type="text">Title Z-A</span></li>
+          <!--<li><span data-path=".desc" data-order="asc" data-type="text">Description A-Z</span></li>
+          <li><span data-path=".desc" data-order="desc" data-type="text">Description Z-A</span></li>-->
+          <li class="active"><span data-path="price" data-sort="price" data-order="asc" data-type="number" data-default="true">Price low to high</span></li>
+          <li><span data-path=".like" data-sort='{"desc":"price"}' data-order="desc" data-type="number">Price high to low</span></li>
+          <li><span data-path=".date" data-sort="created_at" data-order="asc" data-type="datetime">Date asc</span></li>
+          <li><span data-path=".date" data-sort='{"desc":"created_at"}' data-order="desc" data-type="datetime">Date desc</span></li>
+        </ul>
+      </div>	
+    </div>
+    <h3 class="sidebar-header">Filter By</h3>
+    <div class="sidebar-items">
+      <div class="jplist-panel box panel-top">
+        <div class="jplist-group" data-control-type="checkbox-group-filter" data-control-action="filter"  data-control-name="themes">
+          {% assign filterTags = '' %}
+          {% include 'left-side-bar' %}
+          {% assign filterTags = filterTags | split: '|||' %}
+        </div>
+      </div>
+    	
+    </div><!--sidebar-items-->
+  </div><!--sidebar-->
+  
+  
+ 
+  
+   
+  		<div class="ab-right-product">
+          <div id="floatBarsG">
+            <div id="floatBarsG_1" class="floatBarsG"></div>
+            <div id="floatBarsG_2" class="floatBarsG"></div>
+            <div id="floatBarsG_3" class="floatBarsG"></div>
+            <div id="floatBarsG_4" class="floatBarsG"></div>
+            <div id="floatBarsG_5" class="floatBarsG"></div>
+            <div id="floatBarsG_6" class="floatBarsG"></div>
+            <div id="floatBarsG_7" class="floatBarsG"></div>
+            <div id="floatBarsG_8" class="floatBarsG"></div>
+          </div>
+          <div class="jplist-panel box panel-top sidebar superfluous">						
+            
+						<!-- items per page dropdown -->
+						<!-- views -->
+						<div 
+                             class="jplist-views ab-list-views" 
+                             data-control-type="views" 
+                             data-control-name="views" 
+                             data-control-action="views"
+                             data-default="jplist-grid-view">
+
+                          
+<!--                           <button type="button" class="jplist-view jplist-list-view" data-type="jplist-list-view"><i class="fa fa-list" aria-hidden="true"></i></button>
+                          <button type="button" class="jplist-view jplist-grid-view active" data-type="jplist-grid-view"><i class="fa fa-th" aria-hidden="true"></i></button>
+                          <button type="button" class="jplist-view jplist-thumbs-view" data-type="jplist-thumbs-view"><i class="fa fa-th-large" aria-hidden="true"></i></button> -->
+                        </div>	
+						
+						<!-- pagination results -->
+						<!--<div 
+						   class="jplist-label collection-pager" 
+						   data-type="Page {current} of {pages}" 
+						   data-control-type="pagination-info" 
+						   data-control-name="paging" 
+						   data-control-action="paging">
+						</div> -->
+												
+					</div>
+            <div class="list box">	
+								
+          {% for item in search.results %}
+
+            {% include 'bold-product' with item, hide_action: 'skip' %}
+            {% if item.price %}
+              {% assign product = item %}
+              {% assign grid_item_width = 'small--one-half medium--one-half large--one-quarter' %}
+              {% include 'product-grid-item' %}
+            {% else %}
+              {% include 'search-result' %}
+             {% endif %}
+              
+          {% endfor %}
+             
+
+          </div>
+          <div class="box jplist-no-results text-shadow align-center">
+						<p>No results found</p>
+					</div>
+          
+        {% if total_pages > 1 %}
+        <!-- pagination control -->
+        <div class="jplist-panel box panel-top sidebar" style="display: block;">
+          <div class="pagination-collection">
+            <div class="jplist-pagination" data-control-type="pagination" data-control-name="paging" data-control-action="paging">
+              <div class="jplist-pagingprev" data-type="pagingprev">
+                <button type="button" class="jplist-first" data-number="0" data-type="first">«</button>
+                <button type="button" class="jplist-prev" data-type="prev" data-number="0" style="display:none;">‹</button>
+              </div>
+              <div class="jplist-pagingmid" data-type="pagingmid">
+                <div class="jplist-pagesbox" data-type="pagesbox">
+                  {% for i in (1..total_pages) %}
+                    {% if forloop.index <= 3 or forloop.index == total_pages or total_pages < 6 %}
+                      <button{% if forloop.first %} class="active"{% endif %} type="button" data-type="page" data-number="{{ i }}">{{ i }}</button>
+                    {% endif %}
+                    {% if forloop.index == 4 and total_pages > 5 %}
+                      <button class="ellipsis" type="button">&hellip;</button>
+                    {% endif %}
+                  {% endfor %}
+
+
+        <!--           <button type="button" data-type="page" class="jplist-current" data-active="true" data-number="0">1</button> 
+                  <button type="button" data-type="page" data-number="1">2</button> 
+                  <button type="button" data-type="page" data-number="2">3</button> 
+                  <button type="button" data-type="page" data-number="3">4</button>  -->
+                </div>
+              </div>
+              <div class="jplist-pagingnext" data-type="pagingnext">
+                <button type="button" class="jplist-next" data-type="next" data-number="1">›</button>
+                <button type="button" class="jplist-last" data-type="last" data-number="3">»</button>
+              </div>
+            </div> 
+          </div>
+        </div>  
+        {% endif %}
+  
+  </div>
+    </div>
+  </div>
+  </div>
+</div>
+  	
+<script>
+
+  (function() {
+    $('.more-link').click(function() {
+      $(this).parent().css('max-height', 'none');
+      $(this).hide();
+    });
+  })();
+  
+  (function() {
+    function array_unique(arr) {
+      var result = [];
+      for (var i = 0; i < arr.length; i++) {
+        if (result.indexOf(arr[i]) == -1) {
+            result.push(arr[i]);
+        }
+      }
+      return result;
+    }
+    
+    var currentTagFilters = [];
+    var allTags = {{ filterTags | json }};
+    var page = 1;
+    var view = {{ total_products }};
+    var sort_by = "title";
+    var totalPages = {{ total_pages }};
+    var productCount = {{ collection.products_count }};
+    var filters = new FESA();
+    var collection = "{{ collection.handle }}";
+    var mySearchString = "{{ search.terms }}";
+    var mySearchArray = mySearchString.split(' ');
+    mySearchString = array_unique(mySearchArray).join(' '):
+
+  //     allTags = allTags.splice(allTags.length/2, allTags.length/2+1);
+  //     console.log(allTags);
+
+    function reformatPagination() {
+
+      $('.jplist-pagesbox').html('');
+      $('.jplist-pagesbox').append('<button type="button" data-type="page" data-number="1">1</button>');
+
+      if (page == 5) {
+        $('.jplist-pagesbox').append('<button type="button" data-type="page" data-number="2">2</button>');
+      } else if (page > 5) {
+        $('.jplist-pagesbox').append('<button class="ellipsis" type="button">&hellip;</button>');
+      }
+
+      var lowerBound = page - 2 > 1 ? page - 2 : 2 ;
+      var upperBound = page + 2 < totalPages ? page + 2 : totalPages - 1 ;
+      for (var i = lowerBound; i <= upperBound; i++) {
+        $('.jplist-pagesbox').append('<button type="button" data-type="page" data-number="'+i+'">'+i+'</button>');
+      }
+
+      if (page == totalPages-4) {
+        $('.jplist-pagesbox').append('<button type="button" data-type="page" data-number="'+(totalPages-1)+'">'+(totalPages-1)+'</button>');
+      } else if (page < totalPages-4) {
+        $('.jplist-pagesbox').append('<button class="ellipsis" type="button">&hellip;</button>');
+      }     
+
+      if (totalPages === 1) {
+        $('.jplist-panel.box.panel-top.sidebar').hide();
+      } else {
+        $('.jplist-panel.box.panel-top.sidebar').show();
+        $('.jplist-pagesbox').append('<button type="button" data-type="page" data-number="'+totalPages+'">'+totalPages+'</button>');
+      }
+
+      if (page === 1) {
+        $('.jplist-prev').hide();
+      } else {
+        $('.jplist-prev').show();
+      }
+
+      if (page === totalPages) {
+        $('.jplist-next').hide();
+      } else {
+        $('.jplist-next').show();
+      }
+
+      $('.jplist-pagesbox button[data-number="'+page+'"]').addClass('active');
+    }
+
+    function activeFilters() {
+      $('.ab-right-product .overlay').show();
+      var filter = filters.s().searchByAll(mySearchString).collection(collection);
+
+      for (var i = 0; i < currentTagFilters.length; i++) {
+        filter = filter.tag(currentTagFilters[i]);
+      }
+
+      filter.paginate(view).page(page).sort(sort_by).options([{"tags":allTags}]).count(true).e().done(function(products, count, options) {
+        var tags = options.options.tags;
+  //         console.log(options.options.tags);
+        totalPages = Math.ceil(count/view);
+        productCount = count;
+
+        if (count > 0) {
+          $('.list.box').html('');
+        } else {
+          $('.list.box').html('There are no results for those filters');
+        }
+
+        if (totalPages > 1) {
+          reformatPagination();
+          $('.pagination-collection').removeClass('empty');
+        } else {
+          $('.jplist-next, .jplist-prev').hide();
+          $('.jplist-pagesbox').html('');
+          $('.pagination-collection').addClass('empty');
+        }
+
+        function resizeFilterMenu() {
+          var height = $('.ab-right-product').outerHeight();
+          var setHeight = 0;
+          $('.main-container.collection #demo .sidebar h3').each(function() {
+            setHeight += $(this).outerHeight();
+          });
+          setHeight += $('.jplist-views.ab-list-views').outerHeight(true);
+          setHeight += $('.sort-div').outerHeight(true);
+
+
+          console.log(height, setHeight);
+          $('.ab-collections .sidebar-items').css('max-height', height - setHeight);
+
+          if ($('.ab-collections .sidebar-items').innerHeight() > $('.ab-collections .sidebar-items').outerHeight()) {
+            $('.sidebar-items-wrapper').addClass('bottom-shadow');
+          } else {
+            $('.sidebar-items-wrapper').removeClass('bottom-shadow');
+          }
+
+          yotpo.initWidgets();
+        }
+
+        var successes = 0;
+        for (var i = 0; i < products.length; i++) {
+          var product = products[i];
+          var url;
+          if (collection) {
+            url = '/collections/' + collection + '/products/' + product.handle + '?view=grid_no_layout';
+          } else {
+            url = '/products/' + product.handle + '?view=grid_no_layout';
+          }
+  //qw12	
+          $.ajax({
+            url: url,
+            success: function(response) {
+              successes++;
+
+              $('.list.box').append(response);
+              $('.bold-remove-on-load').remove();
+
+              if (successes >= products.length) {
+                resizeFilterMenu();
+              }
+            }
+          });
+        }
+
+        $('.filter-menu-item').addClass('zero');
+        $('.filter-menu-item .tag-count').text('(0)');
+        reformatPagination();
+        for (var tag in tags) {
+          var count = tags[tag];
+
+          $('.filter-menu-item[data-tag="'+tag+'"]').removeClass('zero');
+          $('.filter-menu-item[data-tag="'+tag+'"] .tag-count').remove();
+          $('.filter-menu-item[data-tag="'+tag+'"]').append('<span class="tag-count">('+count+')</span>');
+  //           console.log(tag, count);
+        }
+
+        setTimeout(function() {
+          $('.ab-right-product .overlay').fadeOut();
+        }, 250);
+
+      });
+    }
+
+    $('.filter-menu-item').click(function() {
+      var tag = $(this).data('tag');
+      var category = $(this).data('category');
+      var index = currentTagFilters.indexOf(tag);
+
+      if (index > -1) {
+        currentTagFilters.splice(index, 1);
+        $(this).removeClass('selected');
+        $('.product-information-item[data-category="'+category+'"]').show();
+      } else {
+        currentTagFilters.push(tag);
+        $(this).addClass('selected');
+        $('.product-information-item[data-category="'+category+'"]').hide();
+        $(this).show();
+      }
+
+      page = 1;
+
+      activeFilters();
+    });
+
+    $('.jplist-drop-down').click(function() {
+      $(this).find('ul').show();
+    });
+
+    $(document).mouseup(function (e) {
+      var container = $(".jplist-drop-down");
+
+      if (!container.first().is(e.target) // if the target of the click isn't the container...
+          && container.first().has(e.target).length === 0) // ... nor a descendant of the container
+      {
+        $('.jplist-drop-down:eq(0) ul').hide();
+      }
+
+      if (!container.last().is(e.target) // if the target of the click isn't the container...
+          && container.last().has(e.target).length === 0) // ... nor a descendant of the container
+      {
+        $('.jplist-drop-down:eq(1) ul').hide();
+      }
+    });
+
+    $('.items-per-page li span').click(function() {
+      view = $(this).data('number');
+      totalPages = Math.ceil(productCount/view);
+
+      if (page > totalPages) {page = totalPages}
+
+      activeFilters();
+    });
+
+    $('.jplist-drop-down li').click(function() {
+      var text = $(this).find('span').text();
+      var $li = $(this);
+
+      $(this).parent().prev().text(text);
+      setTimeout(function() {
+        $li.parent().css('display', 'none');
+      }, 100);
+    });
+
+    $('.sort-div span').click(function() {
+      sort_by = $(this).data('sort');
+      activeFilters();
+    });
+
+    $('.jplist-view').click(function() {
+      var dataType = $(this).data('type');
+      $('.jplist-view').removeClass('active');
+      $('#demo').removeClass('jplist-list-view jplist-grid-view jplist-thumbs-view');
+
+      $(this).addClass('active');
+      $('#demo').addClass(dataType);
+    });
+
+    function changePage() {
+
+      $('.jplist-pagesbox button').removeClass('active');
+      $('.jplist-pagesbox button[data-number="'+page+'"]').addClass('active');
+
+      activeFilters();
+    }
+
+    $('.jplist-pagesbox').on('click', 'button[data-type="page"]', function() {
+      page = $(this).data('number');
+      changePage();
+    });
+
+    $('.jplist-next').click(function() {
+      page++;
+      changePage();
+    });
+
+    $('.jplist-prev').click(function() {
+      page--;
+      changePage();
+    });
+
+    activeFilters();
+
+    $('.more-link').click(function() {
+      $(this).parent().css('max-height', 'none');
+      $(this).hide();
+    });
+      })();
+
+</script>

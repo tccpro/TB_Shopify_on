@@ -1,0 +1,83 @@
+{% if section.blocks.size > 0 %}
+  <div class="grid-uniform featured-collections-inner{% if section.settings.simplified %} simplified-mobile{% endif %}">
+  {% for block in section.blocks %}
+    {% assign featured_collection = collections[block.settings.featured_collection] %}
+    <div class="grid__item small--one-half medium--one-half large--one-third featured-collection">
+      {% if block.settings.use_page_link and block.settings.page_link %}
+        {% capture section_link %}/pages/{{ block.settings.page_link }}{% endcapture %}
+      {% else %}
+        {% assign section_link = featured_collection.url %}
+      {% endif %}
+      <div onclick="window.location.href='{{ section_link }}'" class="image lazyload" data-bg="{{ featured_collection.image | img_url: 'large' }}">
+        <h2>
+          {{ featured_collection.title }}
+          {% if featured_collection.description != blank and block.settings.description_truncation > 0 %}
+            <p>{{ featured_collection.description | truncate: block.settings.description_truncation }}</p>
+          {% endif %}
+        </h2>
+        <a class="btn" href="{{ section_link }}">Shop {{ featured_collection.title }}</a>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Featured Collections",
+    "class": "featured-collections",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "simplified",
+        "label": "Simplified on mobile"
+      }
+    ],
+    "max_blocks": 9,
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+	    "settings": [
+          {
+            "type": "collection",
+            "id": "featured_collection",
+            "label": "Featured collection"
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 500,
+            "step": 5,
+            "id": "description_truncation",
+            "label": "Truncation Description's Characters",
+            "unit": "chr",
+            "default": 65 
+          },
+          {
+            "type": "checkbox",
+            "id": "use_page_link",
+            "label": "Link to a Page?"
+          },
+          {
+            "type": "page",
+            "id": "page_link",
+            "label": "Page to link to."
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "category": "Products",
+        "name": "Featured Collections"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

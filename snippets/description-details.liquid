@@ -1,0 +1,252 @@
+{% assign tag_keywords = settings.tag_keywords | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+
+{% assign current_order = false %}
+{% assign pipe_tobacco_order = settings.pipe_tobacco_order | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+{% assign premium_cigars_order = settings.premium_cigars_order | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+{% assign machine_made_cigars_order = settings.machine_made_cigars_order | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+{% assign little_cigars_order = settings.little_cigars_order | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+{% assign esmokes_order = settings.esmokes_order | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+{% assign pipes_order = settings.pipes_order | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+{% assign accessories_order = settings.accessories_order | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+{% assign rtpo_supplies_order = settings.ryo_supplies_order | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}  
+
+{% if product.type == 'Pipe Tobacco' %}
+  {% assign current_order = pipe_tobacco_order %}
+{% endif %}
+{% if product.type == 'Premium Cigars' %}
+  {% assign current_order = premium_cigars_order %}
+{% endif %}
+{% if product.type == 'Machine Made Cigars' %}
+  {% assign current_order = machine_made_cigars_order %}
+{% endif %}
+{% if product.type == 'Little Cigars' %}
+  {% assign current_order = little_cigars_order %}
+{% endif %}
+{% if product.type == 'E-Smokes' %}
+  {% assign current_order = esmokes_order %}
+{% endif %}
+{% if product.type == 'Pipes' %}
+  {% assign current_order = pipes_order %}
+{% endif %}
+{% if product.type == 'Accessories' %}
+  {% assign current_order = accessories_order %}
+{% endif %}
+{% if product.type == 'RYO Supplies' %}
+  {% assign current_order = ryo_supplies_order %}
+{% endif %}
+
+{% assign show_product_info = false %}
+{% for order in current_order %}
+  {% for tag in product.tags %}
+    {% assign key_arr = tag | split: ':' %}
+    {% assign down_tag = key_arr[0] | downcase %}
+
+    {% if current_order %}
+      {% if order == down_tag %}
+        {% assign show_product_info = true %}
+      {% endif %}
+    {% else %}
+      {% if tag_keywords contains down_tag %}
+        {% assign show_product_info = true %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+{% if show_product_info or product.description != blank %}
+<div class="tab-controls clearfix">
+  {% if product.description != blank %}
+  <div class="tab-control active">Description</div>
+  {% endif %}
+  {% if show_product_info %}
+  <div class="tab-control">Details</div>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if show_product_info or product.description != blank %}
+<div class="tabs-container clearfix">
+
+  {% if product.description != blank %}
+ <!-- Removed causing Structured Data Issues
+	  <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">-->
+      <div>
+    {% assign variant = product.selected_or_first_available_variant %}
+    {% include 'wh_variant' with variant %}
+
+    <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+    <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+
+    {% if customer.tags.size > 0 %}
+      <div class="product-single__prices">
+        <span id="ProductPrice" class="product-single__price" itemprop="price">
+          {{ wh_price | money }}
+        </span>
+
+        {% if wh_compare_at_price > wh_price %}
+          <s id="ComparePrice" class="product-single__sale-price">
+            {{ wh_compare_at_price_max | money }}
+          </s>
+        {% endif %}
+      </div>
+    {% else %}
+    <div class="product-single__prices">
+      <span id="ProductPrice" class="product-single__price" itemprop="price">
+        {{ wh_price | money }}
+      </span>
+
+      {% if wh_compare_at_price > wh_price %}
+        <s id="ComparePrice" class="product-single__sale-price">
+          {{ wh_compare_at_price_max | money }}
+        </s>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% comment %}
+    <form action="/cart/add" data-productid="{{product.id}}"  method="post" enctype="multipart/form-data" id="AddToCartForm"> 
+      {% if customer.tags.size > 0 %}
+      {% else %}
+        {% if product.available %}{% endif %} 
+      {% endif %}
+      <select name="id" data-productid="{{product.id}}" id="productSelect" class="product-single__variants">
+        {% for variant in product.variants %}
+         {% include 'wh_variant' with variant %}
+          {% if variant.available %}
+
+            <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}" data-price="{{ wh_v_price | money_without_currency | remove: ',' }}">{{ variant.title }} - {{ wh_v_price | money_with_currency }}</option>
+
+          {% else %}
+            <option disabled="disabled">
+              {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+            </option>
+          {% endif %}
+        {% endfor %}
+      </select>
+
+      <div id="infiniteoptions-container"></div>
+
+      <div class="product-single__quantity{% unless settings.product_quantity_enable %} is-hidden{% endunless %}">
+        <label for="Quantity">{{ 'products.product.quantity' | t }}</label>
+        <input type="number" id="Quantity" name="quantity" value="1" min="1" class="quantity-selector">
+      </div>
+
+      <input name="shopify_customer_id" type="hidden" value="{{ customer.id }}" > 
+      <input name="email" type="hidden" value="{{ customer.email }}" > 
+      <input name="address1" type="hidden" value="{{ customer.default_address.address1 }}" > 
+      <input name="address2" type="hidden" value="{{ customer.default_address.address2 }}" > 
+      <input name="city" type="hidden" value="{{ customer.default_address.city }}" > 
+      <input name="company" type="hidden" value="{{ customer.default_address.company }}" > 
+      <input name="country" type="hidden" value="{{ customer.default_address.country }}" > 
+      <input name="first_name" type="hidden" value="{{ customer.default_address.first_name }}" > 
+      <input name="last_name" type="hidden" value="{{ customer.default_address.last_name }}" > 
+      <input name="phone" type="hidden" value="{{ customer.default_address.phone }}" > 
+      <input name="province" type="hidden" value="{{ customer.default_address.province }}" > 
+      <input name="zip" type="hidden" value="{{ customer.default_address.zip }}" >
+      <button type="submit" name="add" id="AddToCart" class="btn addtocart">
+        <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
+      </button>
+
+    </form>
+    {% endcomment %}
+    <div class="product-description rte" itemprop="description">
+      {{ product.description }}
+    </div>
+    <br/><br/>
+    {% include 'pro-blogger.snippet.related-product-articles' %}
+  </div>
+  {% endif %}
+
+  {% if show_product_info %}
+  <div class="product-information-dtl desktop">
+
+    {% if product.metafields.More_Options.size > 4 %}
+      <div id="loadMore" class="product-information-link">More Details</div>
+      <div id="showLess" class="product-information-link">Less Details</div>
+    {% endif %}
+
+
+
+    {% if current_order %}
+
+      {% for order in current_order %}
+
+        {% assign initial = true %}
+        {% assign code_was_run = false %}
+        {% for tag in product.tags %}
+
+          {% assign key_arr = tag | split: ':' %}
+          {% assign values_arr = key_arr[1] | split: '|' %}
+          {% assign down_tag = key_arr[0] | downcase %}
+
+          {% if order == down_tag %}
+            {% assign code_was_run = true %}
+
+            {% unless key_arr[0] == old_key %}
+              {% unless initial %}
+                {{ '</div>' }}
+              {% endunless %}
+              {% assign initial = false %}
+              {{ '<div class="product-information-row">' }}
+            {% endunless %}
+
+            {% unless key_arr[0] == old_key %}
+              {% assign old_key = key_arr[0] %}
+              <span class="product-information-title">{{ key_arr[0] | capitalize }}</span>
+              <span class="product-information-items">
+            {% endunless %}
+            {% for v in values_arr %}
+              {% if key_arr[0] == 'Brand' or key_arr[0] == 'brand' %}
+                <a href="/collections/vendors?q={{ v | strip }}" class="product-information-item">{{ v }}<span class="info-items-separator">,</span></a>
+              {% else %}
+                <span class="product-information-item">{{ v }}<span class="info-items-separator">,</span></span>
+              {% endif %}
+            {% endfor %}
+
+          {% endif %}
+
+          {% if forloop.last and code_was_run %}
+            {{ '</span></div>' }}
+          {% endif %}
+
+        {% endfor %}  
+
+      {% endfor %}   
+
+    {% else %}
+
+       {% assign initial = true %}
+       {% for tag in product.tags %}
+
+         {% assign key_arr = tag | split: ':' %}
+         {% assign values_arr = key_arr[1] | split: '|' %}
+         {% assign down_tag = key_arr[0] | downcase %}
+
+         {% if tag_keywords contains down_tag %}
+
+           {% unless key_arr[0] == old_key %}
+             {% assign initial = false %}
+             {{ '<div class="product-information-row">' }}
+             {% assign old_key = key_arr[0] %}
+             <span class="product-information-title">{{ key_arr[0] | capitalize }}:</span>
+             {% for v in values_arr %}
+               {% if key_arr[0] == 'Brand' or key_arr[0] == 'brand' %}
+                 <a href="/collections/vendors?q={{ v | strip }}" class="product-information-item">{{ v }}<span class="info-items-separator">,</span></a>
+               {% else %}
+                 <span class="product-information-item">{{ v }}<span class="info-items-separator">,</span></span>
+               {% endif %}
+             {% endfor %}
+             {{ '</div>' }}
+           {% endunless %}
+
+         {% endif %}
+
+       {% endfor %}
+
+    {% endif %}
+  </div><!-- .product-information-dtl -->
+  {% endif %}
+
+</div>
+{% endif %}
+  

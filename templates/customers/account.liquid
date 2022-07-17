@@ -1,0 +1,115 @@
+<div class="main-container account-main-page">
+  <div class="section-header section-header--large">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ 'customer.account.title' | t }}</h1>
+    {{ 'layout.customer.log_out' | t | customer_logout_link }}
+  </div>
+
+  <div class="grid">
+
+    <div class="grid__item two-thirds medium-down--one-whole">
+      <h4>{{ 'customer.orders.title' | t }}</h4>
+
+      {% comment %}
+        If we have past orders, loop through each one
+      {% endcomment %}
+
+      {% paginate customer.orders by 20 %}
+
+      {% if customer.orders.size != 0 %}
+
+        <div class="table-wrap">
+          <table class="full">
+            <thead>
+              <tr>
+                <th>{{ 'customer.orders.order_number' | t }}</th>
+                <th>{{ 'customer.orders.date' | t }}</th>
+                <th>{{ 'customer.orders.payment_status' | t }}</th>
+                <th>{{ 'customer.orders.fulfillment_status' | t }}</th>
+                <th>{{ 'customer.orders.total' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in customer.orders %}
+                <tr>
+                  <td>{{ order.name | link_to: order.customer_url }}</td>
+                  <td>{{ order.created_at | date: "%b %d, %Y" }}</td>
+                  <td>{{ order.financial_status_label }}</td>
+                  <td>{{ order.fulfillment_status_label }}</td>
+                  <td>{{ order.total_price | money }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      {% else %}
+
+        <p>{{ 'customer.orders.none' | t }}</p>
+
+      {% endif %}
+
+      {% if paginate.pages > 1 %}
+        <div class="text-center">
+          {% include 'pagination-custom' %}
+        </div>
+      {% endif %}
+
+      {% endpaginate %}
+
+    </div>
+
+    <div class="grid__item one-third medium-down--one-whole">
+      <h4>{{ 'customer.account.details' | t }}{% if customer.tags contains 'wholesale' %}<br><a href="/account?view=edit" style="font-size: 14px;">{{ shop.metafields.locales.edit }}</a>{% endif %}</h4>
+
+      <h5>{{ customer.name }}</h5>
+      <p><a href="/tools/checkout/api/manage/subscription/app" class="text-link">Manage Subscription</a></p>
+
+
+      {% comment %}
+      {% if customer.metafields.subscriptions.customer_string %}
+
+      {% endif %}
+      {% endcomment %}
+
+      {% if customer.default_address != nil %}
+        <p>
+        {{ customer.default_address.address1 }}<br>
+
+        {% if customer.default_address.address2 != "" %}
+          {{ customer.default_address.address2 }}<br>
+        {% endif %}
+
+        {% if customer.default_address.city != "" %}
+          {{ customer.default_address.city }}<br>
+        {% endif %}
+
+        {% if customer.default_address.province_code != "" %}
+          {{ customer.default_address.province_code | upcase }}<br>
+        {% endif %}
+
+        {% if customer.default_address.zip != "" %}
+          {{ customer.default_address.zip | upcase }}<br>
+        {% endif %}
+
+        {% if customer.default_address.country != "" %}
+          {{ customer.default_address.country }}<br>
+        {% endif %}
+
+        {% if customer.default_address.phone != "" %}
+          {{ customer.default_address.phone }}
+        {% endif %}
+        </p>
+
+      {% endif %}
+
+      <p><a href="/account/addresses">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</a></p>
+    </div>
+
+  </div>
+  
+  <div class="yotpo-widget-instance" data-yotpo-instance-id="85999"></div>
+  <div class="yotpo-widget-instance" data-yotpo-instance-id="85996"></div>
+  
+  
+</div>

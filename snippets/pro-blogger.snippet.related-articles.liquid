@@ -1,0 +1,157 @@
+{% assign artimagesize = '400x' %}
+{% assign artheader = '<h4>Related Articles</h4>' %}
+{% assign arttruncate = 10 %}
+{% assign titleweight = 5 %}
+{% assign tagweight = 1 %}
+{% assign authweight = 1 %}
+{% assign authdisplay = 8 %}
+{% assign slideritems = 4 %}
+{% assign pb_Accuracy = 3 %}
+{% assign pb_show_all_blogs = true %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.theme.min.css">
+
+
+{% assign pb_matches_found = 0 %}
+{% assign matched_list = '' %}
+{% assign match_score = 0 %}
+
+{% if pb_Accuracy == 1 %}
+
+  {% assign pb_base_match_value = 1 %}
+  {% assign pb_check_max = 20 %}
+  {% assign pb_matches_req = 20 %}
+
+{% elsif pb_Accuracy == 2 %}
+
+ {% assign pb_base_match_value = 0 %}
+ {% assign pb_check_max = 50 %}
+ {% assign pb_matches_req  = authdisplay %}
+
+{% elsif pb_Accuracy == 3 %}
+
+ {% assign pb_base_match_value = 0 %}
+ {% assign pb_check_max = 1000 %}
+ {% assign pb_matches_req  = 1000 %}
+
+{% endif %}
+
+
+{% assign post_tags = article.tags %}
+{% assign post_author = article.author %}
+{% assign post_title = article.title | split: " " %}
+
+{% paginate blog.articles by pb_check_max %}
+{% for articles in blog.articles limit: pb_check_max %}
+	{% assign match_score = pb_base_match_value  %}
+
+	{% unless articles.url == article.url %}
+		{% unless pb_matches_found >= pb_matches_req %}
+
+      {% capture articles_contents %}
+          {% include 'pro-blogger.shortcode' load: articles.content %}
+      {% endcapture %}
+
+
+          {% assign articles_cont_arr = articles_contents | split: '<!-- excerpt -->' %}
+          {% if articles_cont_arr.size > 0 %}
+                  {% assign articles_contents = articles_cont_arr | last %}
+          {% endif %}
+
+          {% unless authweight == 0 %}
+            {% if articles.author == article.author %}
+                {% assign match_score = match_score | plus: authweight %}
+            {% endif %}
+          {% endunless %}
+
+
+          {% unless tagweight == 0 %}
+              {% for tag in articles.tags %}
+                    {% if post_tags contains tag %}
+                        {% assign match_score = match_score | plus: tagweight %}
+                    {% endif %}
+            {% endfor %}
+          {% endunless %}
+
+
+          {% unless titleweight == 0 %}
+            {% assign titlearr = articles.title | split: ' ' %}
+            {% for t in titlearr %}
+              {% assign t2 = t | strip %}
+              {% assign t3 = t2 | downcase %}
+                  {% for art_tag in post_tags  %}
+                      {% assign art_tag_d = art_tag | downcase %}
+                      {% if t3 contains art_tag_d %}
+                             {% assign match_score = match_score | plus: titleweight %}
+                      {% endif %}
+                   {% endfor %}
+            {% endfor %}
+          {% endunless %}
+
+
+          {% if match_score > 0 %}
+              {% capture prod_details %}
+                  {% include 'pro-blogger.snippet.score_sorting' with score:match_score %}||{{ articles.id }}||{{ articles.handle }}||{{articles.title | escape }}||{{ articles.url }}||{{ articles.image | img_url: artimagesize }}||{{ articles_contents | strip_html | truncatewords: arttruncate }}
+              {% endcapture %}
+              {% assign matched_list = matched_list | append: prod_details | append: "://:" %}
+
+			{% assign pb_matches_found = pb_matches_found | plus: 1 %}
+          {% endif %}
+
+		{% endunless %}
+	{% endunless %}
+{% endfor %}
+{% endpaginate %}
+
+
+{% assign match_arr = matched_list | split: "://:" %}
+{% assign match_arr_sorted = match_arr | sort_natural  %}
+
+{{ 'problogger.css' | asset_url | stylesheet_tag }}
+{{ 'problogger-custom.css' | asset_url | stylesheet_tag }}
+
+{% if match_arr_sorted.size == 0 and authdisplay >= 1 %}
+{% else %}
+
+	<script type="text/javascript">
+
+		var related_articles_slider_options = {"enabled": false, "slider_display": 4, "slider_autoplay_enabled": true};
+
+	</script>
+     <div id="related_articles_section" style="display: none">
+	<div id="related_articles_header" >{{ artheader }}</div>
+  	<div id="related_articles_slider" class="owl-carousel">
+
+{% assign Slider_Items = 0 %}
+{% for Blog_Posts in match_arr_sorted %}
+  {% assign Blog_Post = Blog_Posts | split: "||" %}
+
+  {% assign articleId = Blog_Post[2] %}
+  {% assign articleHandle = Blog_Post[3] %}
+  {% assign articleTitle = Blog_Post[4] %}
+  {% assign articleURL = Blog_Post[5] %}
+  {% assign articleImg = Blog_Post[6] %}
+  {% assign articleExcerpt = Blog_Post[7] %}
+
+	{% include 'pro-blogger.snippet.related-item' with isarticle:true %}
+
+  {% assign Slider_Items = Slider_Items | plus: 1 %}
+  {% if Slider_Items == authdisplay %}
+  	{% break %}
+  {% endif %}
+
+{% endfor %}
+
+</div>
+        {% if pb_show_all_blogs %}
+        <div class="related_articles-btn-all">
+              {% assign btnmessage = 'blogs.article.view_all' | t  %}
+          		{% if btnmessage contains 'view_all' %}
+          			{% assign btnmessage = 'View All' %}
+          		{% endif %}
+              <a class="button btn"  href="{{ blog.url }}">{{ btnmessage }}</a>
+        </div>
+        {% endif %}
+</div>
+{% endif %}

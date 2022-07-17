@@ -1,0 +1,119 @@
+<!-- bold-hidden-variants.liquid -->
+{% comment %} 14/04/2016 {% endcomment %} 
+{% capture bold_hidden_variants_liquid %}
+{% comment %}
+BOLD-HIDDEN-VARIANTS.LIQUID - Universal Bold check to hide app-specific variants that should not be visible to customers
+This file sets a single variable to indicate if the given variant should be visible or not. 
+If included with the parameter 'loop', will also trigger a 'continue' if the variant should be hidden (useful for putting into the variant loop inside the 'select' tag).
+
+NOTE: bold_product, csp_child_variants and csp_is_default_user are set in bold-product.liquid.  Be sure to include bold-product before any calls to bold-hidden-variants to ensure full CSP compatibility! 
+
+There are two ways to use this file:
+* Include this file anywhere that we need to know whether a given variant should be hidden or not
+		Example: {% include 'bold-hidden-variants' with variant %}
+
+* Include this file immediately at the start of the variant loop with the variant and the keyword 'loop' to skip to the next variant
+		Example: {% include 'bold-hidden-variants' with variant, bold_loop: 'loop' %}
+
+The following variable is set:
+	bold_hidden_variant         Values: true (variant should be hidden), false (variant should be shown)
+
+{% endcomment %}
+
+{% assign bold_variant = bold-hidden-variants %}
+
+{% comment %} Set up Javascript variables. Key assumption is that base variants will be hit before their derivatives {% endcomment %}
+<script class="bold-remove-on-load">
+  if(typeof(Bold) !== 'object')
+    var Bold = {};
+  
+  if(typeof(Bold.base_variant) !== 'object')
+    Bold.base_variant = {};
+  
+  {% unless shop.metafields.shop_csp_tag_group['shop_csp_tag'] == blank %}
+    {% assign csp_tag_array = shop.metafields.shop_csp_tag_group['shop_csp_tag'] | split: ',' %}
+    {% for csp_tag in csp_tag_array %}
+    if(typeof(Bold.csp_{{ csp_tag | handle | replace: '-', '_' }}_variant) !== 'object')
+      Bold.csp_{{ csp_tag | handle | replace: '-', '_' }}_variant = {};
+    {% endfor %}
+  {% endunless %} 
+  
+  if(typeof(Bold.inventory_lookup) !== 'object')
+    Bold.inventory_lookup = {};
+  
+  {% if bold_variant.metafields.shappify_qb['qb_parent'] %}
+    Bold.base_variant[{{ bold_variant.id }}] = {id: {{ bold_variant.metafields.shappify_qb['qb_parent'] }} }; 
+    Bold.base_variant[{{ bold_variant.id }}].price = Bold.base_variant[{{ bold_variant.metafields.shappify_qb['qb_parent'] }}].price;
+  {% elsif bold_variant.metafields.shappify_csp['csp_base'] %}
+    Bold.base_variant[{{ bold_variant.id }}] = { id: {{ bold_variant.metafields.shappify_csp['csp_base'] }} };
+    Bold.base_variant[{{ bold_variant.id }}].price = Bold.base_variant[{{ bold_variant.metafields.shappify_csp['csp_base'] }}].price;
+    Bold.csp_{{ bold_variant.metafields.shappify_csp['csp_tag'] | handle | replace: '-', '_' }}_variant[{{ bold_variant.metafields.shappify_csp['csp_base'] }}] = { id: {{ bold_variant.id }}, price: {{ bold_variant.price }} };
+  {% elsif bold_variant.metafields.shappify_bundle['bundle_parent'] %}
+  Bold.base_variant[{{ bold_variant.id }}] = { id: {{ bold_variant.metafields.shappify_bundle['bundle_parent'] }} };
+    Bold.base_variant[{{ bold_variant.id }}].price = Bold.base_variant[{{ bold_variant.metafields.shappify_bundle['bundle_parent'] }}].price;
+  {% else %}
+    Bold.base_variant[{{ bold_variant.id }}] = { id: {{ bold_variant.id }}, price: {{ bold_variant.price}} };
+    
+  {% comment %} Initially fill all of the CSP containers with the default variants - they will be overwritten later if CSP variants exist {% endcomment %}
+  {% unless shop.metafields.shop_csp_tag_group['shop_csp_tag'] == blank %}
+    {% assign csp_tag_array = shop.metafields.shop_csp_tag_group['shop_csp_tag'] | split: ',' %}
+    {% for csp_tag in csp_tag_array %}
+    Bold.csp_{{ csp_tag | handle | replace: '-', '_' }}_variant[{{ bold_variant.id }}] = { id: {{ bold_variant.id }}, price: {{ bold_variant.price}} };
+    {% endfor %}
+  {% endunless %} 
+  
+    Bold.inventory_lookup[{{ bold_variant.id }}] = { inventory_management: '{{ bold_variant.inventory_management}}', inventory_policy: '{{ bold_variant.inventory_policy }}', inventory_quantity: {{ bold_variant.inventory_quantity }}, available: {{ bold_variant.available }} };
+  {% endif %}
+  
+    Bold.inventory_lookup[{{ bold_variant.id }}] = { inventory_management: Bold.inventory_lookup[Bold.base_variant[{{ bold_variant.id }}].id].inventory_management, inventory_policy: Bold.inventory_lookup[Bold.base_variant[{{ bold_variant.id }}].id].inventory_policy, inventory_quantity: Bold.inventory_lookup[Bold.base_variant[{{ bold_variant.id }}].id].inventory_quantity, available: Bold.inventory_lookup[Bold.base_variant[{{ bold_variant.id }}].id].available };
+</script>
+
+{% comment %} Check for CSP visibility. Other 'hide' rules are based directly on metafields on the variants. {% endcomment %}
+{% assign csp_hidden = false %}
+
+{% unless bold_variant.metafields.shappify_csp['csp_tag'] == blank %}
+  {% if bold_variant.metafields.shappify_csp['csp_tag'] == 'default' %}
+    
+      {% for customer_tag in customer.tags %}
+          {% assign csp_variant = bold_variant.id | append: ':' | append: customer_tag %}
+          {% for varstring in csp_child_variants %}
+            {% if varstring == csp_variant %}{% assign csp_hidden = true %}{% endif %}
+          {% endfor %}
+      {% endfor %}
+
+
+  {% else %}
+    {% assign csp_hidden = true %}
+    {% assign hide_check = bold_variant.metafields.shappify_csp['csp_tag'] | append: '-HIDE' %}
+    {% unless bold_product.tags contains hide_check %}
+
+      {% if customer.tags contains bold_variant.metafields.shappify_csp['csp_tag'] %}{% assign csp_hidden = false %}{% endif %}
+    {% endunless %}    
+  {% endif %}
+
+
+
+{% endunless %}
+
+
+{% comment %} CSP/QB combo doesn't set QB metafields. Need to check for QB using substring match {% endcomment %}
+{% assign cspqb_hidden = false %}
+{% assign cspqb_qty = bold_variant.title | split: ' ' | last | replace: '+', '' | plus: 0 %}
+{% assign cspqb_last_char = bold_variant.title | slice: -1 %}
+{% if cspqb_qty > 1 and cspqb_last_char == '+' %}{% assign cspqb_hidden = true %}{% endif %}
+
+
+{% comment %}Check for Third-party Hide Rules as well {% endcomment %}
+{% assign third_party_hidden = false %}
+{% if bold_variant.title contains '% Off' or bold_variant.metafields.brodev_scn.hide == "true" or bold_variant.metafields.secomapp.freegifts or bold_variant.title contains '(Bundle price)' %}{% assign third_party_hidden = true%}{% endif %}
+
+{% if csp_hidden != true and cspqb_hidden != true and bold_variant.metafields.shappify_qb.qb_hide != "1" and bold_variant.metafields.shappify_bundle.is_bundle != "true" and third_party_hidden != true %}
+   {% assign bold_hidden = false %}
+
+{% else %}
+  {% assign bold_hidden = true %}
+  {% unless bold_loop == blank %}{% continue %}{% endunless %}
+
+{% endif %}
+
+{% endcapture %}{% if bold_loop == blank %}{{ bold_hidden_variants_liquid | strip_newlines }}{% endif %}{% assign bold_loop = "" %}

@@ -1,0 +1,81 @@
+<div class="main-container">
+  {% paginate blog.articles by 5 %}
+
+  {% comment %}{% include 'breadcrumb' %}{% endcomment %}
+  <header class="section-header">
+    <h1 class="section-header__title h3">
+      {% if current_tags %}
+        {{ blog.title | link_to: blog.url }} &mdash; {{ current_tags.first }}
+      {% else %}
+        {{ blog.title }}
+      {% endif %}
+    </h1>
+  </header>
+  
+  <div class="grid">
+    
+    <div class="grid__item large--four-fifths">
+
+      <div class="grid">
+        <div class="grid__item large--one-whole">
+
+          {% for article in blog.articles %}
+
+            <div class="article">
+
+              <h2><a href="{{ article.url }}">{{ article.title }}</a></h2>
+              <p class="blog-date">
+                <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+                {% comment %}
+                  <span class="meta-sep">&#8226;</span>
+                  {{ article.author }}
+                {% endcomment %}
+                {% if article.tags.size > 0 %}
+                  <span class="meta-sep">&#8226;</span>
+                  {% for tag in article.tags %}
+                    <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %} <span class="meta-sep">&#8226;</span> {% endunless %}
+                  {% endfor %}
+                {% endif %}
+              </p>
+
+              {% comment %}
+                Add a surrounding div with class 'rte' to anything that will come from the rich text editor.
+                Since this is just a listing page, you can either use the excerpt or truncate the full article.
+              {% endcomment %}
+              <div class="rte">
+                {% if article.image %}
+                  {% assign image_alt = article.title | escape %}
+                  <p>{{ article | img_url: 'medium' | img_tag: image_alt, 'article__image' | link_to: article.url }}</p>
+                {% endif %}
+                {% if article.excerpt.size > 0 %}
+                <p>{{ article.excerpt }}</p>
+                {% else %}
+                  <p>{{ article.content | strip_html | truncatewords: 100 }}</p>
+                {% endif %}
+              </div>
+
+              <p><a href="{{ article.url }}">{{ 'blogs.article.read_more' | t }} &rarr;</a></p>
+
+            </div>
+
+            {% unless forloop.last %}<hr>{% endunless %}
+
+          {% endfor %}
+
+          {% if paginate.pages > 1 %}
+            <div class="text-center">
+              {% include 'pagination-custom' %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <aside class="sidebar grid__item large--one-fifth">
+      {% include 'blog-sidebar' %}
+    </aside>
+
+  </div>
+
+  {% endpaginate %}
+</div>

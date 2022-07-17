@@ -1,0 +1,33 @@
+{% comment %}
+<!-- \ Static Banner / -->
+<div class="home-banner-mobile">
+<div class="static-banner">
+<a href="#"><img class="lazyload" src="{{ 'Spin-1s-75px.gif' | asset_url }}" data-src="{{ 'home-page-static-banner.jpg' | file_url }}" alt=""></a>
+</div>
+<!-- / Static Banner \ -->
+<div class="clear"></div>
+{% if settings.home_section_1 != blank %}
+  {% include settings.home_section_1 %}
+{% endif %}
+</div>
+{% endcomment %}
+<div class="clear"></div>
+
+<div class="main-index">
+{{ content_for_index }}
+</div>
+
+<div class="clear"></div>
+<!-- {% if settings.home_section_2 != blank %}
+  <hr class="hr--small hr--clear">
+  {% include settings.home_section_2 %}
+{% endif %} -->
+{% if settings.home_section_3 != blank %}
+<div class="home-main-content">
+  {% include settings.home_section_3 %}
+</div>
+{% endif %}
+<!-- {% if settings.home_section_4 != blank %}
+  <hr class="hr--small hr--clear">
+  {% include settings.home_section_4 %}
+{% endif %} -->

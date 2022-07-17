@@ -1,0 +1,206 @@
+{% assign products_per_page = section.settings.products_per_page %}
+{% paginate collection.products by products_per_page %}
+<div class="grid-uniform grid-link__container bc-sf-filter-wrapper-page">
+  <div id="demo" class="box jplist jplist-grid-view">
+
+    <div class="mobile-sidebar-tabs clearfix">
+      <h3 class="sidebar-header" id="sort-by" data-index="2">Sort</h3>
+      <h3 class="sidebar-header" id="filter-by" data-index="3">Filter</h3>
+    </div>
+    {% comment %} TOOLBAR {% endcomment %}
+    
+    {% comment %} END TOOLBAR {% endcomment %}
+    <div id="bc-sf-filter-wrapper">
+      <div id="bc-sf-filter-tree-mobile">{% include 'bc-sf-filter-skeleton', type: 'button' %}</div>
+      <div id="bc-sf-filter-top-sorting-mobile" class="bc-sf-filter-custom-sorting">{% include 'bc-sf-filter-skeleton', width: 1 %}</div>
+      <div class="bc-sf-filter-left-col sidebar">
+        <div id="bc-sf-filter-default-toolbar">
+          <div class="bc-sf-filter-default-toolbar-inner">
+            {% comment %}
+            <div class="bc-sf-filter-toolbar-item">
+              <div id="bc-sf-filter-top-display-type">
+                {% include 'bc-sf-filter-skeleton', width: 4 %}
+              </div>
+            </div>
+            <div class="bc-sf-filter-toolbar-item bc-sf-filter-toolbar-count">
+              <span id="bc-sf-filter-total-product">
+                {% include 'bc-sf-filter-skeleton', width: 1 %}
+              </span>
+            </div>
+            {% endcomment %}
+            <h3 class="sidebar-header" data-index="2">Sort By</h3>
+            <div class="bc-sf-filter-toolbar-item bc-sf-filter-custom-sorting" id="bc-sf-filter-top-sorting">
+              {% include 'bc-sf-filter-skeleton', width: 4 %}
+            </div>
+          </div>
+        </div>
+        <h3 class="sidebar-header" data-index="3">Filter By</h3>
+        <div id="bc-sf-filter-tree">
+          {% include 'bc-sf-filter-tree-placeholder' %}
+        </div>
+      </div>
+      <div class="bc-sf-filter-right-col ab-right-product">
+        <div class="overlay-container">
+          <div class="rte clearfix truncated box grid__item collection-description qw12">
+            {{ collection.description | truncate: 100 }}
+
+            <a class="read-more" href="#">Read more</a>
+          </div>
+
+          <div class="rte clearfix box grid__item collection-description qw12">
+            {{ collection.description }}
+          </div>
+          
+          <div id="bc-sf-filter-products"  class="list box" style="display:flex;" data-bc-sort="{{ collection.default_sort_by }}">
+            {% for product in collection.products %}
+            {% include 'product-grid-item', product: product %}
+            {% endfor %}
+          </div>
+          <div id="bc-sf-filter-bottom-pagination" class="bc-sf-filter-bottom-pagination-default"></div>
+          <div id="bc-sf-filter-load-more"></div>
+                    <div class="rte clearfix box grid__item collection-description qw12">
+			{{ collection.metafields.my_fields.extendedcontent }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% comment %} start-bc-most-popular-template {% endcomment %}
+    <div class="bc-sf-most-popular-products-wrapper bc-sf-widget-slider-wrapper">
+      <div class="bc-sf-most-popular-products bc-sf-widget-products owl-carousel"></div>
+    </div>
+    {% comment %} end-bc-most-popular-template {% endcomment %}
+
+    {% comment %} start-bc-recently-viewed-template {% endcomment %}
+    <div class="bc-sf-recent-products-wrapper bc-sf-widget-slider-wrapper">
+      <div class="bc-sf-recent-products bc-sf-widget-products owl-carousel"></div>
+    </div>
+    {% comment %} end-bc-recently-viewed-template {% endcomment %}
+  </div>
+</div>
+{% endpaginate %}
+<script>
+  // Declare bcSfFilterConfig variable
+  var bcSfFilterConfig = {
+    label: {
+      sorting: {% assign temp = 'collections.sorting.title' | t  %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Sorting" {% endunless %},
+      sorting_best_selling: {% assign temp = 'collections.sorting.best_selling' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Best Selling" {% endunless %},
+      sorting_featured: {% assign temp = 'collections.sorting.featured' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Featured" {% endunless %},
+      sorting_title_ascending: {% assign temp = 'collections.sorting.az' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Alphabetically, A-Z" {% endunless %},
+      sorting_title_descending: {% assign temp = 'collections.sorting.za' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Alphabetically, Z-A" {% endunless %},
+      sorting_price_ascending: {% assign temp = 'collections.sorting.price_ascending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Lowest Price" {% endunless %},
+      sorting_price_descending: {% assign temp = 'collections.sorting.price_descending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Highest Price" {% endunless %},
+      sorting_date_ascending: {% assign temp = 'collections.sorting.date_ascending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Date, Old to New" {% endunless %},
+      sorting_date_descending: {% assign temp = 'collections.sorting.date_descending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Date, New to Old" {% endunless %},
+      sorting_sale_descending: {% assign temp = 'collections.sorting.sale_descending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "% Off" {% endunless %},
+      sorting_relevance: {% assign temp = 'collections.sorting.relevance' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Relevance" {% endunless %},
+      toolbar_viewas: "View As",
+      items_with_count_one: "product",
+      items_with_count_other: "Products",
+    },
+    label_basic: {
+      sale: {{ section.settings.sale_label | json }},
+      sold_out: {{ section.settings.soldout_label | json }},
+      from: {{ section.settings.from | json }},
+    },
+    custom: {
+      products_per_page: {% if products_per_page %} {{ products_per_page | json }} {% else %} 24 {% endif %},
+      products_per_row: {% if section.settings.products_per_row %} {{ section.settings.products_per_row }} {% else %} 3 {% endif %},
+      products_per_row_mobile: {% if section.settings.products_per_row_mobile %} {{ section.settings.products_per_row_mobile }} {% else %} 2 {% endif %},
+      show_vendor: {% if section.settings.show_vendor %} {{ section.settings.show_vendor | json }} {% else %} false {% endif %},
+      show_price: {% if section.settings.show_price %} {{ section.settings.show_price | json }} {% else %} false {% endif %},
+      show_sale_label: {% if section.settings.show_sale_label %} {{ section.settings.show_sale_label | json }} {% else %} false {% endif %},
+      show_sold_out_label: {% if section.settings.show_sold_out_label %} {{ section.settings.show_sold_out_label | json }} {% else %} false {% endif %},
+      active_image_swap: {% if section.settings.active_image_swap %} {{ section.settings.active_image_swap | json }} {% else %} false {% endif %},
+      show_sorting: {% if section.settings.show_sorting %} {{ section.settings.show_sorting | json }} {% else %} false {% endif %},
+    }
+  };
+</script>
+{% schema %}
+  {
+    "name": "Collection pages",
+    "settings": [
+      {
+        "type": "range",
+        "id": "products_per_page",
+        "label": "Products per page",
+        "min": 2,
+        "max": 50,
+        "step": 1,
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "products_per_row",
+        "label": "Products per row on Desktop",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "default": 3
+      },
+      {
+        "type": "range",
+        "id": "products_per_row_mobile",
+        "label": "Products per row on Mobile",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "default": 2
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show product vendor",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_price",
+        "label": "Show price",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_sale_label",
+        "label": "Show sale label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_sold_out_label",
+        "label": "Show sold out label",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "active_image_swap",
+        "label": "Active image swap",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_sorting",
+        "label": "Enable collection sorting",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "soldout_label",
+        "label": "Sold Out Label",
+        "default": "Sold out"
+      },
+	    {
+        "type": "text",
+        "id": "sale_label",
+        "label": "Sale Label",
+        "default": "Sale"
+      },
+      {
+        "type": "text",
+        "id": "from",
+        "label": "From",
+        "default": "from"
+      }
+    ]
+  }
+{% endschema %}

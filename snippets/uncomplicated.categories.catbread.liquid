@@ -1,0 +1,28 @@
+<!-- Begin uncomplicated category-based breadcrumb -->
+<nav id="uncomplicated-category-breadcrumb" class="breadcrumb" role="navigation" aria-label="breadcrumbs">
+
+    <a id="uncomplicated-category-breadcrumb-model-item" href="/" title="Home">Home</a>
+    <span id="uncomplicated-category-breadcrumb-top-separator" aria-hidden="true" class="breadcrumb__sep">&rsaquo;</span>
+    {% if collection %}
+        {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+        {% if current_tags %}
+            <span>{{ current_tags | join: " + " }}</span>
+        {% else %}
+	        {{ collection.title | link_to: url }}
+        {% endif %}
+    {% else %}
+        <a href="/collections/all" title="All Products">All Products</a>
+        {% if current_tags %}
+            <span aria-hidden="true" class="breadcrumb__sep">&rsaquo;</span>
+            <span>{{ current_tags | join: " + " }}</span>
+        {% endif %}
+    {% endif %}
+    {% if product %}
+        <span aria-hidden="true" class="breadcrumb__sep">&rsaquo;</span>
+        <span><strong>{{ product.title | truncate: 28 }}</strong></span>
+    {% endif %}
+</nav>
+
+{{ 'uncomplicated.categories.catlist.min.js' | asset_url | script_tag }}
+{{ 'uncomplicated.categories.catlist.css' | asset_url | stylesheet_tag }}
+<!-- End uncomplicated category-based breadcrumb -->

@@ -1,0 +1,141 @@
+{% comment %}
+{% include 'filter-menu' %}
+           <!--<h4>Strength</h4>
+           {% for link in linklists.Strength.links %}
+<div class="filter-item">
+           <input
+                  data-path='.{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'
+                   id='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}' 
+                   type="checkbox" 									
+                   />
+   			<label for='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'>{{ link.title }}</label>
+</div>	
+  {% endfor %}
+         
+          
+
+ 
+           <h4>Origin</h4>
+
+           {% for link in linklists.country-of-origin.links %}
+<div class="filter-item">
+           <input
+                  data-path='.{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'
+                   id='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}' 
+                   type="checkbox" 									
+                   />
+   			<label for='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'>{{ link.title }}</label>
+  </div>
+
+  {% endfor %}
+         
+         
+
+
+ 
+           <h4>Wrapper</h4>
+           {% for link in linklists.wrapper-types.links %}
+<div class="filter-item">
+           <input
+                  data-path='.{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'
+                   id='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}' 
+                   type="checkbox" 									
+                   />
+   			<label for='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'>{{ link.title }}</label>
+ </div>	
+  {% endfor %}
+
+<h4>Shape</h4>
+           {% for link in linklists.shape.links %}
+<div class="filter-item">
+           <input
+                  data-path='.{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'
+                   id='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}' 
+                   type="checkbox" 									
+                   />
+   			<label for='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'>{{ link.title }}</label>
+ </div>	
+  {% endfor %}
+
+<h4>Binder</h4>
+           {% for link in linklists.binder.links %}
+<div class="filter-item">
+           <input
+                  data-path='.{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'
+                   id='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}' 
+                   type="checkbox" 									
+                   />
+   			<label for='{{link.title | replace: "'", "-" | replace: "$", "-" | replace: ".", "-" | replace: "&", "-" | replace: "/", "-" | replace: " ", "-"}}'>{{ link.title }}</label>
+ </div>	
+  {% endfor %}
+-->
+{% endcomment %}
+{% assign tag_keywords = settings.tag_keywords | downcase | replace: ' ,', ',' | replace: ', ', ',' | split: ',' %}
+{% assign initial = true %}
+{% unless collection %}
+  {% assign collection = collections.all %}
+{% endunless %}
+<!-- qqqqqq {{ collection.all_tags.size }} {{ collection.handle }} -->
+{% if collection.all_tags.size > 0 %}
+  {% for tag in collection.all_tags %}
+
+   {% assign key_arr = tag | split: ':' %}
+   {% assign values_arr = key_arr[1] | split: '|' %}
+   {% assign down_tag = key_arr[0] | downcase %}
+
+   {% if tag_keywords contains down_tag %}
+
+     {% capture filterTags %}{{ filterTags }}|||{{ tag }}{% endcapture %}
+
+     {% assign code_was_run = true %}
+
+     {% unless key_arr[0] == old_key %}
+       {% unless initial %}
+         {{ '<span class="more-link">More...</span></div>' }}
+           {% if old_key == 'Ring Gauge' and false %}
+             <input class="lower-bound" type="text" readonly>
+             <input class="upper-bound" type="text" readonly>
+           {% endif %}
+         {{ '</div>' }}
+       {% endunless %}
+       {% assign initial = false %}
+       {{ '<div class="product-information-row">' }}
+     {% endunless %}
+
+     {% unless key_arr[0] == old_key %}
+       {% assign old_key = key_arr[0] %}
+       <div data-category="{{ key_arr[0] }}" class="product-information-title">{{ key_arr[0] | capitalize }}</div>
+       {% if key_arr[0] == 'Ring Gauge' and false %}
+         <div class="slider-container" data-category="{{ key_arr[0] }}">
+           <div class="slider-arrow slider-arrow-left"></div>
+           <div class="slider-line"></div>
+           <div class="slider-arrow slider-arrow-right"></div>
+         </div>
+       {% endif %}
+       <div class="tags-container">
+     {% endunless %}
+
+     {% if key_arr[0] == 'Ring Gauge' and false %}
+       {% for v in values_arr %}
+         <div data-category="{{ key_arr[0] }}" data-tag="{{ tag }}" class="product-information-item filter-menu-item selected" style="display:none;">{{ v }}</div>
+       {% endfor %}
+
+     {% else %}
+       {% for v in values_arr %}
+         <div data-category="{{ key_arr[0] }}" data-tag="{{ tag }}" class="product-information-item filter-menu-item">{{ v }}</div>
+       {% endfor %}
+     {% endif %}
+
+   {% endif %}
+
+   {% if forloop.last and code_was_run %}
+     {{ '<span class="more-link">More...</span></div></div>' }}
+   {% endif %}
+
+  {% endfor %}
+{% else %}
+  <div class="product-information-row">No product filters available</div>
+{% endif %}
+
+
+<!-- Filter Menu brought to you by Shopify Power Tools -->

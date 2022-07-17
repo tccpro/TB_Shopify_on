@@ -1,0 +1,309 @@
+{% layout none %}
+
+{% comment %} App Settings {% endcomment %}
+{% assign bc_settings = shop.metafields.bc-sf-filter.settings %}
+{% assign bc_al_version = 'basic' %} {% assign bc_al_is_advanced_version = false %} {% if bc_settings contains 'alVersion":' %} {% assign bc_al_check_version = bc_settings | split: 'alVersion":' | last | split: ',' | first | strip %} {% if bc_al_check_version contains '\x61\x64\x76\x61\x6E\x63\x65\x64' %} {% assign bc_al_version = 'advanced' %} {% assign bc_al_is_advanced_version = true %} {% endif %} {% endif %}
+
+
+{% comment %} Translation {% endcomment %}
+{% assign view_full_label = 'View Full Details' %}
+{% if bc_settings contains 'qvViewFullDetails' %}
+{% assign view_full_label = bc_settings | split: 'qvViewFullDetails":' | last | split: ',' | first | replace: '"', '' | replace: '}', '' | strip %}
+{% endif %}
+{% assign quantity_label = 'Quantity' %}
+{% if bc_settings contains 'qvQuantity' %}
+{% assign quantity_label = bc_settings | split: 'qvQuantity":' | last | split: ',' | first | replace: '"', '' | replace: '}', '' | strip %}
+{% endif %}
+{% assign add_to_cart_btn_label = 'Add To Cart' %}
+{% if bc_settings contains 'qvAddToCartBtnLabel' %}
+{% assign add_to_cart_btn_label = bc_settings | split: 'qvAddToCartBtnLabel":' | last | split: ',' | first | replace: '"', '' | replace: '}', '' | strip %}
+{% endif %}
+{% assign sold_out_btn_label = 'Sold Out' %}
+{% if bc_settings contains 'qvSoldOutLabel' %}
+{% assign sold_out_btn_label = bc_settings | split: 'qvSoldOutLabel":' | last | split: ',' | first | replace: '"', '' | replace: '}', '' | strip %}
+{% endif %}
+
+{% comment %} QV Settings {% endcomment %}
+{% assign active_vendor = true %}
+{% assign active_description = true %}
+
+{% assign bc_al_qv_cart_form_enable = 'true' %}
+{% if bc_settings contains 'qvCartFormEnable' and bc_al_is_advanced_version %}
+	{% assign bc_al_qv_cart_form_enable = bc_settings | split: 'qvCartFormEnable:' | last | split: ',' | first | replace: '"', '' | replace: '}', '' | strip %}
+{% endif %}
+
+{% assign bc_al_qv_notify_form_enable = 'false' %}
+{% if bc_settings contains 'qvNotifyMeFormEnable' and bc_al_is_advanced_version %}
+	{% assign bc_al_qv_notify_form_enable = bc_settings | split: 'qvNotifyMeFormEnable:' | last | split: ',' | first | replace: '"', '' | replace: '}', '' | strip %}
+{% endif %}
+
+{% assign bc_al_qv_social_block_enable = 'false' %}
+{% if bc_settings contains 'qvSocilaBlockEnable' and bc_al_is_advanced_version %}
+	{% assign bc_al_qv_social_block_enable = bc_settings | split: 'qvSocilaBlockEnable:' | last | split: ',' | first | replace: '"', '' | replace: '}', '' | strip %}
+{% endif %}
+
+{% assign active_price = true %}
+{% assign image_size = '600x' %}
+{% assign image_thumb_size = '150x' %}
+{% assign image_scale = 3 %}
+{% assign truncate_words = 30 %}
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+
+<div class="bc-quickview-overlay bc-modal-overlay"></div>
+<div class="bc-quickview-wrapper bc-modal-container bc-al-{{ bc_al_version }}-version">
+  <div class="bc-quickview-popup-icon-close bc-modal-icon-close"></div>
+  <div class="bc-quickview-content bc-modal-content">
+    <div class="bc-quickview-left bc-quickview-product-thumbs">
+      <div class="bc-quickview-featured-image-wrapper" id="bc-quickview-featured-image-wrapper">
+        <img id="bc-quickview-featured-image" data-zoom-image="{{ featured_image | img_url: image_size, scale: image_scale }}" src="{{ featured_image | img_url: image_size }}" alt="{{ featured_image.alt | escape }}" class="bc-quickview-featured-image" />
+      </div>
+      {% if product.images.size > 1 %}
+      <div class="bc-quickview-product-thumbs-list" id="bc-quickview-product-thumbs-list">
+        <div class="bc-quickview-thumbs-item selected">
+          <img data-zoom-image-src="{{ featured_image | img_url: image_size, scale: image_scale }}" data-main-src="{{ featured_image | img_url: image_size }}" src="{{ featured_image | img_url: image_thumb_size }}" alt="{{ featured_image.alt | escape }}" class="bc-quickview-thumbs-image"/>
+        </div>
+        {% for image in product.images %}
+          {% unless featured_image == image.src %}
+          <div class="bc-quickview-thumbs-item">
+            <img data-zoom-image-src="{{ image.src | img_url: image_size, scale: image_scale }}" data-main-src="{{ image.src | img_url: image_size }}" src="{{ image.src | img_url: image_thumb_size }}" alt="{{ image.alt | escape }}" class="bc-quickview-thumbs-image"/>
+          </div>
+          {% endunless %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <div class="bc-quickview-right product-details">
+      <h1 class="bc-quickview-title">{{ product.title }}</h1>
+
+      {% if active_vendor %}
+      <p class="bc-quickview-vendor">{{ product.vendor }}</p>
+      {% endif %}
+
+      {% if active_description %}
+      <div class="bc-quickview-description">
+        {{ product.description | strip_html | truncatewords: truncate_words }}
+      </div>
+      {% endif %}
+
+      <a href="{{ product.url | within_collection }}" class="bc-quickview-view-full">{{ view_full_label }}</a>
+
+      <div class="bc-quickview-line"></div>
+
+      {% if active_price %}
+      <div class="bc-quickview-price-wrapper {% unless current_variant.available %} bc-quickview-price-sold-out{% endunless %} {% if current_variant.compare_at_price > current_variant.price %} bc-quickview-price-on-sale{% endif %}">
+        <p class="bc-quickview-price">
+          {% if current_variant.compare_at_price > current_variant.price %}
+          <span id="bc-quickview-current-price" class="h3 money bc-quickview-price sale">
+            {{ current_variant.price | money }}
+          </span>
+          <span id="bc-quickview-was-price" class="h3 money bc-quickview-price bc-quickview-was-price">
+            {{ current_variant.compare_at_price | money }}
+          </span>
+          {% else %}
+          <span id="bc-quickview-current-price" class="h3 money bc-quickview-price">
+            {{ current_variant.price | money }}
+          </span>
+          <span id="bc-quickview-was-price" class="h3 money bc-quickview-price bc-quickview-was-price"></span>
+          {% endif %}
+        </p>
+      </div>
+      {% endif %}
+
+      {% if bc_al_qv_cart_form_enable == 'true' %}
+      <form id="bc-quickview-cart-form" action="/cart/add" method="post" enctype="multipart/form-data" class="bc-quickview-cart-form">
+        {% assign available_variants = product.variants | map: 'title' | join: ', '%}
+        <select data-available_variants="{{ available_variants }}"
+                data-product-title="{{ product.title | escape }}"
+                data-bc-options-size="{{product.options_with_values | size}}"
+                style="display:none" name="id"
+                id="bc-quickview-variants-selector"
+                class="bc-quickview-variants-selector">
+          {% for variant in product.variants %}
+          {% if variant.image != blank %}
+          {% assign variant_image = variant.image %}
+          {% else %}
+          {% assign variant_image = featured_image %}
+          {% endif %}
+          {% if variant.available %}
+          <option data-available="true"
+                  data-zoom-image-src="{{ variant_image | img_url: image_size, scale: image_scale }}"
+                  data-featured-image="{{ variant_image | img_url: image_size }}"
+                  data-variant-id="{{ variant.id }}"
+                  data-variant-title="{{ variant.title }}"
+                  data-current-price-without-currency="{{ variant.price | money_without_currency }}"
+                  data-current-price="{{ variant.price | money | strip_html }}"
+                  data-was-price-without-currency="{{ variant.compare_at_price | money_without_currency }}"
+                  data-was-price="{{ variant.compare_at_price | money | strip_html }}"
+                  data-inventory-management="{{ variant.inventory_management }}"
+                  data-inventory-policy="{{ variant.inventory_policy }}"
+                  data-inventory-quantity="{{ variant.inventory_quantity }}"
+                  {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %}
+                  value="{{ variant.id }}"></option>
+          {% else %}
+          <option data-available="false"
+                  disabled="disabled"
+                  data-zoom-image-src="{{ variant_image | img_url: image_size, scale: image_scale }}"
+                  data-featured-image="{{ variant_image | img_url: image_size }}"
+                  data-variant-id="{{ variant.id }}"
+                  data-variant-title="{{ variant.title }}"
+                  data-current-price-without-currency="{{ variant.price | money_without_currency }}"
+                  data-current-price="{{ variant.price | money | strip_html }}"
+                  data-was-price-without-currency="{{ variant.compare_at_price | money_without_currency }}"
+                  data-was-price="{{ variant.compare_at_price | money | strip_html }}" {% if variant == product.selected_or_first_available_variant %}
+                  data-inventory-management="{{ variant.inventory_management }}"
+                  data-inventory-policy="{{ variant.inventory_policy }}"
+                  data-inventory-quantity="{{ variant.inventory_quantity }}"
+                  selected="selected" {% endif %}
+                  value="{{ variant.id }}"></option>
+          {% endif %}
+          {% endfor %}
+        </select>
+        {% assign option_size = product.options_with_values | size %}
+        {% if option_size > 0 %}
+        <div id="bc-quickview-option-selector-wrapper">
+          {% for option in product.options_with_values %}
+          {% unless option.values contains "Default Title" %}
+          {% assign index = forloop.index %}
+          <div class="bc-quickview-selector-wrapper {% if index == option_size %}last{% endif %}">
+            <label for="bc-quicview-single-option-selector-{{ forloop.index0 }} {% if option.name == 'default' %}class="label--hidden" {% endif %}">
+              {{ option.name }}
+            </label>
+            <select id="bc-quickview-single-option-selector-{{ forloop.index }}" class="bc-quickview-single-option-selector" data-single-option-selector-index="option{{ forloop.index }}">
+              {% for value in option.values %}
+              <option data-available-variant="{{}}" value="{{ value | escape }}" {% if option.selected_value == value %} selected="selected"{% endif %}>{{ value }}</option>
+              {% endfor %}
+            </select>
+            {% capture downcased_option %}{{ option.name | downcase }}{% endcapture %}
+            <ul style="display: none" class="bc-quickview-single-option-swatch" data-single-option-selector-target="#bc-quickview-single-option-selector-{{ forloop.index }}">
+              {% if downcased_option contains 'color' or downcased_option contains 'colour' %}
+              {% for value in option.values %}
+              <li data-value="{{ value }}" class="{% if bc_al_is_advanced_version %}bc-quickview-swatch-tooltip{% endif %} {% if option.selected_value == value %}selected{% endif %} bc-quickview-single-option-swatch-item bc-quickview-swatch-color">
+                <span class="bc-quickview-swatch-tooltip-hover" style="background-color: {{ value }};">{{ value }}</span>
+                <span class="bc-quickview-swatch-tooltip-text">{{ value }}</span>
+              </li>
+              {% endfor %}
+              {% else %}
+              {% for value in option.values %}
+              <li data-value="{{ value }}" class="{% if bc_al_is_advanced_version %}bc-quickview-swatch-tooltip{% endif %} {% if option.selected_value == value %}selected{% endif %} bc-quickview-single-option-swatch-item">
+                <span class="bc-quickview-swatch-tooltip-hover">{{ value }}</span>
+                {% if bc_al_is_advanced_version %}
+                <span class="bc-quickview-swatch-tooltip-text">{{ value }}</span>
+                {% endif %}
+              </li>
+              {% endfor %}
+              {% endif %}
+            </ul>
+          </div>
+          {% endunless %}
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if bc_al_is_advanced_version and current_variant.available == true and current_variant.inventory_management == "shopify" and current_variant.inventory_policy != "continue" and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= 9 %}
+        <div id="bc-quickview-inventory-quantity">Hurry, there are only {{ current_variant.inventory_quantity }} item(s) left!</div>
+        {% endif %}
+
+        <div class="bc-quickview-qty-cartbtn-wrapper">
+          <label for="bc-quickview-cart-quantity">{{ quantity_label }}</label>
+          <div class="bc-quickview-qty-cartbtn">
+            <div class="bc-quickview-quantity">
+              <input type="number" id="bc-quickview-cart-quantity" name="quantity" value="1" min="1" class="bc-quickview-cart-quantity" pattern="[0-9]*">
+            </div>
+            <div class="bc-quickview-cart">
+              <button type="submit" name="add" id="bc-quickview-cart-btn" {% unless current_variant.available %}disabled="disabled"{% endunless %} class="btn bc-quickview-cart-btn{% if product.options.size == 1 and product.variants[0].title == 'Default Title' %} product-form__cart-submit--small{% endif %}">
+                <span id="bc-quickview-cart-btn-text">
+                  {% unless current_variant.available %}
+                  {{ sold_out_btn_label }}
+                  {% else %}
+                  {{ add_to_cart_btn_label }}
+                  {% endunless %}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+      {% endif %}
+
+      {% if bc_al_is_advanced_version %}
+        {% if bc_al_qv_notify_form_enable == 'true' %}
+        <div id="bc-quickview-notify-me-form-wrapper" {% if current_variant.available %} style="display: none" {% endif %}>
+          <p id="bc-quickview-notify-me-form-message">Please notify me when {{ product.title | escape }} - {{ current_variant.title }} becomes available.</p>
+          {% form 'contact', class: 'bc-quickview-notify-form' %}
+          {% unless form.posted_successfully? %}
+          <div id="bc-quickview-notify-me-customer-info">
+            <div class="bc-quickview-notify-me-info-left">
+              {% if customer %}
+              <input type="hidden" name="contact[email]" value="{{ customer.email }}" />
+              {% else %}
+              <input required="required" type="email" name="contact[email]"
+                     placeholder="your@email.com"
+                     class="styled-input {% if form.errors contains 'email' %} error{% endif %}"
+                     value="{{ contact.fields.email }}" />
+              {% endif %}
+              <input type="hidden" name="challenge" value="false" />
+              <input type="hidden" id="bc-quickview-notify-me-form-body" name="contact[body]"
+                     value="Please notify me when {{ product.title | escape }} - {{ current_variant.title }} becomes available." />
+            </div>
+
+
+            <div class="bc-quickview-notify-me-info-right">
+              <button type="submit" class="btn bc-quickview-send-message-btn">
+                <span>Send</span>
+              </button>
+            </div>
+          </div>
+          {% endunless %}
+          {% endform %}
+        </div>
+        {% endif %}
+
+      	{% if bc_al_qv_social_block_enable == 'true' %}
+        {% capture bc_social_escaped_url %}
+        {{ shop.url }}{{ product.url }}
+        {% endcapture %}
+        {% assign bc_social_escaped_url = bc_social_escaped_url | url_param_escape %}
+        {% assign bc_social_image_escaped_url = featured_image | img_url: image_size %}
+        {% assign bc_social_title_escaped_url = product.title | url_param_escape %}
+        {% assign bc_social_description_escaped_url = product.description | truncatewords:25  | strip_html | url_param_escape %}
+        {% assign bc_social_twitter_id = '' %}
+        {% assign bc_social_google_plus_id = '' %}
+        {% assign bc_social_pinterest_id = '' %}
+
+        <div class="bc-quickview-social-listing">
+          <p class="bc-quickview-social-item-label">
+            Share:
+          </p>
+          <ul>
+            <li class="bc-quickview-social-item bc-quickview-facebook">
+              <a href="https://www.facebook.com/sharer/sharer.php?s=100&amp;p[url]={{ bc_social_escaped_url  }}&amp;p[images][0]={{ bc_social_image_escaped_url }}&amp;p[title]={{ bc_social_title_escaped_url }}&amp;p[summary]={{ bc_social_description_escaped_url }}"
+                 target="_blank" title="Share on Facebook"
+                 rel="nofollow">
+                <i class="bc-facebook-icon"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" version="1.1" role="img" aria-labelledby="at-svg-facebook-1" class="at-icon at-icon-facebook" style="fill: rgb(34, 34, 34); width: 16px; height: 16px;"><title id="at-svg-facebook-1">Facebook</title><g><path d="M22 5.16c-.406-.054-1.806-.16-3.43-.16-3.4 0-5.733 1.825-5.733 5.17v2.882H9v3.913h3.837V27h4.604V16.965h3.823l.587-3.913h-4.41v-2.5c0-1.123.347-1.903 2.198-1.903H22V5.16z" fill-rule="evenodd"></path></g></svg></i>
+              </a>
+            </li>
+            <li class="bc-quickview-social-item bc-quickview-twitter">
+              <a href="https://twitter.com/intent/tweet?url={{ bc_social_escaped_url }}&amp;text={{ bc_social_title_escaped_url }}&amp;pubid={{ bc_social_twitter_id }}&amp;ct=1&amp;pco=tbxnj-1.0&quot;,&quot;&quot;,&quot;"
+                 target="_blank" title="Share on Twitter" rel="nofollow">
+                <i class="bc-twitter-icon"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" version="1.1" role="img" aria-labelledby="at-svg-twitter-2" class="at-icon at-icon-twitter" style="fill: rgb(34, 34, 34); width: 16px; height: 16px;"><title id="at-svg-twitter-2">Twitter</title><g><path d="M27.996 10.116c-.81.36-1.68.602-2.592.71a4.526 4.526 0 0 0 1.984-2.496 9.037 9.037 0 0 1-2.866 1.095 4.513 4.513 0 0 0-7.69 4.116 12.81 12.81 0 0 1-9.3-4.715 4.49 4.49 0 0 0-.612 2.27 4.51 4.51 0 0 0 2.008 3.755 4.495 4.495 0 0 1-2.044-.564v.057a4.515 4.515 0 0 0 3.62 4.425 4.52 4.52 0 0 1-2.04.077 4.517 4.517 0 0 0 4.217 3.134 9.055 9.055 0 0 1-5.604 1.93A9.18 9.18 0 0 1 6 23.85a12.773 12.773 0 0 0 6.918 2.027c8.3 0 12.84-6.876 12.84-12.84 0-.195-.005-.39-.014-.583a9.172 9.172 0 0 0 2.252-2.336" fill-rule="evenodd"></path></g></svg></i>
+              </a>
+            </li>
+            <li class="bc-quickview-social-item bc-quickview-google-plus">
+              <a href="https://plus.google.com/share?url={{ bc_social_escaped_url }}&amp;pubid={{ bc_social_google_plus_id }}&amp;ct=1&amp;pco=tbxnj-1.0&quot;,&quot;&quot;,&quot;" rel="nofollow" title="Share on Google+" target="_blank">
+                <i class="bc-google-plus-icon"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" version="1.1" role="img" aria-labelledby="at-svg-google_plusone_share-7" class="at-icon at-icon-google_plusone_share" style="fill: rgb(34, 34, 34); width: 16px; height: 16px;"><title id="at-svg-google_plusone_share-7">Google+</title><g><path d="M12 15v2.4h3.97c-.16 1.03-1.2 3.02-3.97 3.02-2.39 0-4.34-1.98-4.34-4.42s1.95-4.42 4.34-4.42c1.36 0 2.27.58 2.79 1.08l1.9-1.83C15.47 9.69 13.89 9 12 9c-3.87 0-7 3.13-7 7s3.13 7 7 7c4.04 0 6.72-2.84 6.72-6.84 0-.46-.05-.81-.11-1.16H12zm15 0h-2v-2h-2v2h-2v2h2v2h2v-2h2v-2z" fill-rule="evenodd"></path></g></svg></i>
+              </a>
+            </li>
+            <li class="bc-quickview-social-item bc-quickview-pinterest-icon">
+              <a href="https://www.pinterest.com/pin/create/button/?url={{ bc_social_escaped_url }}&amp;media={{ bc_social_image_escaped_url }}&amp;description={{ bc_social_description_escaped_url }}&amp;pubid={{ bc_social_pinterest_id }}&amp;ct=1&amp;pco=tbxnj-1.0&quot;,&quot;&quot;,&quot;"
+                 rel="nofollow" title="Share on Pinterest">
+                <i class="bc-pinterest-icon"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" version="1.1" role="img" aria-labelledby="at-svg-pinterest_share-3" class="at-icon at-icon-pinterest_share" style="fill: rgb(34, 34, 34); width: 16px; height: 16px;"><title id="at-svg-pinterest_share-3">Pinterest</title><g><path d="M7 13.252c0 1.81.772 4.45 2.895 5.045.074.014.178.04.252.04.49 0 .772-1.27.772-1.63 0-.428-1.174-1.34-1.174-3.123 0-3.705 3.028-6.33 6.947-6.33 3.37 0 5.863 1.782 5.863 5.058 0 2.446-1.054 7.035-4.468 7.035-1.232 0-2.286-.83-2.286-2.018 0-1.742 1.307-3.43 1.307-5.225 0-1.092-.67-1.977-1.916-1.977-1.692 0-2.732 1.77-2.732 3.165 0 .774.104 1.63.476 2.336-.683 2.736-2.08 6.814-2.08 9.633 0 .87.135 1.728.224 2.6l.134.137.207-.07c2.494-3.178 2.405-3.8 3.533-7.96.61 1.077 2.182 1.658 3.43 1.658 5.254 0 7.614-4.77 7.614-9.067C26 7.987 21.755 5 17.094 5 12.017 5 7 8.15 7 13.252z" fill-rule="evenodd"></path></g></svg></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      	{% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>

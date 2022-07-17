@@ -1,0 +1,51 @@
+<div class="main-container">
+
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ page.title }}</h1>
+  </header>
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+  <div class="rte clearfix truncated">
+    {{ page.content | truncate: 100 }}
+    
+    <a class="read-more" href="#">Read more</a>
+  </div>
+  
+  <div class="rte clearfix">
+    {{ page.content }}
+  </div>
+
+  {% assign brand_collections = page.metafields.Brands.brand_collection | strip_html | split: ';' %}
+
+  <ul class="collection-grid">
+
+    {% for brand in brand_collections %}
+      {% assign handle = brand | strip %}
+      {% assign brand_collection = collections[handle] %}
+
+      <li class="collection-item">  <!-- search-brand-item -->
+        <a href="{{ brand_collection.url }}"><img class="lazyload" src="{{ 'lazy.gif' | asset_url }}" data-src="{{ brand_collection.image | img_url: 'small'}}"></a>
+        <h4>{{ brand_collection.title | link_to: brand_collection.url }}</h4>
+      </li>
+
+    {% endfor %} 
+  </ul>
+</div>
+
+<br/>
+{% section 'feature-products-pipe' %}
+{% section 'featured-products_premiumpipe' %}
+<div class="main-container">
+    	<div class="rte clearfix">
+  <p>When we think of pipe smoking, many of us no doubt imagine old Hollywood stars, homey advertisements from the 50s and 60s, or perhaps even memories of grandparents and loved ones long gone. It's easy to think that pipe smoking is mistakenly a thing of the past. However, the tradition of pipe smoking is still very much alive.</p> 
+  <p>In fact, since 2014, more and more smokers and collectors have turned to the pipe-smoking hobby to bring the pursuit back into fashion. And we are more than proud and happy to be able to provide you with new and expert pipe smokers alike the most extensive, most well-stocked variety of pipe tobacco found online today.</p>
+  <p>Much like fine wines, Tobacco blends use different types of leaves to produce different flavors, burn rates, and mouthfeel. Made of long, narrow strips, pipe tobacco has higher moisture levels than cigarette tobacco for a denser, smoother smoke. Whether you are searching for premium tobacco for a high palate or a beginner looking to try affordable yet flavorful pipe tobacco, you'll find the perfect blend for you to enjoy. We have the most celebrated tobacco brands on the market and several fantastic but budget-friendly options. </p> 
+  <p>Some of our exclusive blends may feature sweeteners and a favorite of special blends to provide a unique flavor experience. For instance, we have Captain Black, one of the world's most iconic blends, and Cornell & Diehl, one of the most sought-after flavored pipe tobacco in the industry today. We even have a few collections of unique CBD pipe blends, such as Beleave CBD—providing a unique alternative to tobacco use. </p>
+  <p>For ease of browsing through our pipe tobacco online, you will find that we have conveniently placed all the brands of pipe tobacco we carry in one accessible place. Should you be searching for the best selling, best value pipe tobacco, simply scroll down to view the category and shop all of them or find our top customer favorites by looking through our best selling premium pipe tobacco section. Here, you'll find well-loved brands such as 4 Aces, Captain Black, Cherokee, Kentucky Select, Lane, Peter Stokkebye, and many more. There's also the option to browse both flavored and non-flavored tobacco with various strengths: mellow, medium, and full.</p> 
+  <p>Before you order from our fine selection of pipe tobacco online, why not consider signing up for our loyalty program? Please register today and enjoy complimentary 100 points for signing up, then earn reward points for every single purchase to go toward redeemable deals and discounts exclusively with us.</p>
+  <p>Would you love to know more about our pipe tobacco or have any questions for us? Please feel free to reach out to our excellent customer service representatives. We'd love to assist you!"
+  </div>
+</div>

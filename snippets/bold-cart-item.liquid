@@ -1,0 +1,404 @@
+<!-- bold-cart-item.liquid -->
+{% comment %} Last updated 2018-May-14 {% endcomment %}
+{% capture bold_cart_item_liquid %}
+{% comment %}
+BOLD-CART-ITEM.LIQUID - Universal Bold Cart Updater
+This file creates liquid variables to assist in updating line items in cart.liquid.
+
+USED BY: Product Options, Recurring Orders, Product Builder
+REQUIRES: bold.css
+
+To use this file:
+* Include this file immediately after the start of the item loop in the cart.
+	Example: {% include 'bold-cart-item' with item %}
+
+
+* Make the following replacements.
+	bold_item_price         replaces	item.price
+	bold_item_line_price    replaces	item.line_price
+
+* Follow the install instructions for your app to see where these variables need to be inserted
+  (See bold-cart.liquid for additional installation requirements)
+
+  PRODUCT OPTIONS
+    {{ bold_row_class }}         inserted	Inside the class attribute of the first row after  "for item in cart.items"
+    {{ bold_row_data }}          inserted	Inside the first row tag, outside of any other attributes
+    {{ bold_remove_class }}      inserted	Inside the class attribute of the remove button
+    {{ bold_remove_href }}       replaces	Relpaces the existing href attribute of the remove button
+    {{ bold_remove_attr }}       inserted	Inside the remove element's tag, outside of any other attributes
+    {{ bold_qty_class }}         inserted	Inside the class attribute of the quantity box
+    {{ bold_qty_attr }}          inserted	Inside the quantity box input tag, outside of any other attributes
+    {{ bold_item_properties }}   inserted	Placed where you want the selected options to display, usually shortly after the {{ item.title }}
+    {{ bold_qty_button_attr }} 	 inserted	Inside any +/- buttons on the cart.liquid page (if they exist)
+
+  RECURRING ORDERS
+    {{ bold_remove_class }}      inserted	Inside the class attribute of the remove button
+    {{ bold_recurring_desc }}    inserted	Placed where you want the recurring orders description to appear, usually shortly after the {{ item.title }}
+    (See bold-cart.liquid for additional installation requirements)
+
+  PRODUCT BUILDER
+    {{ bold_row_class }}         inserted	Inside the class attribute of the first row after  "for item in cart.items"
+    {{ bold_row_data }}          inserted	Inside the first row tag, outside of any other attributes
+    {{ bold_remove_class }}      inserted	Inside the class attribute of the remove button
+    {{ bold_remove_href }}       replaces	Relpaces the existing href attribute of the remove button
+    {{ bold_remove_attr }}       inserted	Inside the remove element's tag, outside of any other attributes
+    {{ bold_qty_class }}         inserted	Inside the class attribute of the quantity box
+    {{ bold_qty_attr }}          inserted	Inside the quantity box input tag, outside of any other attributes
+    {{ bold_qty_button_attr }} 	 inserted	Inside any +/- buttons on the cart.liquid page (if they exist)
+    {{ bold_item_properties }}   inserted	Placed where you want the selected options to display, usually shortly after the {{ item.title }}
+    {{ bold_builder_img_src }} inserted	Wrap the image tag with {% if bold_builder_img_src != blank %}<img src="{{ bold_builder_img_src }}" alt="{{ bold_builder_img_alt }}" />{% else %} <!-- Original Image Code --> {% endif %}
+    {{ bold_builder_img_alt }} inserted	See bold_builder_image_src above
+    {{ bold_builder_href }}      replaces	item.url (Some themes use item.product.url or item.variant.url instead)
+
+  BOLD D&H
+    {{ bold_qty_attr }}          inserted       Inside the quantity box input tag, outside of any other attributes
+
+  BUY THE MEASURE
+    {{ bold_qty_class }}         inserted       Inside the class attribute of the quantity box
+
+  QUANTITY BREAKS, CUSTOMER PRICING, PRODUCT BUNDLES
+    {{ bold_row_data }}          inserted	Inside the first row tag, outside of any other attributes
+    ** Inventory control also requires bold-variant-inventory.liquid and bold-base-variant.liquid
+    (See bold-cart.liquid for additional installation requirements)
+
+{% endcomment %}
+
+{% comment %} SET UP DEFAULTS BEFORE ANY APP INTERFERENCE {% endcomment %}
+
+{% assign bold_cart = bold_order | default: cart | default: checkout %}
+{% assign bold_item_list = bold_cart.items | default: bold_cart.line_items %}
+
+{% assign bold_item = bold-cart-item %}
+{% assign bold_item_price = bold_item.price %}
+{% assign bold_item_quantity = bold_item.quantity %}
+
+
+{% include 'bold-variant' with bold_item.variant, base_product: bold_item.product, line_item: bold_item %}
+{% assign bold_item_price = bold_variant_price | default: bold_item_price %}
+
+
+{% assign bold_hidden_item = false %}
+
+{% comment %} ATTRIBUTES FOR THE CART ROW {% endcomment %}
+{% if bold_item.properties.builder_id != blank %}
+  {% assign builder_id = 'builder_id' %}
+  {% assign master_builder = 'master_builder' %}
+{% else %}
+  {% assign builder_id = '_builder_id' %}
+  {% assign master_builder = '_master_builder' %}
+{% endif %}
+{% if bold_item.properties[master_builder] != blank %}
+  {% assign bold_row_class = 'bold-row bold-master bold-row-' | append: bold_item.properties[builder_id] %}
+  {% assign bold_row_data = 'data-bold-id="' | append: bold_item.properties[builder_id] | append: '"' %}
+{% elsif bold_item.properties[builder_id] != blank %}
+  {% assign bold_row_class = 'bold-row bold-hidden bold-row-' | append: bold_item.properties[builder_id] %}
+  {% assign bold_row_data = 'data-bold-id="' | append: bold_item.properties[builder_id] | append: '"' %}
+  {% assign bold_hidden_item = true %}
+{% else %}
+  {% assign bold_row_class = '' %}
+  {% assign bold_row_data = '' %}
+{% endif %}
+
+{% comment %} ADDITIONAL DATA FOR THE CART ROW {% endcomment %}
+{% capture bold_qty_check %}{% include 'bold-variant-inventory' %}{% endcapture %}
+{% unless bold_qty_check contains 'Liquid error' %}
+  {% assign bold_row_data = bold_row_data | append: ' data-bold-inventory-policy=' | append: bold_variant_inventory_policy %}
+  {% assign bold_row_data = bold_row_data | append: ' data-bold-inventory-quantity=' | append: bold_variant_inventory_quantity %}
+  {% assign bold_row_data = bold_row_data | append: ' data-bold-base-variant=' | append: bold_variant_inventory_base_id %}
+{% endunless %}
+
+{% comment %} CHECK FOR RATIO PROPERTIES {% endcomment %}
+{% assign bold_ratio = 1 %}
+{% if bold_item.properties._bold_ratio %}
+  {% assign bold_ratio = bold_ratio | times: bold_item.properties._bold_ratio %}
+{% elsif bold_item.properties._btm_ratio %}
+  {% assign bold_ratio = bold_ratio | times: bold_item.properties._btm_ratio %}
+{% endif %}
+{% assign bold_row_data = bold_row_data | append: ' data-bold-ratio=' | append: bold_ratio %}
+
+
+{% comment %} UNIT PRICE AND QUANTITY WITH BUY THE MEASURE {% endcomment %}
+{% if bold_ratio != 1 %}
+  {% assign bold_item_quantity = bold_item_quantity | divided_by: bold_ratio %}
+  {% assign bold_item_price = bold_item.price | times: bold_ratio %}
+{% endif %}
+
+{% comment %} TOTAL PRICE WITH PRICED OPTIONS {% endcomment %}
+{% if bold_item.properties[master_builder] != blank %}
+  {% if bold_item.properties._extra_price %}
+  {% comment %} PRICE IS ATTACHED TO THE MASTER, NO NEED TO LOOP THROUGH CART {% endcomment %}
+    {% assign bold_item_price = bold_item.price %}
+    {% for bold_extra in  bold_item.properties._extra_price %}
+      {% assign bold_item_price = bold_item_price | plus: bold_extra.last %}
+    {% endfor %}
+  {% else %}
+  {% comment %} OLD INSTALL, NEED TO LOOP THROUGH ENTIRE CART {% endcomment %}
+    {% assign bold_item_price = 0 %}
+    {% for po_item in bold_item_list %}
+
+      {% if bold_item.properties[builder_id] == po_item.properties[builder_id] %}
+
+        {% comment %} CHECK FOR RATIO PROPERTIES {% endcomment %}
+        {% assign po_ratio = 1 %}
+        {% if po_item.properties._bold_ratio %}
+          {% assign po_ratio = po_ratio | times: po_item.properties._bold_ratio %}
+        {% elsif po_item.properties._btm_ratio %}
+          {% assign po_ratio = po_ratio | times: po_item.properties._btm_ratio %}
+        {% endif %}
+
+        {% assign bold_item_price = po_ratio | times: po_item.price | plus: bold_item_price %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endif %}
+
+{% comment %} APPLY RECURRING ORDERS DISCOUNT, IF SET (ONLY FOR V2 RO) {% endcomment %}
+{% if bold_item.properties._ro_discount_percentage %}
+  {% assign bold_ro_multiplier = 100.00 | minus: bold_item.properties._ro_discount_percentage | times: 0.01 %}
+  {% assign bold_original_price = bold_item_price %}
+  {% assign bold_item_price = bold_item_price | times: bold_ro_multiplier | round %}
+{% endif %}
+
+{% comment %} SET LINE ITEM PRICE {% endcomment %}
+{% assign bold_item_line_price = bold_item_price | times: bold_item_quantity %}
+
+{% comment %} HELPER VARIABLES FOR REMOVE BUTTON {% endcomment %}
+{% if bold_item.properties[master_builder] != blank %}
+  {% assign bold_remove_href = '#' %}
+  {% assign bold_remove_attr = 'onclick="remove_product_builder(' | append: "'" | append: bold_item.properties[builder_id] | append: "'" | append: ');"' %}
+  {% assign bold_remove_class = bold_item.properties[builder_id] | append: '_remove bold-ro-remove' %}
+{% else %}
+  {% assign bold_remove_href = '/cart/change?line=' | append: forloop.index | append: '&quantity=0' %}
+  {% assign bold_remove_attr = '' %}
+  {% assign bold_remove_class = 'bold-ro-remove' %}
+{% endif %}
+
+{% comment %} HELPER VARIABLES FOR QUANTITY BOX {% endcomment %}
+{% assign options_readonly = false %}
+{% if bold_helper_loaded and bold_item.properties[builder_id] != blank %}
+  {% assign bold_qty_attr = 'onchange="Bold.updateQtyBoxes();"' %}
+  {% assign bold_qty_class = bold_item.properties[builder_id] | append: '_qty' %}
+{% elsif bold_item.properties[builder_id] != blank %}
+  {% assign bold_qty_attr = 'onchange="update_qty_builder(' | append: "'" | append: bold_item.properties[builder_id] | append: "'" | append: ', this);"' %}
+  {% assign bold_qty_class = bold_item.properties[builder_id] | append: '_qty' %}
+  {% if bold_item.properties[master_builder] == blank %}{% assign options_readonly = true %}{% endif %}
+{% else %}
+  {% assign bold_qty_attr = '' %}
+  {% assign bold_qty_class = '' %}
+{% endif %}
+{% if options_readonly or bold_item.product.metafields.inventory.ShappifyHidden == "true" or bold_item.variant.metafields.bold_measurement.formula %}
+  {% assign bold_qty_attr = bold_qty_attr | append: ' readonly="readonly"' %}
+{% endif %}
+{% if bold_item.variant.metafields.bold_measurement.formula %}
+  {% assign bold_qty_class = bold_qty_class | append: ' bold-btm-qty ' %}
+  {% assign bold_qty_name = '' %}
+  {% assign bold_qty_after = '<input type="hidden" name="updates[]" class="bold-btm-true-qty" value="' | append: bold_item.quantity | append: '">' %}
+{% else %}
+  {% assign bold_qty_name = 'updates[]' %}
+  {% assign bold_qty_after = '' %}
+{% endif %}
+{% if bold_variant_inventory_policy == 'deny' and bold_item_max_quantity != blank %}
+  {% assign bold_qty_attr = bold_qty_attr | append: ' max=' | append: bold_item_max_quantity %}
+{% endif %}
+
+{% comment %} HELPER ATTRIBUTES FOR NON-AJAX +/- BUTTONS {% endcomment %}
+{% assign bold_qty_button_attr = '' %}
+{% assign bold_qty_readonly = false %}
+{% if bold_item.properties[master_builder] != blank %}
+  {% assign bold_qty_button_attr = ' onclick="trigger_qty_update()" ' %}
+{% endif %}
+{% if bold_item.product.metafields.inventory.ShappifyHidden == "true" or bold_item.variant.metafields.bold_measurement.formula %}
+  {% assign bold_qty_button_attr = bold_qty_button_attr | append: ' disabled="disabled" '%}
+  {% assign bold_qty_readonly = true %}
+{% endif %}
+
+{% comment %} GENERATE PROPERTIES DESCRIPTION {% endcomment %}
+{% assign bold_builder_product = false %}
+{% capture bold_item_properties %}
+  {% capture custom_properties_display_check %}{% include 'bold-item-properties' with bold_item %}{% endcapture %}
+  {% unless custom_properties_display_check contains 'Liquid error' %}
+    {{ custom_properties_display_check }}
+  {% else %}
+	<div class="bold-properties bold-properties-{{ bold_item.properties[builder_id] }}">
+      {% for p in bold_item.properties %}
+          {% assign underscore_hidden = false %}
+          {% assign first_char = p.first | slice: 0 %}
+          {% assign second_char = p.first | slice: 1 %}
+          {% if first_char == "_" and second_char != "_" %}
+              {% assign underscore_hidden = true %}
+          {% endif %}
+
+          {% comment %} CHECK FOR ALL THE REASONS WE MIGHT HIDE THIS PROPERTY FROM THE DISPLAY {% endcomment %}
+          {% if p.first == 'total_recurrences' or p.first == "frequency_type_text" or p.first == "frequency_type" or p.first == "frequency_num" or p.first == "builder_id" or p.first == "builder_info" or p.first == "master_builder" or p.first == "group_id" or p.first == "discounted_price" or p.first == "is_prepaid" or underscore_hidden == true or p.last == blank %}
+            {% if p.first contains "builder_info" %}
+                {% assign bold_builder_product = true %}
+                {% if p.first == 'builder_info' %}
+                  {% assign builder_info = 'builder_info' %}
+                {% else %}
+                  {% assign builder_info = '_builder_info' %}
+                {% endif %}
+            {% endif %}
+            {% continue %}
+          {% endif %}
+          {% assign option_title = p.first %}
+          <div class='bold_option_line'><span class="bold_option_title">{{ p.first | replace: '__', '' | replace: '&amp;', '&' }}</span><span class="bold_option_seperator">: </span>
+
+          {% comment %} DISPLAY UPLOAD LINKS AS LINKS, EVERYTHING ELSE AS TEXT{% endcomment %}
+          {% if p.last contains '/uploads/' %}
+          	<span class="bold_option_value"><a class="lightbox" href="{{ p.last }}">Uploaded File</a></span>
+          {% else %}
+          	<span class="bold_option_value" >{{ p.last | replace: '&amp;', '&' | replace: '&lt;', '<' | replace: '&gt;', '>'  }}</span>
+          {% endif %}
+          </div>
+      {% endfor %}
+	</div>
+	{% if bold_item.properties[builder_id] != blank %}
+		<div id="bold-item-{{ bold_item.properties[builder_id]}}" data-is-builder="{{ bold_builder_product }}" data-handle="{{ bold_item.product.handle }}" data-variant-id="{{ bold_item.variant.id }}" class="bold-edit-item" data-index="{{ forloop.index }}"></div>
+	{% endif %}
+  {% endunless %}
+{% endcapture %}
+
+{% comment %} GENERATE RECURRING ORDER VARIABLES FOR CUSTOM DISPLAY {% endcomment %}
+{% assign bold_recurring_frequency_num = bold_item.properties.frequency_num %}
+{% assign bold_recurring_frequency_text = bold_item.properties.frequency_type_text %}
+{% assign bold_recurring_savings = bold_original_price | minus: bold_item_price %}
+
+{% comment %} GENERATE RECURRING ORDER DESCRIPTION {% endcomment %}
+{% assign bold_is_recurring = false %}
+{% capture bold_recurring_desc %}
+  {% if bold_item.properties.frequency_type and bold_item.properties.frequency_num and bold_item.properties.frequency_type_text  %}
+    {% assign bold_is_recurring = true %}
+    {% capture custom_recurring_desc_check %}{% include 'bold-recurring-desc' with bold_item %}{% endcapture %}
+    {% unless custom_recurring_desc_check contains 'Liquid error' %}
+      {{ custom_recurring_desc_check }}
+    {% else %}
+		{% unless bold_item.properties._convertible_discount_percent%}
+			<div class = "bold_recurring_desc">
+				<span class="bold_ro_every">Every </span>
+				<span class="bold_ro_frequency_num">{{ bold_item.properties.frequency_num}} </span>
+				<span class="bold_ro_frequency_type_text">{{ bold_item.properties.frequency_type_text }} </span>
+				{% if bold_item.properties.discounted_price %}<span class="discounted_price_in_cart">{{ bold_item_price | money }}</span><span class="bold_ro_each"> each</span>{% endif %}
+				{% if bold_item.properties._secondary_discount_percent %}
+				  {% assign bold_ro_secondary_discount_multiplier = 100.00 | minus: bold_item.properties._secondary_discount_percent | times: 0.01 %}
+				  {% assign bold_ro_secondary_discount_price = bold_item.price | times: bold_ro_secondary_discount_multiplier %}
+				  <br>
+				  {% if bold_item.properties._secondary_discount_required_orders == '1' %}
+					{% if bold_ro_secondary_discount_price < bold_item.price %}
+						<span class="bold_ro_is_discount">Discounted price </span>
+					{% else %}
+						<span class="bold_ro_no_discount">Price </span>
+					{% endif %}
+					<span class="bold_ro_price_after_first">after first order </span>
+					<span class="bold_ro_secondary_discount_price">{{bold_ro_secondary_discount_price | money}}</span>
+				  {% else %}
+					{% if bold_ro_secondary_discount_price < bold_item.price %}
+						<span class="bold_ro_is_discount">Discounted price </span>
+					{% else %}
+						<span class="bold_ro_no_discount">Price </span>
+					{% endif %}
+					<span class="bold_ro_price_after_multiple">after </span>
+					<span class="bold_ro_secondary_discount_required_orders">{{bold_item.properties._secondary_discount_required_orders}} </span>
+					<span class="bold_ro_secondary_discount_orders">orders: </span>
+					<span class="bold_ro_secondary_discount_price">{{bold_ro_secondary_discount_price | money}}</span>
+				  {% endif %}
+				{% endif %}
+			</div>
+		{% endunless %}
+		{% if bold_item.properties._convertible_discount_percent %}
+			{% assign bold_ro_convertible_multiplier = 100.00 | minus: bold_item.properties._convertible_discount_percent | times: 0.01 %}
+			{% assign bold_ro_convertible_product_price = all_products[bold_item.properties._convertible_product_handle].price %}
+			{% assign bold_ro_convertible_title = all_products[bold_item.properties._convertible_product_handle].title %}
+			{% assign bold_ro_convertible_variant_id = bold_item.properties._convertible_variant_id | times: 1 %}
+			{% for var in all_products[bold_item.properties._convertible_product_handle].variants %}
+			  {% if var.id == bold_ro_convertible_variant_id %}
+				{% assign bold_ro_convertible_product_price = var.price %}
+				{% if var.title != 'Default Title' %}
+					{% assign bold_ro_convertible_title = bold_ro_convertible_title | append: ' - ' | append: var.title %}
+				{% endif %}
+			  {% endif %}
+			{% endfor %}
+			{% assign bold_ro_convertible_discount_price = bold_ro_convertible_product_price | times: bold_ro_convertible_multiplier %}
+			<span class="bold_ro_conversion">Converts to: </span>
+			<span class="bold_ro_convert_initial_product">{{bold_ro_convertible_title}} </span>
+			<span class="converted_discounted_price_in_cart">{{ bold_ro_convertible_discount_price | money }}</span>
+			<br>
+			<span class="bold_ro_deliver_every">Deliver every </span>
+			<span class="bold_ro_frequency_num">{{ bold_item.properties.frequency_num}} </span>
+			<span class="bold_ro_frequency_type_text">{{ bold_item.properties.frequency_type_text }}</span>
+			<br>
+		{% endif%}
+		{% if bold_item.properties.total_recurrences %}
+			<span class="bold_ro_total_recurrences_label">Your subscription will last for {{ bold_item.properties.total_recurrences }} shipments</span>
+		{% endif %}
+    {% endunless %}
+  {% endif %}
+
+  {% comment %} GENERATE HIDDEN INPUT FIELDS FOR RO PRODUCTS {% endcomment %}
+  {% if bold_item.properties.frequency_type and bold_item.properties.frequency_num and bold_item.properties.frequency_type_text  %}
+		<input type="hidden" name="{{ forloop.index0 }}[number]" value="{{ bold_item.properties.frequency_num }}" />
+		<input type="hidden" name="{{ forloop.index0 }}[type_id]" value="{{ bold_item.properties.frequency_type }}" />
+  {% endif %}
+
+  {% comment %} GENERATE REMAINING HIDDEN INPUT FIELDS FOR ALL ITEMS {% endcomment %}
+    <input type="hidden" name="product_id[{{ forloop.index0 }}]" value="{{ bold_item.product.id }}">
+    <input type="hidden" name="variant_id[{{ forloop.index0 }}]" value="{{ bold_item.variant.id }}">
+    <input type="hidden" name="quantity[{{ forloop.index0 }}]" value="{{ bold_item.quantity }}">
+{% endcapture %}
+
+{% comment %} EXPOSE DATA FOR RO CONVERTIBLE ITEM {% endcomment %}
+{% if bold_item.properties._convertible_product_handle != blank %}
+    <script>
+        BOLD = BOLD || {};
+        BOLD.recurring_orders = BOLD.recurring_orders || {};
+        BOLD.recurring_orders.convertible_products = BOLD.recurring_orders.convertible_products || {};
+        var convertible_handle = {{bold_item.properties._convertible_product_handle | json }};
+        var convertible_variant = {{bold_item.properties._convertible_variant_id | json }};
+        var convertible_product = {{ all_products[bold_item.properties._convertible_product_handle] | json }};
+
+        if(BOLD.recurring_orders.addConvertibleVariants)
+        {
+            if(BOLD.recurring_orders.convertible_products[convertible_handle])
+            {
+                BOLD.recurring_orders.addConvertibleVariants(convertible_product, convertible_handle, convertible_variant);
+            } else {
+                BOLD.recurring_orders.convertible_products[convertible_handle] = {
+                    title: convertible_product.title,
+                    price: convertible_product.price,
+                    variants: [],
+                };
+                BOLD.recurring_orders.addConvertibleVariants(convertible_product, convertible_handle, convertible_variant);
+            }
+        }
+    </script>
+{% endif %}
+
+{% comment %} GENERATE BOLD DESCRIPTION {% endcomment %}
+{% capture bold_desc %}
+    <span class="bold-cart-item" data-product-id="{{bold_item.id}}-{{forloop.index0}}"></span>
+{% endcapture %}
+
+{% comment %} GENERATE VARIABLES FOR BUILDER {% endcomment %}
+{% if bold_builder_product %}
+  {% assign builder_info = bold_item.properties[builder_info] | split: '~~' %}
+  {% assign bold_builder_img_alt = builder_info[0] %}
+  {% assign bold_builder_img_src = builder_info[1] %}
+  {% assign bold_builder_href = '/apps/productbuilder/' | append: builder_info[2] %}
+{% else %}
+  {% assign bold_builder_img_alt = false %}
+  {% assign bold_builder_img_src = false %}
+  {% assign bold_builder_href = bold_item.product.url %}
+{% endif %}
+
+{% comment %} ALIASES FOR PRODUCT OPTIONS VARIABLES FOR QUICK-INSTALL {% endcomment %}
+{% assign boldoptions_step3 = bold_row_class %}
+{% assign boldoptions_step4 = bold_row_data %}
+{% assign boldoptions_step6 = bold_item_properties %}
+{% assign boldoptions_step7 = bold_qty_class %}
+{% assign boldoptions_step8 = bold_qty_attr %}
+{% assign boldoptions_step9 = bold_remove_href %}
+{% assign boldoptions_step10 = bold_remove_class %}
+{% assign boldoptions_step11 = bold_remove_attr %}
+{% assign boldoptions_step12 = bold_item_price | money %}
+{% assign boldoptions_step13 = bold_item_line_price | money %}
+
+{% endcapture %}{{ bold_cart_item_liquid | strip_newlines }}

@@ -1,0 +1,19 @@
+<script>
+var checkExist = setInterval(function() {
+    if (typeof zonos !== 'undefined') {
+        clearInterval(checkExist);
+        document.addEventListener("z-country-change", hideSections);
+        hideSections();
+    }
+}, 100);
+
+function hideSections(){
+    jQuery('.shopify-payment-button__button').each(function(){
+        if(!zonos.isDomestic()){
+            jQuery(this).hide();
+        }else{
+            jQuery(this).show();
+        }
+    });
+}
+</script>

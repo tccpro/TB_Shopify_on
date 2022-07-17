@@ -1,0 +1,20 @@
+{% comment %}
+  Loop through each collection, except 'frontpage'
+{% endcomment %}
+
+<div class="main-container">
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ 'collections.general.title' | t }}</h1>
+  </header>
+
+  <div class="grid-uniform">
+    {% for collection in collections %}
+      {% unless collection.handle == 'frontpage' %}
+        {% assign collection_item_width = 'medium-down--one-half large--one-third' %}
+        {% assign featured = collection.handle %}
+        {% include 'collection-grid-item' %}
+      {% endunless %}
+    {% endfor %}
+  </div>
+</div>

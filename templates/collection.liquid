@@ -1,0 +1,16 @@
+<div id="shopify-section-collection-template">
+  <div class="main-container collection clearfix">
+    <div class="ab-collections">
+      <header class="section-header">
+        {% include 'breadcrumb' %}
+        <h1 class="section-header__title">
+          {{ collection.title }}
+        </h1>
+      </header>
+
+      <div class="rte clearfix">
+        {% section 'collection-template-bc-sf-filter' %}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="main-container">
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ page.title }}</h1>
+  </header>
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+
+
+  <div class="rte">
+    {{ page.content }}
+    <div class="grid">
+      <div class="grid__item push--large--three-tenths large--two-fifths small--text-center">
+        {% include 'customer-fields' %}
+      </div>
+    </div>
+  </div>
+</div>

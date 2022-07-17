@@ -1,0 +1,113 @@
+{% comment %} Soldout {% endcomment %}
+{% assign sold_out = false %}
+{% assign sold_out_class = '' %}
+{% assign sold_out_text = section.settings.soldout_label %} 
+{% unless product.available %}
+{% assign sold_out = true %}
+{% assign sold_out_class = 'sold-out' %}
+{% endunless %}
+
+{% comment %} On Sale {% endcomment %}
+{% assign on_sale = false %}
+{% assign sale_class = '' %}
+{% assign sale_text = section.settings.sale_label %} 
+{% if product.compare_at_price > product.price %}
+{% assign on_sale = true %}
+{% assign sale_class =  'on-sale' %}
+{% endif %}
+
+{% comment %} Product Image Url {% endcomment %}
+{% assign img_url = 'bc-sf-filter-no-image.gif' | asset_url %}
+{% if product.featured_image.src == blank %}
+{% if product.images[0]%}
+{% assign img_url = product.images[0] | img_url: 'large' %}
+{% endif %}
+{% if product.images[1] %}
+{% assign swap_img_url = product.images[1] | img_url: 'large' %}
+{% endif %}
+{% else %}
+{% assign img_url = product.featured_image | img_url: 'large' %}
+{% if product.images[1] %}
+{% assign swap_img_url = product.images[1] | img_url: 'large' %}
+{% endif %}
+{% endif %}
+
+<div class="bc-sf-filter-product-item bc-sf-filter-product-item-list {% if section.settings.active_image_swap and product.images[1] %} has-bc-swap-image{% endif %}  {{ sold_out_class }} {{ sale_class }}">
+  <div class="bc-sf-filter-product-item-inner">
+    <div class="bc-sf-filter-product-item-list-col-1">
+      <div class="bc-sf-filter-product-item-image">
+        <a href="{{ product.url | within: collection }}" class="bc-sf-filter-product-item-image-link">
+          <img src="{{ img_url }}" class="bc-sf-filter-product-item-main-image" alt="{{ product.featured_image.alt | escape }}" />
+          {% if section.settings.active_image_swap and product.images[1] %}
+          <img src="{{ swap_img_url }}" class="bc-sf-filter-product-item-flip-image" alt="{{ product.featured_image.alt | escape }}" />
+          {% endif %}
+        </a>
+      </div>
+
+      {% comment %} PRODUCT LABEL {% endcomment %}
+      {% if section.settings.show_sale_label or section.settings.show_sold_out_label %}
+      <div class="bc-sf-filter-product-item-label">
+        {% if sold_out and section.settings.show_sold_out_label %}
+        <span class="soldout bc-sf-filter-label">
+          {{ sold_out_text }}
+        </span>
+        {% endif %}
+        {% if on_sale and section.settings.show_sale_label %}
+        <span class="sale bc-sf-filter-label">
+          {{ sale_text }}
+        </span>
+        {% endif %}
+
+        {% comment %} LABEL EXTEND BY TAG: New, Best, Featured {% endcomment %}
+        {% assign showAll = false %}
+        {% if showAll %}
+          {% for tag in product.tags %}
+            {% if tag contains 'pfs:label-'%}
+              {% assign t = tag | split: 'pfs:label-' %}
+              <span class="bc-sf-filter-label tag {{ t }}">{{ t }}</span>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          {% assign productTags = product.tags | reverse %}
+          {% for tag in productTags %}
+            {% if tag contains 'pfs:label-'%}
+              {% assign t = tag | split: 'pfs:label-' %}
+              <span class="bc-sf-filter-label tag {{ t }}">{{ t }}</span>
+              {% break %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% endif %}
+
+    </div>
+
+    <div class="bc-sf-filter-product-bottom">
+      <div class="bc-sf-filter-product-item-list-col-2">
+        <a href="{{ product.url | within: collection }}" class="bc-sf-filter-product-item-title">{{ product.title }}</a>
+
+        {% if section.settings.show_vendor %}
+        <p class="bc-sf-filter-product-item-vendor">{{ product.vendor }}</p>
+        {% endif %}
+
+        <p class="bc-sf-filter-des">{{ product.content | strip_html | truncatewords: 40 }}</p>
+      </div>
+
+      <div class="bc-sf-filter-product-item-list-col-3">
+        {% if section.settings.show_price %}
+        <p class="bc-sf-filter-product-item-price">
+          {% if on_sale %}
+          <s>{{ product.compare_at_price | money }}</s>
+          <span class="bc-sf-filter-product-item-sale-price">{{ product.price | money }}</span>
+          {% else %}
+          {% if product.price_varies %}
+            {{ section.settings.from }}
+          {% endif %}
+          <span class="bc-sf-filter-product-item-regular-price">{{ product.price | money }}</span>
+          {% endif %}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

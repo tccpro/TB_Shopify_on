@@ -1,0 +1,972 @@
+{% assign displayStatus = shop.metafields.navidium.nvd_show_checkout %} 
+{% assign autoOptIn = false %} 
+{% if shop.metafields.navidium.nvd_auto_insurance ==1 %} {% assign autoOptIn = true %} 
+{% endif %} 
+{% assign widget_location = 'contact_information' %} 
+{% if displayStatus == 1 %}
+<style>
+  tr.product[data-product-id='7159724605594'] .product-thumbnail__quantity {
+    display: none;
+  }
+  tr.product[data-product-id='7159724605594']
+    span.product__description__variant {
+    display: none;
+  }
+  .switch label {
+    text-align: left;
+  }
+  .switch {
+    padding: 30px 0;
+    text-align: right;
+  }
+  .toggle {
+    position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 24px;
+    background-color: #f3f3f3;
+    border-radius: 30px;
+    border: 2px solid #d3be0b;
+  }
+  .toggle:after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #d3be0b;
+    top: 1px;
+    left: 1px;
+    transition: all 0.5s;
+  }
+  .toggle p {
+    color: #fff;
+    font-size: 12px;
+  }
+  .checkbox:checked + .toggle::after {
+    left: 20px;
+    top: 1px;
+    background-color: #fff;
+  }
+  .checkbox:checked + .toggle {
+    background-color: #5dc8db;
+    border-color: #5dc8db;
+  }
+  .checkbox {
+    display: none;
+  }
+  .w80 {
+    display: inline-block;
+    width: 79%;
+    text-align: left;
+    padding-left: 29%;
+  }
+  .w19 {
+    display: inline-block;
+    width: 19%;
+  }
+  .w100 {
+    width: 100%;
+    padding-left: 30%;
+    text-align: left;
+    padding-top: 10px;
+  }
+  .w80 img {
+    position: absolute;
+  }
+  .ship_heading {
+    font-size: 14px;
+    font-weight: 600;
+    clear: both;
+    padding-left: 41px;
+  }
+  .insurance_direction {
+    position: relative;
+    display: block;
+    padding-left: 41px;
+    font-size: 12px;
+  }
+  .disable_msg {
+    display: none;
+  }
+  @media only screen and (max-width: 550px) {
+    .w100,
+    .w20,
+    .w80 {
+      padding-left: 0;
+    }
+  }
+  .switch {
+    max-width: 370px;
+    margin-left: auto;
+    position: relative;
+    text-align: left;
+    width: 100%;
+  }
+  .w80 {
+    width: 100%;
+    padding-left: 0;
+  }
+  .w19 {
+    position: absolute;
+    right: 0;
+    width: auto;
+  }
+  .toggle {
+    background: #6d7175;
+    width: 26px;
+    height: 14px;
+    border: 0;
+  }
+  .toggle p {
+    display: none;
+  }
+  .toggle:after {
+    width: 11px;
+    height: 11px;
+    background: #fff;
+  }
+  .w100.disable_msg {
+    padding-left: 0;
+    padding-top: 0;
+  }
+  .w100.msg_holder {
+    padding-left: 0;
+    padding-top: 0;
+  }
+  .w100 p {
+    padding-left: 40px;
+    font-weight: 300;
+    font-size: 11.6408px;
+    line-height: 14px;
+    color: #6d7175;
+    padding-top: 5px;
+  }
+  span.insurance_direction {
+    padding-top: 10px;
+    font-weight: 300;
+    font-size: 11.6408px;
+    line-height: 14px;
+    color: #6d7175;
+  }
+  .ship_heading {
+    font-weight: 700;
+    font-size: 12.5362px;
+    line-height: 15px;
+    color: #6d7175;
+  }
+  .checkbox:checked + .toggle::after {
+    left: 13px;
+  }
+  .checkbox:checked + .toggle {
+    background: #008060;
+  }
+  .tooltipCstm {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted #000;
+  }
+  .tooltipCstm .toolltiptextCstm {
+    visibility: hidden;
+    width: 120px;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+  }
+  .tooltipCstm:hover .toolltiptextCstm {
+    visibility: visible;
+  }
+  .tooltipCstm .toolltiptextCstm {
+    font-size: 12px;
+    text-align: left;
+    width: 200px !important;
+    height: auto;
+    display: inline-block;
+    line-height: 14px;
+    min-width: 100px;
+    word-break: break-word;
+    white-space: normal;
+    margin-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 10px;
+  }
+  .tooltipCstm .toolltiptextCstm::after {
+    content: ' ';
+    position: absolute;
+    top: 100%;
+    left: 30%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #000 transparent transparent transparent;
+  }
+  .btnCstm {
+    padding: 0;
+    margin-left: 10px;
+    line-height: 0;
+    margin-top: -2px;
+    border: 0;
+  }
+  .btnCstm svg {
+    width: 10px;
+    height: 10px;
+  }
+  #preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ffffff7d;
+    /* change if the mask should have another color then white */
+    z-index: 99;
+    /* makes sure it stays on top */
+  }
+
+  #status {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    left: 50%;
+    /* centers the loading animation horizontally one the screen */
+    top: 50%;
+    /* centers the loading animation vertically one the screen */
+    background-image: url(https://raw.githubusercontent.com/niklausgerber/PreLoadMe/master/img/status.gif);
+    /* path to your loading animation */
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: -100px 0 0 -100px;
+    /* is width and height divided by two */
+  }
+</style>
+{% assign navidium_counter = 0 %} 
+
+{% assign navidium_variants = '' %} 
+
+{% assign xProtectionPrice = 0 %} 
+
+{% for xitem in checkout.line_items %} 
+
+  {% assign itemHandle = xitem.product.handle %} 
+
+  {% if itemHandle contains  'navidium-shipping-protection' %} 
+    {% if navidium_variants != '' %} 
+
+      {% assign navidium_variants = navidium_variants | append: '+' | append: xitem.variant_id %} 
+
+    {% else %} 
+
+      {% assign navidium_variants = navidium_variants | append: xitem.variant_id %} 
+
+    {% endif %} 
+
+    {% assign navidium_counter = navidium_counter | plus: xitem.quantity %} 
+
+    {% assign xProtectionPrice = xProtectionPrice | plus: xitem.final_line_price %} 
+
+  {% endif %}
+
+{% endfor %} 
+
+{% assign cart_total = checkout.line_items_subtotal_price | minus: xProtectionPrice %} 
+
+{% assign cart_total = cart_total | divided_by: 100 %}
+
+{{ 'nvd-js-asset.js' | asset_url | script_tag }}
+<script>
+    let widgetLocation = '{{ shop.metafields.navidium.widget_location }}';
+    console.log('widget location is', widgetLocation)
+    var called_variant_id = '';
+    var in_cart_variant_id = '{{navidium_variants}}';
+    console.log('in_cart_variant_id - ' + in_cart_variant_id);
+    var called_price = '';
+    var shopCurrency = '{{ shop.money_with_currency_format }}';
+    function checkNavidiumVariant(addMe) {
+      $('#status').fadeIn(); // will first fade out the loading animation
+      $('#preloader').fadeIn('slow'); // will fade out the white DIV that covers the website.
+      $('body').css({'overflow':'hidden'});
+    var called_variant_id = '';
+    var in_cart_variant_id = '{{navidium_variants}}';
+    console.log('in_cart_variant_id - ' + in_cart_variant_id);
+    var called_price = '';
+
+      $.ajax({
+          method: "GET",
+          crossDomain: true,
+          dataType: "json",
+          crossOrigin: true,
+          // data: {shop_url: "crazy-quiz-shop.myshopify.com"},
+          headers: {
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Credentials": true,
+            "Access-Control-Allow-Headers":
+            "Access-Control-Allow-Headers, Origin, X-Requested-With, Content-Type, Accept, Authorization",
+            "Access-Control-Allow-Origin": "*",
+            "Control-Allow-Origin": "*",
+            "cache-control": "no-cache",
+            "Content-Type": "application/json",
+          },
+        {% if shop.metafields.navidium.nvd_protection_type == 1 %}
+  		url: "https://app.navidiumapp.com/api/check-dynamic-variant-id-from-api.php?shop_url={{shop.permanent_domain}}&price={{cart_total}}",
+        {% else %}
+      url: "https://app.navidiumapp.com/api/plus-static-variant-checker.php?shop_url={{shop.permanent_domain}}&price={{cart_total}}",
+        {% endif %}
+          success: function(data){
+            console.log(data);
+            if(data.variant_id) {
+                called_variant_id = data.variant_id;
+              console.log(called_variant_id);
+              called_price = data.price;
+              console.log('called_price - '+called_price);
+                $('#status').fadeOut(); // will first fade out the loading animation
+                $('#preloader').delay(350).fadeOut('slow'); // will fade out the white DIV that covers the website.
+                $('body').delay(350).css({'overflow':'visible'});
+                {% if autoOptIn == true %}
+              var widget_location = '{{widget_location}}';
+              if(Shopify.Checkout.step == widget_location){
+          //check reload status
+              var reload_status = localStorage.getItem('navidium_reload');
+
+                  if(localStorage.getItem('navidium_reload') == 'yes'){
+            //you can't reload now. Variant is in cart already
+
+                       //append the snippet
+                 var price = called_price;
+                        price = price*100;
+                        price = Shopify.formatMoney(price,shopCurrency);
+                    	let clear_protection = localStorage.getItem('nvd_opted_out');
+                    var widget_html
+                    if(clear_protection == 'true' ){
+                     widget_html = navidium_snippet(called_variant_id,price,'');
+                    }
+                    else{
+                    	widget_html = navidium_snippet(called_variant_id,price,'checked');
+                    }
+                       
+
+                          var stepsFinder = setInterval(function(){
+                            if($(document).find('.step__sections').length > 0){
+                                $(document).find('.step__sections').append(widget_html);
+                                clearInterval(stepsFinder);
+                            }
+                          }, 1);
+
+                  }else{
+                      //add variant to cart and reload
+                   //before adding check the variant in cart
+                   if(called_variant_id == in_cart_variant_id){
+              //since they are the same, don't take any step
+
+                  //append the snippet
+                     console.log('appending snippet 1')
+                          var price = called_price;
+                          price = price*100;
+                          price = Shopify.formatMoney(price,shopCurrency);
+                          var widget_html = navidium_snippet(called_variant_id,price,'checked');
+
+                          var stepsFinder = setInterval(function(){
+                            if($(document).find('.step__sections').length > 0){
+                                $(document).find('.step__sections').append(widget_html);
+                                clearInterval(stepsFinder);
+                            }
+                          }, 1);
+
+                      }else{
+                        //check the clear protection status, if it says yes then customer picked not to use protection
+                        //just append the snippet and return false here
+                        var clear_protection = localStorage.getItem("nvd_opted_out");
+                        if(clear_protection == 'true'){
+                  //append the snippet
+                          var price = called_price;
+                          price = price*100;
+                          price = Shopify.formatMoney(price, shopCurrency);
+                          var widget_html = navidium_snippet(called_variant_id,price,'');
+
+                          var stepsFinder = setInterval(function(){
+                            if($(document).find('.step__sections').length > 0){
+                                $(document).find('.step__sections').append(widget_html);
+                                clearInterval(stepsFinder);
+                            }
+                          }, 1);
+                          return false;
+                        }
+
+              //since they are not the same, check if the in_cart_variant_id is really something
+                          if(in_cart_variant_id){
+                            //in cart variant id needs removed first then on success add the called_variant_id
+
+                                  //first remove it and then add it again
+                                   var params = {
+                                      type: "POST",
+                                      url: "/cart/change.js",
+                                      data: "quantity=0&id="+in_cart_variant_id,
+                                      dataType: "json",
+                                      success: function (data) {
+                                               //if protection is not present, add it now
+                                                $.ajax({
+                                                  type: "POST",
+                                                  url: '/cart/add.js',
+                                                  dataType: 'json',
+                                                  data: {items: [
+                                                          {
+                                                           id: called_variant_id,
+                                                           quantity: 1
+                                                          }
+                                                       ]},
+                                                  success: function(){
+                                                    console.log('Successful');
+                                                    //set the variant id to log
+                                                    localStorage.setItem("navidium_variant", called_variant_id);
+                                                    localStorage.setItem("navidium_variant_price", called_price);
+                                                    localStorage.setItem('navidium_reload', 'yes');
+                                                    //location.reload();
+
+                                                    //New Method Starts\\
+                                                    var hittingUrl = window.location.href;
+                                                    console.log(hittingUrl);
+                                                    //on click next -- previous
+                                                    //Adding Pagination
+                                                    $.ajax({
+                                                      url:hittingUrl,
+                                                      type:'GET',
+                                                      success: function(data){
+
+                                                        console.log(data);
+                              var DNitems = $(data).find('#order-summary').html();
+                                                        $('#order-summary').html(DNitems);
+
+                                                        //append widget
+
+                                                          //append the snippet
+                                                          var price = called_price;
+                                                          price = price*100;
+                                                          price = Shopify.formatMoney(price,shopCurrency);
+                                                          var widget_html = navidium_snippet(called_variant_id,price,'checked');
+                                                          if($('.swtich_holder').length>0){
+                                                            $('.swtich_holder').remove();
+                                                          }
+                                                          var stepsFinder = setInterval(function(){
+                                                            if($(document).find('.step__sections').length > 0){
+                                                              $(document).find('.step__sections').append(widget_html);
+                                                              clearInterval(stepsFinder);
+                                                            }
+                                                          }, 1);
+                                                          //append snippet ends\\
+
+
+                                                      }
+                                                    });
+                                                    //New Method Ends\\
+
+                                                  },
+                                                  error: function(error){
+                                                    console.log(error);
+                                                  }
+                                                });
+
+                                      },
+                                      error: function (error) {
+                                         console.log(error);
+                                      }
+                                   };
+                                   $.ajax(params);
+
+
+                          }else{
+                            console.log('254: adding protection')
+                            //now since the in_cart_variant_id is actually empty, add our item to cart and reload.
+                            //if protection is not present, add it now
+                            $.ajax({
+                              type: "POST",
+                              url: '/cart/add.js',
+                              dataType: 'json',
+                              data: {items: [
+                                {
+                                  id: called_variant_id,
+                                  quantity: 1
+                                }
+                              ]},
+                              success: function(data){
+                                console.log('Successful',data);
+                                console.log(data);
+                                //set the variant id to log
+                                localStorage.setItem("navidium_variant", called_variant_id);
+                                localStorage.setItem("navidium_variant_price", called_price);
+                                localStorage.setItem('navidium_reload', 'yes');
+                                //location.reload();
+
+                                //New Method Starts\\
+                                var hittingUrl = window.location.href;
+                                console.log(hittingUrl);
+                                //on click next -- previous
+                                //Adding Pagination
+                                $.ajax({
+                                  url:hittingUrl,
+                                  type:'GET',
+                                  success: function(data){
+
+                                    console.log(data);
+                                    var DNitems = $(data).find('#order-summary').html();
+                                    $('#order-summary').html(DNitems);
+                                    $('#status').fadeOut();
+                                    $('#preloader').fadeOut('slow');
+                                    //append widget
+
+                                    //append the snippet
+                                    var price = called_price;
+                                    price = price*100;
+                                    price = Shopify.formatMoney(price,shopCurrency);
+                                    var widget_html = navidium_snippet(called_variant_id,price,'checked');
+                                    if($('.swtich_holder').length>0){
+                                      $('.swtich_holder').remove();
+                                    }
+                                    var stepsFinder = setInterval(function(){
+                                      if($(document).find('.step__sections').length > 0){
+                                        $(document).find('.swtich_holder').html('');
+                                        $(document).find('.step__sections').append(widget_html);
+                                        clearInterval(stepsFinder);
+                                      }
+                                    }, 1);
+                                    //append snippet ends\\
+
+
+
+                                  }
+                                });
+                                //New Method Ends\\
+
+                              },
+                              error: function(error){
+                                console.log(error);
+                              }
+                            });
+                          } //in_cart_variant_id ends here
+                      }
+                  } //if localStorage getitem ends
+
+                }else{
+                    console.log('Not on this page');
+                }
+
+                {% else %}
+                var widget_location = '{{widget_location}}';
+                if(Shopify.Checkout.step == widget_location){
+                   //append the snippet
+  //                 var price = called_price;
+  //                 price = price*100;
+  //                 price = Shopify.formatMoney(price);
+  //                 var widget_html = navidium_snippet(called_variant_id,price,'');
+  //                 $(document).find('.step__sections').append(widget_html);
+
+
+                  //STATIC CHECKER 101 201//
+                  if(addMe == 1){
+
+
+              //since they are not the same, check if the in_cart_variant_id is really something
+                          if(in_cart_variant_id){
+                            //in cart variant id needs removed first then on success add the called_variant_id
+
+                                  //first remove it and then add it again
+                                   var params = {
+                                      type: "POST",
+                                      url: "/cart/change.js",
+                                      data: "quantity=0&id="+in_cart_variant_id,
+                                      dataType: "json",
+                                      success: function (data) {
+                                               //if protection is not present, add it now
+                                                $.ajax({
+                                                  type: "POST",
+                                                  url: '/cart/add.js',
+                                                  dataType: 'json',
+                                                  data: {items: [
+                                                          {
+                                                           id: called_variant_id,
+                                                           quantity: 1
+                                                          }
+                                                       ]},
+                                                  success: function(){
+                                                    console.log('Successful');
+                                                    //set the variant id to log
+                                                    localStorage.setItem("navidium_variant", called_variant_id);
+                                                    localStorage.setItem("navidium_variant_price", called_price);
+                                                    localStorage.setItem('navidium_reload', 'yes');
+                                                   // location.reload();
+
+                                                    //New Method Starts\\
+                                                    var hittingUrl = window.location.href;
+                                                    console.log(hittingUrl);
+                                                    //on click next -- previous
+                                                    //Adding Pagination
+                                                    $.ajax({
+                                                      url:hittingUrl,
+                                                      type:'GET',
+                                                      success: function(data){
+
+                                                        console.log(data);
+                              var DNitems = $(data).find('#order-summary').html();
+                                                        $('#order-summary').html(DNitems);
+
+                                                        //append widget
+
+                                                          //append the snippet
+                                                          var price = called_price;
+                                                          price = price*100;
+                                                          price = Shopify.formatMoney(price,shopCurrency);
+                                                          var widget_html = navidium_snippet(called_variant_id,price,'checked');
+                                                          if($('.swtich_holder').length>0){
+                                                            $('.swtich_holder').remove();
+                                                          }
+                                                          var stepsFinder = setInterval(function(){
+                                                            if($(document).find('.step__sections').length > 0){
+                                                              $(document).find('.step__sections').append(widget_html);
+                                                              clearInterval(stepsFinder);
+                                                            }
+                                                          }, 1);
+                                                          //append snippet ends\\
+
+                                                        $('#status').fadeOut(); // will first fade out the loading animation
+                                                        $('#preloader').delay(350).fadeOut('slow'); // will fade out the white DIV that covers the website.
+                                                        $('body').delay(350).css({'overflow':'visible'});
+                                                      }
+                                                    });
+                                                    //New Method Ends\\
+
+                                                  },
+                                                  error: function(error){
+                                                    console.log(error);
+                                                  }
+                                                });
+
+                                      },
+                                      error: function (error) {
+                                         console.log(error);
+                                      }
+                                   };
+                                   $.ajax(params);
+
+
+                          }else{
+                            console.log('427: adding protection')
+                            //now since the in_cart_variant_id is actually empty, add our item to cart and reload.
+                            //if protection is not present, add it now
+                            $.ajax({
+                              type: "POST",
+                              url: '/cart/add.js',
+                              dataType: 'json',
+                              data: {items: [
+                                {
+                                  id: called_variant_id,
+                                  quantity: 1
+                                }
+                              ]},
+                              success: function(data){
+                                console.log('Successful',data);
+                                console.log(data);
+                                //set the variant id to log
+                                localStorage.setItem("navidium_variant", called_variant_id);
+                                localStorage.setItem("navidium_variant_price", called_price);
+                                localStorage.setItem('navidium_reload', 'yes');
+                                //location.reload();
+                          //New Method Starts\\
+                                                    var hittingUrl = window.location.href;
+                                                    console.log(hittingUrl);
+                                                    //on click next -- previous
+                                                    //Adding Pagination
+                                                    $.ajax({
+                                                      url:hittingUrl,
+                                                      type:'GET',
+                                                      success: function(data){
+
+                                                        console.log(data);
+                              var DNitems = $(data).find('#order-summary').html();
+                                                        $('#order-summary').html(DNitems);
+
+                                                        //append widget
+
+                                                          //append the snippet
+                                                          var price = called_price;
+                                                          price = price*100;
+                                                          price = Shopify.formatMoney(price,shopCurrency);
+                                                          var widget_html = navidium_snippet(called_variant_id,price,'checked');
+                                                          if($('.swtich_holder').length>0){
+                                                            $('.swtich_holder').remove();
+                                                          }
+                                                          var stepsFinder = setInterval(function(){
+                                                            if($(document).find('.step__sections').length > 0){
+                                                              $(document).find('.step__sections').append(widget_html);
+                                                              clearInterval(stepsFinder);
+                                                            }
+                                                          }, 1);
+                                                          //append snippet ends\\
+                                                        $('#status').fadeOut();
+                                                        $('#preloader').fadeOut('slow');
+
+
+                                                      }
+                                                    });
+                                                    //New Method Ends\\
+
+                              },
+                              error: function(error){
+                                console.log(error);
+                              }
+                            });
+                          } //in_cart_variant_id ends here
+
+
+
+                  }else{
+                    var price = called_price;
+                    price = price*100;
+                    price = Shopify.formatMoney(price,shopCurrency);
+                    var ifCheck = '';
+                    //var X_checker = localStorage.getItem("navidium_variant");
+                    if(localStorage.getItem("navidium_variant") != null){
+                      ifCheck = 'checked';
+                    }
+                    var widget_html = navidium_snippet(called_variant_id,price,ifCheck);
+                    $(document).find('.step__sections').append(widget_html);
+                  }
+              }
+                {% endif %}
+
+
+                return true;
+          } //if data.variantid ends
+        }, //success 70 ends
+          error: function(error){
+            console.log(error);
+            return false;
+          }
+      });
+    }
+
+    function initialCheck(){
+      console.log('doing initial checking');
+      let lineItem ;
+      let nvdCounter = 0;
+      {% for line_item in checkout.line_items %}
+      {% if line_item.product.handle == 'navidium-shipping-protection' %}
+      console.log('{{line_item.product.handle}} count is {{ line_item.quantity }}');
+        nvdCounter = {{ line_item.quantity }};
+        let price = {{ line_item.final_line_price }};
+        lineItem = {{line_item.variant_id}};
+        localStorage.setItem("navidium_variant", {{line_item.variant_id}} );
+        localStorage.setItem("navidium_variant_price", price );
+        console.log('found navidium', nvdCounter);
+      
+        if(nvdCounter > 1){
+          removeDuplicate(lineItem);
+        } 
+      {% endif %}
+      {% endfor %}
+    
+      
+      if(nvdCounter > 1){
+        console.log('found more than one navidium,removing one');
+        let variantId = localStorage.getItem('navidium_variant');
+        removeDuplicate(variantId);
+        checkNavidiumVariant(1);
+      }
+      else{
+        localStorage.setItem('shippingProtectionChecked',false);
+        checkNavidiumVariant(0);
+        
+      }
+
+    }//check order limit ends here
+
+    function removeDuplicate(variantId){
+        $.ajax({
+            type: "POST",
+            url: '/cart/change.js',
+            dataType: 'json',
+            data: {
+              'id': variantId,
+              'quantity': 0
+            },
+            success: function(data){
+              console.log('Successful',data);
+              localStorage.removeItem("navidium_variant");
+              localStorage.removeItem("navidium_variant_price");
+              localStorage.removeItem('navidium_reload');
+              location.reload();
+            },
+            error: function(error){
+              console.log(error);
+            }
+          })
+
+    }
+
+    function navidium_snippet(variant,price,checked){
+      console.log('functional Price - '+price);
+      var widget_html = `  <div class="swtich_holder ">
+        <div class="switch">
+          <div class="w80">
+            <img style="" width="37" height="37" src="{{ 'navidium-shipping-icon-tr.png' | asset_url }}" alt="Navidium">
+            <h4 class="ship_heading">{{shop.metafields.navidium.nvd_name}}
+            <button type="button" class="btnCstm tooltipCstm">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.5 0C3.36433 0 0 3.36433 0 7.5C0 11.6357 3.36433 15 7.5 15C11.6357 15 15 11.6357 15 7.5C15 3.36433 11.6357 0 7.5 0ZM7.5 11.875C7.15496 11.875 6.87504 11.595 6.87504 11.25C6.87504 10.905 7.15496 10.625 7.5 10.625C7.84504 10.625 8.12496 10.905 8.12496 11.25C8.12496 11.595 7.84504 11.875 7.5 11.875ZM8.48934 7.90123C8.26813 8.00308 8.12496 8.22624 8.12496 8.46943V8.75004C8.12496 9.09496 7.84561 9.375 7.5 9.375C7.15439 9.375 6.87504 9.09496 6.87504 8.75004V8.46943C6.87504 7.73998 7.30373 7.0713 7.96566 6.76563C8.60252 6.47255 9.06246 5.69435 9.06246 5.31246C9.06246 4.45129 8.36185 3.75 7.5 3.75C6.63815 3.75 5.93754 4.45129 5.93754 5.31246C5.93754 5.6575 5.65807 5.93754 5.31246 5.93754C4.96685 5.93754 4.6875 5.6575 4.6875 5.31246C4.6875 3.7619 5.94933 2.49996 7.5 2.49996C9.05067 2.49996 10.3125 3.7619 10.3125 5.31246C10.3125 6.15692 9.57996 7.39815 8.48934 7.90123Z" fill="#212B36"></path>
+                </svg>
+                <span class="toolltiptextCstm">{{shop.metafields.navidium.nvd_description}}</span>
+            </button>
+            </h4>
+            <span class="insurance_direction">{{shop.metafields.navidium.nvd_subtitle}} <strong class="shipping-protection-price">${price}</strong> </span>
+          </div>
+          <div class="w19">
+        <input type="checkbox" id="switch" class="checkbox" ${checked}/>
+            <label for="switch" class="toggle">
+                <p>ON   OFF</p>
+            </label>
+          </div>
+          <div class="w100 msg_holder">
+            <p class="enable_msg">{{shop.metafields.navidium.nvd_description}}</p>
+              <p class="disable_msg">{{shop.metafields.navidium.nvd_message}}</p>
+          </div>
+        </div>
+    </div>`;
+
+      return widget_html;
+    }
+
+    initialCheck();
+
+
+    //now swtich change html codes
+
+
+
+
+          //clear all stored info on checkout
+        if(Shopify.Checkout.step == 'thank_you'){
+            localStorage.removeItem("navidium_variant", called_variant_id);
+            localStorage.removeItem("navidium_variant_price", called_price);
+            localStorage.removeItem('navidium_reload', 'yes');
+        }
+
+
+
+
+
+
+          //check uncheck
+          $(document).on('change', '#switch', function(){
+            //enable disable message
+            if($('#switch').is(':checked')){
+              console.log('checked');
+              $('.enable_msg').fadeIn();
+              $('.disable_msg').fadeOut();
+            }else{
+              console.log('not checked');
+
+              $('.disable_msg').fadeIn();
+              $('.enable_msg').fadeOut();
+              let step1_data = {};
+
+              step1_data.checkout_shipping_address_first_name = $('#checkout_shipping_address_first_name').val();
+              step1_data.checkout_shipping_address_last_name = $('#checkout_shipping_address_last_name').val();
+              step1_data.checkout_shipping_address_address1 = $('#checkout_shipping_address_address1').val();
+              step1_data.checkout_shipping_address_address2 = $('#checkout_shipping_address_address2').val();
+              step1_data.checkout_shipping_address_city = $('#checkout_shipping_address_city').val();
+              step1_data.checkout_shipping_address_phone = $('#checkout_shipping_address_phone').val();
+              step1_data.checkout_shipping_address_province = $('#checkout_shipping_address_province').val();
+              step1_data.checkout_shipping_address_zip = $('#checkout_shipping_address_zip').val();
+              //checkout_email
+              step1_data.checkout_email = $('#checkout_email').val();
+
+              localStorage.setItem('step1_data', JSON.stringify(step1_data));
+            }
+
+            $(document).ready(function(){
+              //fulfill items
+              if(localStorage.getItem('step1_data') != null || localStorage.getItem('step1_data') != ''){
+                //checkout info available. Now autofill them
+                var step1_data = localStorage.getItem('step1_data');
+                step1_data = JSON.parse(step1_data);
+                for(let z in step1_data){
+                  console.log(step1_data[z]);
+                  $('#'+z).val(step1_data[z]);
+                  console.log('----');
+                }
+
+              }
+            });
+
+            var check_variant_in_localStorage = localStorage.getItem("navidium_variant");
+            console.log('check_variant_in_localStorage',check_variant_in_localStorage)
+            var variantID = '';
+            if(check_variant_in_localStorage != null || check_variant_in_localStorage != undefined){
+              variantID = check_variant_in_localStorage;
+            }
+            console.log('Variant ID - '+variantID);
+            if (this.checked == true){
+                  localStorage.setItem("nvd_opted_out", "false");
+                  localStorage.setItem("navidium_reload", "no");
+          //set clear_protection to no and call the function
+                checkNavidiumVariant(1);
+            } else {
+              //console.log('unchecked');
+              $.ajax({
+                type: "POST",
+                url: '/cart/change.js',
+                dataType: 'json',
+                data: {
+                  'id': variantID,
+                  'quantity': 0
+                },
+                success: function(){
+                  console.log('Successful 670');
+                  localStorage.removeItem("navidium_variant");
+                  localStorage.removeItem("navidium_variant_price");
+                  localStorage.setItem("nvd_opted_out", "true");
+                  localStorage.removeItem('navidium_reload');
+                  //reload
+  //                 location.reload();
+
+
+
+                  //New Method Starts\\
+                  var hittingUrl = window.location.href;
+                  console.log(hittingUrl);
+                  //on click next -- previous
+                  //Adding Pagination
+                  $.ajax({
+                    url:hittingUrl,
+                    type:'GET',
+                    success: function(data){
+
+                      console.log(data);
+                      var DNitems = $(data).find('#order-summary').html();
+                      $('#order-summary').html(DNitems);
+                      $('#status').fadeOut();
+                      $('#preloader').fadeOut('slow');
+
+
+
+                    }
+                  });
+                  //New Method Ends\\
+
+
+
+
+                },
+                error: function(error){
+                  console.log(error);
+                }
+              });
+            }
+          });
+</script>
+{% endif %}

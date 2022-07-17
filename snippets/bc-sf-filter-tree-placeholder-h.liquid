@@ -1,0 +1,17 @@
+{%- assign bc_settings = shop.metafields.bc-sf-filter.settings -%}
+{% if bc_settings contains 'showPlaceholder":' %}
+	{%- assign bc_placeholder_enable = bc_settings | split: 'showPlaceholder":' | last | split: ',' | first | split: '}' | first | strip -%}
+{% else %}
+	{%- assign bc_placeholder_enable = 'true' -%}
+{% endif %}
+
+{% if bc_placeholder_enable == 'true' %}
+  {% for i in (1..4) %}
+  <div class="bc-sf-filter-option-block bc-sf-filter-option-skeleton">
+    <div class="bc-sf-filter-block-title">
+      <a href="#"><span></span></a>
+    </div>
+    <div class="bc-sf-filter-block-content"></div>
+  </div>
+  {% endfor %}
+{% endif; %}

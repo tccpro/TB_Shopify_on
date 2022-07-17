@@ -1,0 +1,31 @@
+{% capture article_contents %}
+    {{ article.content }}
+{% endcapture %}  
+
+{% if article_contents contains '<!-- related products -->' %} 
+    {% assign char_split = '<!-- related products -->' %}
+{% else %}
+    {% assign char_split = '</p>' %}
+{% endif %}
+
+{% assign arrparagraphs = article_contents  | split: char_split %}
+{% if arrparagraphs.size > 1 %}
+{% assign middle = arrparagraphs.size | divided_by: 2 | round %}
+{% for paragraph in arrparagraphs limit:middle %}
+{% assign top_contents = top_contents | append: paragraph | append: "</p>" %}
+{% endfor %}
+{% assign article_contents  = top_contents %}
+{% for paragraph in arrparagraphs offset:middle %}
+{% assign content_split = content_split | append: paragraph | append: "</p>" %}
+{% endfor %}
+
+{% endif %}
+{{ article_contents }}
+
+{% unless article.tags contains 'norelprod' %}
+
+    {% assign pb_mid_display = true %}
+    {% include 'pro-blogger.snippet.related-products' %}
+
+{% endunless %}
+{{ content_split }}

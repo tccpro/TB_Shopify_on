@@ -1,0 +1,164 @@
+<div class="bg-hook lazyload" data-bg="{{ 'featured_products_bg.png' | asset_url }}">
+  {% assign featured = section.settings.home_featured_products %}
+  {% assign products_per_row = section.settings.home_featured_products_num %}
+  {% assign rows = section.settings.home_featured_products_row_num %}
+  {% assign title = section.settings.home_featured_products_title %}
+  {% assign total_products = products_per_row | times: 1 %}
+
+  {% if section.settings.home_featured_products_show_heading %}
+  <div class="section-header section-header--small">
+    <h2 class="section-header__title">
+      {{ title }}
+    </h2>
+    <a class="view-all" href="{{ collections[featured].url }}">View All</a>
+  </div>
+  {% endif %}
+
+  {% case products_per_row %}
+    {% when '2' %}
+      {% assign grid_item_width = 'small--one-half medium--one-half large--one-half' %}
+    {% when '3' %}
+      {% assign grid_item_width = 'small--one-half medium--one-third large--one-third' %}
+    {% when '4' %}
+      {% assign grid_item_width = 'small--one-half medium--one-half large--one-quarter' %}
+    {% when '5' %}
+      {% assign grid_item_width = 'small--one-half medium--one-half large--one-fifth' %}
+  {% endcase %}
+
+  <div class="grid-uniform">
+    {% for product in collections[featured].products limit: total_products %}
+<!--       {{forloop.index}} -->
+    
+  {% include 'wh_calculate_discount' with product, hide_method: 'skip' %}
+      {% include 'bold-product' with product, hide_action: 'skip' %}
+      <!-- {{total_products}} -->
+      {% include 'product-grid-item' %}
+    {% else %}
+      {% unless emptyState %}
+        {{ 'theme-onboarding.css' | global_asset_url | stylesheet_tag }}
+        {% assign emptyState = true %}
+      {% endunless %}
+
+      <div class="grid__item">
+        <div class="helper-section">
+          <div class="helper-note">
+            <span class="helper-icon"></span>
+            <h3>{{ 'home_page.onboarding.modal_title' | t }}</h3>
+            <p>{{ 'home_page.onboarding.no_products_html' | t }}</p>
+            <p><a class="admin-btn-primary" href="/admin/collections?tutorial=Frontpage">{{ 'home_page.onboarding.add_product' | t }}</a></p>
+          </div>
+
+          <div class="grid-uniform helper-content">
+            {% assign index = 1 %}
+            {% for i in (1..8) %}
+              {% case i %}
+                {% when 7 %}
+                  {% assign index = 1 %}
+                {% when 8 %}
+                  {% assign index = 2 %}
+              {% endcase %}
+              <div class="grid__item one-half large--one-quarter">
+                <a href="/admin/products" class="grid-link">
+                  <span class="grid-link__image grid-link__image--product">
+                    <span class="grid-link__image-centered">
+                      {% capture imageUrl %}//cdn.shopify.com/s/images/themes/product-{{ index }}.png{% endcapture %}
+                      {{ imageUrl | img_tag }}
+                    </span>
+                  </span>
+                  <p class="grid-link__title">{{ 'home_page.onboarding.product_title' | t }}</p>
+                  <p class="grid-link__meta">
+                    <strong>$19.99</strong>
+                  </p>
+                </a>
+              </div>
+              {% assign index = index | plus: 1 %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    {% endfor %}
+
+  </div>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Featured Products NP",
+    "class": "featured-products",
+    "settings": [
+      {
+        "type": "text",
+        "id": "home_featured_products_title",
+        "label": "Featured collection title"
+      },
+      {
+        "type": "collection",
+        "id": "home_featured_products",
+        "label": "Featured collection"
+      },
+      {
+        "type": "select",
+        "id": "home_featured_products_num",
+        "label": "Number of products per row",
+        "options": [
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          },
+          {
+            "value": "5",
+            "label": "5"
+          },
+          {
+            "value": "6",
+            "label": "6"
+          },
+          {
+            "value": "7",
+            "label": "7"
+          },
+          {
+            "value": "8",
+            "label": "8"
+          },
+          {
+            "value": "9",
+            "label": "9"
+          },
+          {
+            "value": "10",
+            "label": "10"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "home_featured_products_show_heading",
+        "label": "Show heading"
+      }
+    ],
+    "presets": [
+      {
+        "category": "Products",
+        "name": "Featured Products NP"
+      }
+    ]
+  }
+{% endschema %}
+
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

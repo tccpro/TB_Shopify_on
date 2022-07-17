@@ -1,0 +1,26 @@
+{% layout none %}
+{% capture results %}
+
+{% paginate search.results by 6 %}  
+  {% for item in search.results %}
+{% include 'wh_calculate_discount' with item, hide_method: 'skip' %}
+    {% assign product = item %}
+    { 
+"id":{{ product.id | json }},
+"title":{{ product.title | json }},
+"product_type":{{ product.product_type | json }},
+"vendor":{{ product.vendor | json }},
+"handle":{{ product.handle | json }},
+"variants":{{ product.variants | json }},
+"url":{{ product.url | within: product.collections.last | json }},
+"thumbnail":{{ product.featured_image.src | product_img_url: 'thumb' | json }}
+    }
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+{% endpaginate %}
+
+{% endcapture %}
+searchCallback({
+"results_count":{{ search.results_count }},
+"results":[{{ results }}]
+});

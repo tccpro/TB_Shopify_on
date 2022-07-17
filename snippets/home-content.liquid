@@ -1,0 +1,10 @@
+{% if settings.home_page_content != empty %}
+  {% if settings.home_page_show_heading %}
+  <div class="section-header section-header--small">
+    <h2 class="section-header__title">{{ pages[settings.home_page_content].title }}</h2>
+  </div>
+  {% endif %}
+  <div class="rte">
+    {{ pages[settings.home_page_content].content }}
+  </div>
+{% endif %}

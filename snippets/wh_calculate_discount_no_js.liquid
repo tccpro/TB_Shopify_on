@@ -1,0 +1,160 @@
+{% assign wh_discount_value = 0 %}
+{% assign wh_price_min_wo_compare = null %}
+{% assign set_price = null %}
+{% assign active_discounts = shop.metafields.wh_active_discounts.wh_active_discounts %}
+
+{% if customer %}
+
+  {% assign p_discount_value = 0 %}
+  {% for metafield in wh_calculate_discount_no_js.metafields.wh_discount %}
+    {% assign metafield_value = metafield.last | times: 1 %}
+    {% assign metafield_key = metafield.first %}
+	{% capture dg_key %}{{ metafield_key }}-{{ metafield_value }}{% endcapture %}
+	{% if active_discounts contains dg_key %}
+
+    {% if customer.tags contains metafield_key %}     
+      {% if metafield_value > p_discount_value  %}
+        {% assign p_discount_value = metafield_value %}
+        {% assign p_discount_tag = metafield_key %}
+      {% endif %}
+    {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% if customer.tags contains p_discount_tag %}
+    {% assign wh_customer_tag = p_discount_tag %}
+    {% assign wh_discount_value = wh_calculate_discount_no_js.metafields.wh_discount[p_discount_tag] | divided_by: 100.0 %}
+  {% endif %}
+
+{% endif %}
+
+{% assign wh_discount_value = 1 | minus: wh_discount_value %}
+{% assign wh_price_min = wh_calculate_discount_no_js.price_max %}
+
+{% for variant in wh_calculate_discount_no_js.variants %}
+  {% unless variant.title contains '% Off' %}
+  {% unless variant.metafields.shappify_qb.qb_hide == "1" %}
+  {% unless variant.metafields.shappify_bundle.is_bundle == "true" %}
+  {% unless variant.metafields.brodev_scn.hide == "true" %}
+  {% unless variant.metafields.secomapp.freegifts %}
+
+
+  {% assign temp_set_price = 9999999 %}
+  {% for metafield in variant.metafields.wh_discount %}
+    {% assign metafield_value = metafield.last | times: 1 %}
+    {% assign metafield_key = metafield.first %}
+	{% capture dg_key %}{{ metafield_key }}{% endcapture %}
+	{% if active_discounts contains dg_key %}
+    {% if customer.tags contains metafield_key %}     
+      {% if metafield_value < temp_set_price  %}
+        {% assign temp_set_price = metafield_value %}
+        {% assign v_discount_tag = metafield_key %}
+      {% endif %}
+    {% endif %}
+    {% endif %}
+  {% endfor %}
+
+   
+  {% if v_discount_tag %}
+
+    {% assign v_price = variant.metafields.wh_discount[v_discount_tag] %}
+    {% if v_price == null %}
+     {% assign v_price = variant.price %}
+    {% else %}
+      {% assign set_price = v_price %}
+      {% if set_price < wh_price_min %}
+        {% assign wh_price_min = set_price %}
+      {% endif %}
+
+        window.wh_metafields[{{variant.id}}] = {{set_price}};
+    {% endif %}
+
+  {% else %}
+      {% assign v_price = variant.price %}
+  {% endif %}
+
+    {% if v_price < wh_price_min %}
+      {% assign wh_price_min = v_price %}
+    {% endif %}
+
+    {% if variant.compare_at_price == blank or variant.compare_at_price == 0 %}
+      {% assign wh_price_min_wo_compare = v_price %}
+    {% endif %}
+
+  {% endunless %}
+  {% endunless %}
+  {% endunless %}
+  {% endunless %}
+  {% endunless %}
+{% endfor %}
+
+
+{% assign wh_price = wh_calculate_discount_no_js.price %}
+{% assign wh_compare_at_price = wh_calculate_discount_no_js.compare_at_price %}
+{% assign wh_price_max = wh_calculate_discount_no_js.price_max %}
+{% assign wh_compare_at_price_max = wh_calculate_discount_no_js.compare_at_price_max %}
+{% assign wh_compare_at_price_min = wh_calculate_discount_no_js.compare_at_price_min %}
+
+
+{% if wh_discount_value < 1 or set_price %}
+
+    {% if wh_compare_at_price == blank  or wh_compare_at_price == 0 or wh_compare_at_price < wh_price_min %}
+        {% assign wh_compare_at_price = wh_calculate_discount_no_js.price %}
+    {% endif %}
+
+
+    {% if wh_compare_at_price_max == blank or wh_compare_at_price_max == 0 %}
+        {% assign wh_compare_at_price_max = wh_price_max %}
+    {% endif %}
+    {% assign wh_price_max = wh_compare_at_price_max | times: wh_discount_value %}
+
+    {% if wh_compare_at_price_min == blank or wh_compare_at_price_min == 0 or wh_compare_at_price_min < wh_price_min  %}
+        {% assign wh_compare_at_price_min = wh_calculate_discount_no_js.price %}
+    {% endif %}
+
+	{% if set_price == null %}
+
+      {% assign wh_price_min = wh_compare_at_price_min | times: wh_discount_value %}
+
+
+      {% if wh_price_min_wo_compare == null %}
+        {% assign wh_price_min = wh_compare_at_price_min | times: wh_discount_value %}
+      {% else %}
+
+          {% if  wh_price_min_wo_compare < wh_compare_at_price_min %}
+            {% assign wh_compare_at_price_min = wh_price_min_wo_compare %}
+            {% assign wh_price_min = wh_price_min_wo_compare | times: wh_discount_value %}
+          {% endif %}
+      {% endif %}
+	{% endif %}
+
+
+    {% assign wh_price = wh_compare_at_price | times: wh_discount_value %}
+    {% if wh_price > wh_calculate_discount_no_js.price %}
+      {% assign wh_price = wh_calculate_discount_no_js.price %}
+    {% endif %}
+
+	{% if set_price %}
+      {% assign wh_price = set_price %}
+	{% endif %}
+
+  	{% if wh_price_min > wh_calculate_discount_no_js.price_min %}
+		{% assign wh_price_min = wh_calculate_discount_no_js.price_min %}
+    {% endif %}
+
+    {% if wh_price_max > wh_calculate_discount_no_js.price_max %}
+		{% assign wh_price_max = wh_calculate_discount_no_js.price_max %}
+  {% endif %}
+
+  window.wh_discount_value = {{wh_discount_value}};
+{% endif %}
+
+<!-- product {{wh_calculate_discount_no_js.handle}} set-price {{set_price}}-->
+<!-- product.price {{wh_calculate_discount_no_js.price}}: wh_price {{wh_price}}-->
+<!-- product.price_min {{wh_calculate_discount_no_js.price_min}} : wh_price_min {{wh_price_min}} -->
+<!-- product.price_max {{wh_calculate_discount_no_js.price_max}} : wh_price_max {{wh_price_max}} -->
+
+<!-- wh_discount_value {{wh_discount_value}} -->
+<!-- compare_at_price {{wh_calculate_discount_no_js.compare_at_price}}: wh_compare_at_price {{wh_compare_at_price}} -->
+<!-- compare_at_price_min {{wh_calculate_discount_no_js.compare_at_price_min}}: wh_compare_at_price_min {{wh_compare_at_price_min}} -->
+<!-- compare_at_price_max {{wh_calculate_discount_no_js.compare_at_price_max}}: wh_compare_at_price_max {{wh_compare_at_price_max}} -->

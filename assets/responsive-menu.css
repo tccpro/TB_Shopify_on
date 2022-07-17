@@ -1,0 +1,492 @@
+
+body {
+  /* These styles don't have to be on body,
+     they could be on an element that wraps around
+     the left-flyout-nav and the content. 
+     This is to prevent a problem on Chrome that
+     leaves the width of the container with the 
+     added width of the flyout nav even after it's been
+     hidden. */
+  position: relative;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.layout-left-flyout {
+  height: 100%;
+  position: fixed;
+  visibility: hidden;
+  z-index: 0;
+  -moz-transition: visibility 0 linear 0.2s;
+  -o-transition: visibility 0 linear 0.2s;
+  -webkit-transition: visibility 0 linear;
+  -webkit-transition-delay: 0.2s;
+  transition: visibility 0 linear 0.2s;
+  background: #383838;
+  -moz-backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-perspective: 1000;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+  -moz-transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+.layout-left-flyout.isCbFlyNavActive {
+  visibility: visible;
+  z-index: 1;
+  -moz-transition: z-index 0 linear 0.2s;
+  -o-transition: z-index 0 linear 0.2s;
+  -webkit-transition: z-index 0 linear;
+  -webkit-transition-delay: 0.2s;
+  transition: z-index 0 linear 0.2s;
+}
+
+.cbFlyNav-wrap {
+  display: block;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  width: 270px;
+  -moz-backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-perspective: 1000;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+  -moz-transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+.cbFlyNav-wrap > nav {
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
+  -o-transform: translateY(0);
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+  -moz-transition: -moz-transform 0 ease-in-out;
+  -o-transition: -o-transform 0 ease-in-out;
+  -webkit-transition: -webkit-transform 0 ease-in-out;
+  transition: transform 0 ease-in-out;
+  /*    height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;*/
+}
+
+.nav-collapse {
+  -moz-transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -moz-transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+.layout-right-content {
+  -moz-transition: -moz-transform 0.2s ease-in-out;
+  -o-transition: -o-transform 0.2s ease-in-out;
+  -webkit-transition: -webkit-transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out;
+  -moz-transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -moz-perspective: 1000;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+  -moz-transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -moz-backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  z-index: 1;
+  /* NOTE! Put container bg here so you don't
+     get any clipping when the content is 
+     transitioning. Any tips on alternate 
+     solutions are welcome.
+  */
+  background: #fff;
+  background: #E72534;
+}
+
+.layout-right-content.isCbFlyNavActive {
+  -moz-transform: translate3d(270px, 0, 0);
+  -webkit-transform: translate3d(270px, 0, 0);
+  transform: translate3d(270px, 0, 0);
+  min-width: 320px;
+}
+
+.icon-cbmore {
+  content: "";
+  float: right;
+  margin-top: 4.5px;
+  padding: 4.5px;
+  box-shadow: 1px -1px 0 0px #FFF inset;
+  -moz-transform: rotate(225deg);
+  -ms-transform: rotate(225deg);
+  -o-transform: rotate(225deg);
+  -webkit-transform: rotate(225deg);
+  transform: rotate(225deg);
+}
+
+.nav-flyout-navmask, .nav-flyout-contentmask {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.nav-flyout-contentmask {
+  z-index: 1;
+}
+
+.nav-flyout-navmask {
+  right: 180px;
+  z-index: 1;
+}
+
+/* Menu Toggle */
+.btn-navbar {
+  position: absolute;
+  width: 50px;
+  height: 40px;
+  padding: 4px 0;
+  display: block;
+  z-index: 1;
+}
+
+.btn-navbar-navtoggle {
+  left: 10px;
+}
+
+.btn-navbar .icon-bar {
+  display: block;
+  width: 28px;
+  height: 4px;
+  background-color: #4d4d4d;
+  margin: 7px auto 0 auto;
+}
+
+.btn-navbar .icon-bar + .icon-bar {
+  margin-top: 3px;
+}
+
+@media screen and (min-width: 768px) {
+  .btn-navbar {
+    display: none;
+  }
+}
+/* Navbar Styles */
+.navbar {
+  height: 40px;
+  margin: 0;
+  padding: 5px 0;
+  position: relative;
+  background: #fafafa;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 0 10px;
+  font-family: "Lato", sans-serif;
+  box-shadow: 0 1px 1px 0px #dddddd;
+}
+
+@media screen and (max-width: 767px) {
+  .navbar .nav-collapse {
+    display: none;
+  }
+}
+@media screen and (min-width: 768px) {
+  .navbar {
+    height: auto;
+    position: relative;
+    background: #fafafa;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 0 10px;
+  }
+}
+/* Mobile First Nav */
+.the-nav ul.nav-flyout {
+  display: block;
+  margin-bottom: 15px;
+  float: none;
+  height: 100%;
+}
+.the-nav ul.nav-flyout > li {
+  float: none;
+  display: block;
+  width: 270px;
+}
+.the-nav ul.nav-flyout li a {
+  color: #FFF;
+  display: block;
+  text-decoration: none;
+  padding: 11px 15px;
+  margin-right: 0;
+}
+.the-nav ul.nav-flyout li a:hover {
+  background: #ff8358;
+}
+.the-nav ul.nav-flyout .dropdown {
+  position: static;
+}
+.the-nav ul.nav-flyout .dropdown .subnav {
+  float: none;
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  left: auto;
+  width: 0;
+  min-width: 0;
+  margin: 0;
+  list-style: none;
+  z-index: 1000;
+  background: #595959;
+  transition: width .2s ease-in-out;
+}
+.the-nav ul.nav-flyout .dropdown .subnav > li {
+  width: 180px;
+}
+.the-nav ul.nav-flyout .dropdown .subnav.is-subnav-visible {
+  width: 180px;
+}
+.the-nav.is-inactive ul.nav-flyout > li > a {
+  opacity: .2;
+}
+.the-nav.is-inactive ul.nav-flyout > li.is-active > a {
+  opacity: 1;
+  background: #ff8358;
+}
+
+/* Large Screen Styles*/
+@media screen and (min-width: 768px) {
+  .container {
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  .the-nav {
+    display: block;
+  }
+
+  .the-nav .nav {
+    display: block;
+  }
+
+  .the-nav .nav-pill:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .the-nav > .nav {
+    margin: 0;
+    line-height: normal;
+  }
+
+  .the-nav > .nav > li {
+    display: inline-block;
+    margin-bottom: 0;
+    position: relative;
+  }
+
+  .the-nav > .nav > li .caret {
+    margin-top: 8px;
+    margin-left: 2px;
+    border-top-color: #A7A7A7;
+    border-bottom-color: #A7A7A7;
+  }
+
+  .the-nav > .nav > li a {
+    display: block;
+    padding: 10px 10px 10px;
+    color: #A7A7A7;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .the-nav > .nav > li:nth-of-type(1) > a {
+    padding-left: 0;
+  }
+
+  .the-nav > .nav > li:last-of-type > a {
+    padding-right: 0;
+  }
+
+  /* Active State */
+  .the-nav > .nav > li:hover > a {
+    color: #303030;
+  }
+
+  .the-nav > .nav > li:hover .subnav {
+    display: block;
+  }
+
+  .the-nav > .nav > li:hover .caret {
+    border-top-color: #303030;
+    border-bottom-color: #303030;
+  }
+
+  /* Subnav */
+  .nav > li > .subnav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 20;
+    margin: 0;
+    padding: 0;
+    min-width: 160px;
+    background: #F7F7F7;
+    box-shadow: 0 1px 1px 0px #DDDDDD;
+  }
+
+  .nav > li > .subnav > li {
+    margin-bottom: 0;
+  }
+
+  .nav > li > .subnav > li a {
+    color: #A7A7A7;
+    -moz-transition: all, 0.2s;
+    -o-transition: all, 0.2s;
+    -webkit-transition: all, 0.2s;
+    transition: all, 0.2s;
+  }
+
+  .nav > li > .subnav > li:hover a {
+    background: #ff8358;
+    color: white;
+  }
+}
+/* General Mobile First Styles */
+.hidden-sm {
+  display: none;
+}
+
+@media screen and (min-width: 768px) {
+  .visible-sm {
+    display: none;
+  }
+
+  .hidden-sm {
+    display: block;
+  }
+}
+/* Resets and clean ups and extras */
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+ul li {
+  margin: 0;
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.dropdown .caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: top;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid gray;
+  content: "";
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.container {
+  font-family: 'Lato', Sans-serif;
+  width: 95%;
+  margin: 0 auto;
+}
+.container.navbar {
+  width: 100%;
+}
+.container:before, .container:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+h1 {
+  font-size: 3.7em;
+  font-weight: 200;
+  margin-top: .2em;
+}
+
+p {
+  font-size: 1em;
+  line-height: 1.4em;
+  font-weight: 400;
+}
+
+a.gh-btn {
+  display: inline-block;
+  width: 250px;
+  background: white;
+  color: #1D1F21;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  padding: 15px 25px;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+a.gh-btn:hover {
+  background: #e6e6e6;
+}
+
+.align-center {
+  text-align: center;
+}
+
+pre {
+  color: #cccccc;
+  overflow: auto;
+  overflow: auto;
+  background: #1D1F21;
+  padding: 0;
+  font-family: monospace;
+  -moz-tab-size: 2;
+  -o-tab-size: 2;
+  tab-size: 2;
+  -ms-word-break: normal;
+  word-break: normal;
+  word-break: normal;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  position: relative;
+}
+
+
+
+

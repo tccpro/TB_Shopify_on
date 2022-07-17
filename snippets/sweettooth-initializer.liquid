@@ -1,0 +1,10 @@
+{% if customer %}
+  {% assign digest = customer.id | append: shop.metafields['sweettooth'].api_secret | md5 %}
+  {% assign customerId = customer.id %}
+{% endif %}
+
+<div class="sweettooth-init"
+     data-channel-api-key="{{ shop.metafields['sweettooth'].api_key }}"
+     data-external-customer-id="{{ customerId }}"
+     data-customer-auth-digest="{{ digest }}"
+></div>

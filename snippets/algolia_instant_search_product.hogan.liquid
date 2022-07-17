@@ -1,0 +1,54 @@
+<div data-algolia-position="[[ productPosition ]]" data-algolia-queryid="[[ queryID ]]" data-algolia-objectid="[[ objectID ]]" class="ais-hit ais-product" data-handle="[[ handle ]]" data-variant-id="[[ objectID ]]" data-distinct="[[ _distinct ]]">
+  <div class="ais-hit--picture" style="background-image: url('[[# helpers.mediumImage ]][[/ helpers.mediumImage ]]')"></div>
+
+  <div class="ais-hit--details">
+    <p class="ais-hit--title">
+      <a data-algolia-position="[[ productPosition ]]" data-algolia-queryid="[[ queryID ]]" data-algolia-objectid="[[ objectID ]]" href="[[# helpers.instantsearchLink ]][[/ helpers.instantsearchLink ]]" onclick="void(0)" title="[[# helpers.fullTitle ]][[/ helpers.fullTitle ]]">
+        [[# helpers.fullHTMLTitle ]][[/ helpers.fullHTMLTitle ]]
+      </a>
+    </p>
+    <p class="ais-hit--subtitle" title="[[ product_type ]][[# vendor ]] by [[ vendor ]][[/ vendor ]]">
+      [[& _highlightResult.product_type.value ]]
+      [[# vendor ]] by [[& _highlightResult.vendor.value ]][[/ vendor ]]
+    </p>
+    <p class="ais-hit--price">[[# helpers.instantsearchPrice ]][[/ helpers.instantsearchPrice ]]</p>
+    <!-- Extra info examples - Remove the display: none to show them -->
+    <p class="ais-hit--info" style="display: none">
+      [[# sku ]]
+        <span class="algolia-sku">[[& _highlightResult.sku.value ]]</span>
+      [[/ sku ]]
+      [[# barcode ]]
+        <span class="algolia-barcode">[[& _highlightResult.barcode.value ]]</span>
+      [[/ barcode ]]
+      [[# weight ]]
+        <span class="algolia-weight">[[ weight ]]</span>
+      [[/ weight ]]
+      [[^ taxable ]]
+        <span class="algolia-taxable">Tax free</span>
+      [[/ taxable ]]
+    </p>
+    <!-- Tags example - Remove the display: none to show them -->
+    <p class="ais-hit--tags" style="display: none">
+      [[# _highlightResult.tags ]]
+        <span class="ais-hit--tag">[[& value ]]</span>
+      [[/ _highlightResult.tags ]]
+    </p>
+    [[^ _distinct ]]
+      <form id="algolia-add-to-cart-[[ objectID ]]" style="display: none;" action="/cart/add" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="[[ objectID ]]" />
+      </form>
+      <p class="ais-hit--cart">
+        [[# can_order ]]
+          <span class="ais-hit--cart-button" data-form-id="algolia-add-to-cart-[[ objectID ]]">
+            [[ translations.addToCart ]]
+          </span>
+        [[/ can_order ]]
+        [[^ can_order ]]
+          <span class="ais-hit--cart-button ais-hit--cart-button__disabled">
+            [[ translations.outOfStock ]]
+          </span>
+        [[/ can_order ]]
+      </p>
+    [[/ _distinct ]]
+  </div>
+</div>

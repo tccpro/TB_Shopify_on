@@ -1,0 +1,46 @@
+{% unless collection_item_width %}
+  {% assign collection_item_width = 'medium--one-half large--one-third' %}
+{% endunless %}
+
+{% unless collection_item_img_size %}
+  {% assign collection_item_img_size = 'grande' %}
+{% endunless %}
+
+{% assign img_size_px = 400 %}
+{%- if collection_item_img_size =='grande' -%}
+	{% assign img_size_px = 600 %}
+{%- elsif collection_item_img_size =='large' -%}
+	{% assign img_size_px = 480 %}
+{%- elsif collection_item_img_size =='medium' -%}
+	{% assign img_size_px = 240 %}
+{%- elsif collection_item_img_size =='compact' -%}
+	{% assign img_size_px = 160 %}
+{%- endif -%}
+
+<div class="grid__item {{collection_item_width}} text-center">
+  {% capture collection_title %}{{ collections[featured].title | escape }}{% endcapture %}
+
+  <a href="{{ collections[featured].url }}" title="{{ 'collections.general.link_title' | t: title: collection_title }}" class="grid-link text-center">
+    <span class="grid-link__image grid-link__image--collection">
+      <span class="grid-link__image-centered">
+        {% if collections[featured].image %}
+          <img src="{{ 'lazy.gif' | asset_url }}"
+               data-src="{{ collections[featured].image.src | img_url: '400x' }}"
+               data-srcset="{{ collections[featured].image.src | img_url: collection_item_img_size }} {{ img_size_px }}w, {{ collections[featured].image.src | img_url: '480x' }} 480w, {{ collections[featured].image.src | img_url: '400x' }} 400w"
+               data-sizes="auto"
+               class="lazyload"
+               alt="{{ img_tag: collection_title }}" />
+        {% else %}
+         <img src="{{ 'lazy.gif' | asset_url }}"
+              data-src="{{ collections[featured].products.first.featured_image | img_url: '400x' }}"
+              data-srcset="{{ collections[featured].products.first.featured_image | img_url: collection_item_img_size }} {{ img_size_px }}w, {{ collections[featured].products.first.featured_image | img_url: '480x' }} 480w, {{ collections[featured].products.first.featured_image | img_url: '400x' }} 400w"
+              data-sizes="auto"
+              class="lazyload"
+              alt="{{ img_tag: collection_title }}" />
+        {% endif %}
+      </span>
+    </span>
+    <p class="grid-link__title">{{ collections[featured].title }}</p>
+  </a>
+
+</div>

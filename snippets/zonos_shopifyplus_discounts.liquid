@@ -1,0 +1,63 @@
+<script>    
+     function hideDiscountField(){	
+         var checkExist = setInterval(function() {
+           if (document.querySelector('.order-summary__section.order-summary__section--discount')) {
+			
+              if(window.location.href.indexOf("step=shipping_method") > -1){
+                  console.log('true, hide');
+                  document.querySelector('.order-summary__section.order-summary__section--discount').style.display='none'; 
+              }else{
+                  console.log('false, show');
+                  document.querySelector('.order-summary__section.order-summary__section--discount').style.display=''; 
+              }
+              clearInterval(checkExist);
+           }
+         }, 100); 
+      }
+
+      var temp = null; 
+      var checkoutToken = window.location.href.split('checkouts/')[1].split('?')[0];
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+           if (xmlhttp.status == 200) {
+               	var cart = JSON.parse(xmlhttp.responseText);
+               	console.log(cart);
+               	console.log(cart.token);
+                temp = cart;
+             	var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/cart/change.js");
+                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xhr.onreadystatechange = function() {
+                if (xhr.readyState == xhr.DONE) {
+                   if (xhr.status == 200) {
+                     var cart = JSON.parse(xhr.responseText);
+                     console.log(cart);
+                     if(temp && temp.items[0] && temp.items[0].properties._checkoutToken){
+                       console.log('token exists');
+                       hideDiscountField();
+                     }else{
+                       console.log('token doesnt exist, reloading');
+                       window.location.reload();
+                     }
+
+                   } else if (xhr.status == 400) {
+                     console.log('There was an error 400');
+                   } else {
+                     console.log('something else other than 200 was returned');
+                   }
+                 }
+               };
+           	xhr.send(JSON.stringify({line:1,'quantity': temp.items[0].quantity,'properties': { '_checkoutToken': checkoutToken }}));
+           }
+           else if (xmlhttp.status == 400) {
+              console.log('There was an error 400');
+           }
+           else {
+              console.log(xmlhttp.status);
+           }
+        }
+      };
+      xmlhttp.open("GET", "/cart.js", true);
+      xmlhttp.send();
+</script>

@@ -1,0 +1,16 @@
+{%- layout none -%}
+{%- assign bc_settings = shop.metafields.bc-sf-filter.settings -%}
+{%- if bc_settings contains 'mostPopularEnable":' -%}
+	{%- assign bc_most_popular_limit = bc_settings | split: 'mostPopularEnable":' | last | split: 'limit"' | last | split: ',"' | first | split: ':' | last | replace: '"','' | strip | plus: 0 -%}
+{%- else -%}
+	{%- assign bc_most_popular_limit = 4 -%}
+{%- endif -%}
+{%- if collection.products_count < bc_most_popular_limit -%}
+	{%- assign bc_most_popular_limit = collection.products_count -%}
+{%- endif -%}
+{"products":[
+{%- for product in collection.products limit: bc_most_popular_limit -%}
+{%- include 'bc-sf-filter-product-json', product: product  -%}
+{%- if forloop.index < bc_most_popular_limit -%},{%- endif -%}
+{%- endfor -%}
+]}

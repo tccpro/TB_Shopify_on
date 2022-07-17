@@ -1,0 +1,34 @@
+{% layout none %}
+
+{% paginate search.results by 5 %}
+  {% if search.results_count > 0 %}
+    <p class="search-article">Results for "{{ search.terms }}"</p>
+
+    {% for item in search.results %}
+      <p class="search-article">
+        <a href="{{ item.url }}">{{ item.title }}</a>
+        <br>
+        <time pubdate="" datetime="{{ item.created_at | date: "%Y-%m-%d" }}">
+          <em class="text-light">{{ item.created_at | date: "%B %-d, %Y" }}</em>
+        </time>
+      </p>
+    {% endfor %}
+    <div class="pagination search-article">
+      {% if paginate.previous %}
+        <a class="prev-article-search" href="{{ paginate.previous.url }}">
+          {% include 'icon-right-arrow' %}
+        </a>
+      {% endif %}
+
+      <span>{{ paginate.current_page }} of {{ paginate.pages }}</span>
+
+      {% if paginate.next %}
+        <a class="next-article-search" href="{{ paginate.next.url }}">
+          {% include 'icon-right-arrow' %}
+        </a>
+      {% endif %}
+    </div>
+  {% else %}
+    <p class="search-article">No results for "{{ search.terms }}"</p>
+  {% endif %}
+{% endpaginate %}

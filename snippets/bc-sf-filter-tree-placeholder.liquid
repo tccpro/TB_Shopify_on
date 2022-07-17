@@ -1,0 +1,22 @@
+{%- assign bc_settings = shop.metafields.bc-sf-filter.settings -%}
+{% if bc_settings contains 'showPlaceholder":' %}
+	{%- assign bc_placeholder_enable = bc_settings | split: 'showPlaceholder":' | last | split: ',' | first | split: '}' | first | strip -%}
+{% else %}
+	{%- assign bc_placeholder_enable = 'true' -%}
+{% endif %}
+
+{% if bc_placeholder_enable == 'true' %}
+  {% for i in (1..3) %}
+  <div class="bc-sf-filter-option-block bc-sf-filter-option-skeleton">
+    <div class="bc-sf-filter-block-title">
+      <h3><span></span></h3>
+    </div>
+    <div class="bc-sf-filter-block-content">
+      <span class="bc-sf-filter-skeleton-text bc-sf-filter-skeleton-width3"></span>
+      <span class="bc-sf-filter-skeleton-text bc-sf-filter-skeleton-width4"></span>
+      <span class="bc-sf-filter-skeleton-text bc-sf-filter-skeleton-width2"></span>
+      <span class="bc-sf-filter-skeleton-text bc-sf-filter-skeleton-width1"></span>
+    </div>
+  </div>
+  {% endfor %}
+{% endif %}

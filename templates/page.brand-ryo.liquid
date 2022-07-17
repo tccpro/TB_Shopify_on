@@ -1,0 +1,53 @@
+<div class="main-container">
+
+  <header class="section-header">
+    {% include 'breadcrumb' %}
+    <h1 class="section-header__title">{{ page.title }}</h1>
+  </header>
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+  <div class="rte clearfix truncated">
+    {{ page.content | truncate: 100 }}
+    
+    <a class="read-more" href="#">Read more</a>
+  </div>
+  
+  <div class="rte clearfix">
+    {{ page.content }}
+  </div>
+
+  {% assign brand_collections = page.metafields.Brands.brand_collection | strip_html | split: ';' %}
+
+  <ul class="collection-grid">
+
+    {% for brand in brand_collections %}
+      {% assign handle = brand | strip %}
+      {% assign brand_collection = collections[handle] %}
+
+      <li class="collection-item">  <!-- search-brand-item -->
+        <a href="{{ brand_collection.url }}"><img class="lazyload" src="{{ 'lazy.gif' | asset_url }}" data-src="{{ brand_collection.image | img_url: 'small'}}"></a>
+        <h4>{{ brand_collection.title | link_to: brand_collection.url }}</h4>
+      </li>
+
+    {% endfor %} 
+
+  </ul>
+</div>
+
+<br/>
+{% section 'featured-products-tubes' %}
+{% section 'featured-products-wraps' %}
+{% section 'featured-products-cones' %}
+{% section 'featured-products-papers' %}
+<div class="main-container">
+  	<div class="rte clearfix">
+    <p>Many of today's most popular brands of tobacco cigarettes are pre-rolled. While it is convenient, there are also many benefits to learning how to roll your own tobacco. When it comes to RYO tobacco online, we strive to provide customers with one of the largest inventories of rolling tobacco brands to make finding the perfect RYO flavor and combination easier.</p> 
+    <p>On this page, you'll note that we've carefully curated the top rolling tobacco brands in one convenient place for you to browse. Just a small sampling of the best-selling RYO brands you'll find here includes Bugler, Zig Zag, Gambler, Raw Zen, Joker, Top, Beretta, Premier, Good Times, and many more.</p> 
+    <p>You'll find a vast array of exceptional products here from each of these brands, such as the tobaccos they make, tubes, injectors, papers, accessories, and all must-have tools for a satisfying, perfect smoke at home. Below you can find our list of brands for quick and easy access, and we've listed the best-selling cigarette tubes, wraps, cones, and RYO papers that our customers love to aid you in finding the products you need.</p> 
+    <p>If you've been searching for the best prices on RYO tobacco online, you've come to the right place. We strive to offer the most extensive assortment of world-famous rolling tobacco brands to serve all of our customers' tailored tastes and needs. RYO is about knowing exactly what you are smoking while lowering costs and enjoying the same great taste and flavor you've come to love. At BnB, we've something for everyone. 
+    Don't forget to take advantage of our excellent customer Loyalty program before you make your purchase. Join the Loyalty club for free today, and earn points for every purchase you make with us. Those points can be redeemed for one-of-a-kind rewards and savings every time you shop. When you sign up, enjoy 100 complimentary points on us, earn further points every time you shop, leave a review, follow us on social media, and more.</p> 
+    <p>If you're a wholesaler looking for the absolute best prices online today, please check out our Wholesale Registration form to apply and begin saving today. At BnB Tobacco, like a small mom-and-pop shop, our focus and commitment are to quality products at affordable prices. Should you have any questions, please reach out and contact us today. Our excellent customer service team would love to help.</p>
+</div>
+</div>

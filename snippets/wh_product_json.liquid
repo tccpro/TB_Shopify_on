@@ -1,0 +1,233 @@
+{%- comment -%}api_v6{%- endcomment -%}
+{%- assign wh_discount_value = 0 -%}
+{%- assign wh_price_min_wo_compare = null -%}
+{%- assign set_price = null -%}
+{%- assign active_discounts = shop.metafields.wh_active_discounts.wh_active_discounts -%}
+{%- assign active_discounts_array = active_discounts | split: ',' -%}
+{%- if customer -%}
+  {%- assign p_discount_value = 0 -%}
+  {%- for discount_key in active_discounts_array -%}
+    {%- assign key_split = discount_key | split: '-' -%}
+    {%- assign key_split_length = key_split | size -%}
+    {%- if key_split_length > 2 -%}
+      {%- assign p_value = key_split.last | plus: 0 -%}
+      {%- assign removeable_key = key_split.last | prepend: '-' -%}
+      {%- assign p_key = discount_key | remove_first: removeable_key -%}
+    {%- else -%}
+      {%- assign p_key = key_split[0] -%}
+      {%- assign p_value = key_split[1] | plus: 0 -%}
+    {%- endif -%}
+    {%- if customer.tags contains p_key -%}
+      {%- assign discount_type = shop.metafields.wh_discount_types[discount_key] -%}
+      {%- if discount_type contains 'entire' -%}
+        {%- if p_value > p_discount_value -%}
+          {%- assign p_discount_value = p_value -%}
+          {%- assign p_discount_tag = p_key -%}
+        {%- endif -%}
+      {%- elsif discount_type contains 'collection' -%}
+        {%- for c in wh_product_json.collections -%}
+          {%- if discount_type contains c.id -%}
+          	{%- if p_value > p_discount_value -%}
+              {%- assign p_discount_value = p_value -%}
+              {%- assign p_discount_tag = p_key -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- elsif discount_type contains 'product' -%}
+        {%- if discount_type contains wh_product_json.id -%}
+          {%- if p_value > p_discount_value -%}
+            {%- assign p_discount_value = p_value -%}
+            {%- assign p_discount_tag = p_key -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if customer.tags contains p_discount_tag -%}
+    {%- assign wh_customer_tag = p_discount_tag -%}
+    {%- assign wh_discount_value = p_discount_value | divided_by: 100.0 -%}
+  {%- endif -%}
+{%- endif -%}
+{%- assign wh_discount_value = 1 | minus: wh_discount_value -%}
+{%- assign raw_set_prices = wh_product_json.metafields.wh_set_prices.wh_set_prices -%}
+{%- capture wh_variants_json -%}[
+{%- assign wh_price_min = wh_product_json.price_max -%}
+{%- assign temp_set_price = 9999999 -%}
+{%- for variant in wh_product_json.variants -%}
+  {%- unless variant.title contains '% Off' -%}
+  {%- unless variant.metafields.shappify_qb.qb_hide == "1" -%}
+  {%- unless variant.metafields.shappify_bundle.is_bundle == "true" -%}
+  {%- unless variant.metafields.brodev_scn.hide == "true" -%}
+  {%- unless variant.metafields.secomapp.freegifts -%}
+    {%- if raw_set_prices -%}
+      {%- assign set_prices_array = raw_set_prices | split: "," -%}
+      {%- for sp in set_prices_array -%}
+        {%- assign sp_arr = sp | split: '--' -%}
+        {%- assign sp_tag = sp_arr | first -%}
+        {%- assign sp_var_arr = sp_arr | last | split: '^' -%}
+        {%- if active_discounts contains sp_tag -%}
+          {%- if customer.tags contains sp_tag -%}  
+            {%- for value in sp_var_arr -%}
+              {%- assign val_split = value | split: '-' -%}
+              {%- assign variant_id = val_split | first | times: 1 -%}
+              {%- if variant_id == variant.id -%}
+                {%- assign meta_set_price = val_split | last |times: 1 -%}
+                {%- if meta_set_price < temp_set_price  -%}
+                  {%- assign temp_set_price = meta_set_price -%}
+                  {%- assign v_discount_tag = sp_tag -%}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+    {%- if v_discount_tag and temp_set_price != 9999999 -%}
+      {%- assign v_price = temp_set_price -%}
+      {%- if v_price == null -%}
+       {%- assign v_price = variant.price -%}
+      {%- else -%}
+        {%- assign set_price = v_price -%}
+        {%- if set_price < wh_price_min -%}
+          {%- assign wh_price_min = set_price -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- else -%}
+        {%- assign v_price = variant.price -%}
+    {%- endif -%}
+    {%- if v_price < wh_price_min -%}
+      {%- assign wh_price_min = v_price -%}
+    {%- endif -%}
+    {%- if variant.compare_at_price == blank or variant.compare_at_price == 0 -%}
+      {%- assign wh_price_min_wo_compare = v_price -%}
+    {%- endif -%}
+    {%- assign wh_v_compare_at_price = variant.compare_at_price -%}
+    {%- if wh_v_compare_at_price == blank or wh_v_compare_at_price == 0  -%}
+      {%- assign wh_v_compare_at_price = variant.price -%}
+    {%- endif -%}
+    {%- assign wh_v_price = wh_v_compare_at_price | times: wh_discount_value -%}
+    {%- if wh_v_price > variant.price  -%}
+      {%- assign wh_v_price = variant.price -%}
+    {%- endif -%}
+    {%- if v_discount_tag -%}
+      {%- for sp in set_prices_array -%}
+        {%- assign sp_arr = sp | split: '--' -%}
+        {%- assign sp_tag = sp_arr | first -%}
+        {%- if v_discount_tag == sp_tag -%}
+          {%- assign sp_var_arr = sp_arr | last | split: '^' -%}
+          {%- for value in sp_var_arr -%}
+            {%- assign val_split = value | split: '-' -%}
+            {%- assign variant_id = val_split | first | times: 1 -%}
+            {%- if variant_id == variant.id -%}
+              {%- assign meta_set_price = val_split | last |times: 1 -%}
+              {%- assign set_v_price = meta_set_price -%}
+              {%- if set_v_price -%}
+                {%- assign wh_v_price = set_v_price -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+    {%- if wh_discount_value == 1 and set_v_price == null -%}
+      {%- assign wh_v_compare_at_price = variant.compare_at_price -%}
+      {%- assign wh_v_price = variant.price -%}
+    {%- endif -%}
+  ,{"id":{{- variant.id | json -}},
+    "title":{{- variant.title | json -}},
+    "option1":{{- variant.option1 | json -}},
+    "option2":{{- variant.option2 | json -}},
+    "option3":{{- variant.option3 | json -}},
+    "sku":{{- variant.sku | json -}},
+    "requires_shipping":{{- variant.requires_shipping | json -}},
+    "taxable":{{- variant.taxable | json -}},
+    "featured_image":{%- if variant.featured_image.src == blank -%}{{- variant.featured_image | json -}}{%- else -%}{"src": {{- variant.featured_image.src | json -}}, "id": {{- variant.featured_image.id | json -}} }{%- endif -%},
+    "available":{{- variant.available | json -}},
+    "options":{{- variant.options | json -}},
+    "price":{{- wh_v_price | json -}},
+    "weight":{{- variant.weight | json -}},
+    "compare_at_price":{{- wh_v_compare_at_price | json -}},
+    "inventory_quantity":{{- variant.inventory_quantity | json -}},
+    "inventory_management":{{- variant.inventory_management | json -}},
+    "inventory_policy":{{- variant.inventory_policy | json -}},
+    "barcode":{{- variant.barcode | json -}}
+    }
+  {%- endunless -%}
+  {%- endunless -%}
+  {%- endunless -%}
+  {%- endunless -%}
+  {%- endunless -%}
+{%- endfor -%}
+]{%- endcapture wh_variants_json -%}
+{%- assign wh_variants_json = wh_variants_json | remove_first: "," -%}
+{%- assign wh_price = wh_product_json.price -%}
+{%- assign wh_compare_at_price = wh_product_json.compare_at_price -%}
+{%- assign wh_price_max = wh_product_json.price_max -%}
+{%- assign wh_compare_at_price_max = wh_product_json.compare_at_price_max -%}
+{%- assign wh_compare_at_price_min = wh_product_json.compare_at_price_min -%}
+{%- if wh_discount_value < 1 or set_price -%}
+    {%- if wh_compare_at_price == blank  or wh_compare_at_price == 0 or wh_compare_at_price < wh_price_min -%}
+        {%- assign wh_compare_at_price = wh_product_json.price -%}
+    {%- endif -%}
+    {%- if wh_compare_at_price_max == blank or wh_compare_at_price_max == 0 -%}
+        {%- assign wh_compare_at_price_max = wh_price_max -%}
+    {%- endif -%}
+    {%- assign wh_price_max = wh_compare_at_price_max | times: wh_discount_value -%}
+    {%- if wh_compare_at_price_min == blank or wh_compare_at_price_min == 0 or wh_compare_at_price_min < wh_price_min  -%}
+        {%- assign wh_compare_at_price_min = wh_product_json.price -%}
+    {%- endif -%}
+	{%- if set_price == null -%}
+      {%- assign wh_price_min = wh_compare_at_price_min | times: wh_discount_value -%}
+      {%- if wh_price_min_wo_compare == null -%}
+        {%- assign wh_price_min = wh_compare_at_price_min | times: wh_discount_value -%}
+      {%- else -%}
+          {%- if  wh_price_min_wo_compare < wh_compare_at_price_min -%}
+            {%- assign wh_compare_at_price_min = wh_price_min_wo_compare -%}
+            {%- assign wh_price_min = wh_price_min_wo_compare | times: wh_discount_value -%}
+          {%- endif -%}
+      {%- endif -%}
+	{%- endif -%}
+    {%- assign wh_price = wh_compare_at_price | times: wh_discount_value -%}
+    {%- if wh_price > wh_product_json.price -%}
+      {%- assign wh_price = wh_product_json.price -%}
+    {%- endif -%}
+	{%- if set_price -%}
+      {%- assign wh_price = set_price -%}
+	{%- endif -%}
+  	{%- if wh_price_min > wh_product_json.price_min -%}
+		{%- assign wh_price_min = wh_product_json.price_min -%}
+    {%- endif -%}
+    {%- if wh_price_max > wh_product_json.price_max -%}
+		{%- assign wh_price_max = wh_product_json.price_max -%}
+  {%- endif -%}
+{%- endif -%}
+{%- capture wh_json -%}{
+"id":{{- wh_product_json.id | json -}},
+"title":{{- wh_product_json.title | json -}},
+"handle":{{- wh_product_json.handle | json -}},
+"description":{{- wh_product_json.description | json -}},
+"published_at":"{{- wh_product_json.published_at | date: "%FT%T%:z" -}}",
+"created_at":"{{- wh_product_json.created_at | date: "%FT%T%:z" -}}",
+"vendor":{{- wh_product_json.vendor | json -}},
+"type":{{- wh_product_json.type | json -}},
+"tags":{{- wh_product_json.tags | json -}},
+"price":{{- wh_price | json -}},
+"price_min":{{- wh_price_min | json -}},
+"price_max":{{- wh_price_max | json -}},
+"available":{{- wh_product_json.available | json -}},
+"price_varies":{{- wh_product_json.price_varies | json -}},
+"compare_at_price": {{- wh_compare_at_price | json -}},
+"compare_at_price_min": {{- wh_compare_at_price_min | json -}},
+"compare_at_price_max": {{- wh_compare_at_price_max | json -}},
+"compare_at_price_varies":{{- wh_product_json.compare_at_price_varies | json -}},
+"variants":{{- wh_variants_json -}},
+"images": {{- wh_product_json.images | json -}},
+"featured_image":{{- wh_product_json.featured_image | json -}},
+"options":{{- wh_product_json.options | json -}},
+"content":{{- wh_product_json.content | json -}}
+}{%- endcapture wh_json -%}
+{%- if escape -%}
+{{- wh_json | escape -}}
+{%- else -%}
+{{- wh_json -}}
+{%- endif -%}

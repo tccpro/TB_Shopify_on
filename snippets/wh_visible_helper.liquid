@@ -1,0 +1,32 @@
+{% assign wh_visible = true %}
+{% for wh_tag in wh_visible_helper.tags %}
+  {% capture last_tag_piece %}{{ wh_tag | split: '-' | last }}{% endcapture %}
+  
+  {% if last_tag_piece == 'HIDE' %}
+
+    {% capture first_tag_piece %}{{ wh_tag | remove_first: "-HIDE" }}{% endcapture %}
+
+	{% if first_tag_piece == 'default' %}
+      {% assign wh_visible = false %}
+    {% endif %}
+
+    {% if customer.tags contains first_tag_piece %}
+      {% assign wh_visible = false %}
+    {% endif %}
+
+  {% endif %}
+
+
+  {% if last_tag_piece == 'SHOW' %}
+
+    {% capture first_tag_piece %}{{ wh_tag | remove_first: "-SHOW" }}{% endcapture %}
+
+    {% if customer.tags contains first_tag_piece %}
+      {% assign wh_visible = true %}
+	  {% break %}
+    {% endif %}
+
+  {% endif %}
+  
+
+{% endfor %}

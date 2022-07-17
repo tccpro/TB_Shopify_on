@@ -1,0 +1,156 @@
+{% assign ShopifyBlogs = 'news,product-review' | split:',' %}
+{% assign artimagesize = '400x' %}
+{% assign artheader = '<h4>Related Articles/Reviews</h4>' %}
+{% assign arttruncate = 15 %}
+{% assign titleweight = 0 %}
+{% assign tagweight = 10 %}
+{% assign authdisplay = 3 %}
+{% assign slideritems = 3 %}
+{% assign pb_Accuracy = 2 %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.theme.min.css">
+
+
+{% assign pb_matches_found = 0 %}
+{% assign matched_list = '' %}
+{% assign match_score = 0 %}
+
+{% if pb_Accuracy == 1 %}
+
+  {% assign pb_base_match_value = 1 %}
+  {% assign pb_check_max = 20 %}
+  {% assign pb_matches_req = 20 %}
+
+{% elsif pb_Accuracy == 2 %}
+
+ {% assign pb_base_match_value = 0 %}
+ {% assign pb_check_max = 50 %}
+ {% assign pb_matches_req  = authdisplay %}
+
+{% elsif pb_Accuracy == 3 %}
+
+ {% assign pb_base_match_value = 0 %}
+ {% assign pb_check_max = 1000 %}
+ {% assign pb_matches_req  = 1000 %}
+
+{% endif %}
+
+{% assign pb_handle_match_value = 50 %}
+
+{% assign prod_title_d =  product.title | downcase %}
+{% assign prod_title_arr = prod_title_d | split: " " %}
+{% assign prod_handle =  product.handle  %}
+
+<!-- Related Product Articles -->
+{% for featuredBlog in ShopifyBlogs %}
+        {% if blogs[featuredBlog].articles %}
+                {% paginate blogs[featuredBlog].articles by pb_check_max %}
+                {% assign featuredArticles = blogs[featuredBlog].articles %}
+                {% for article in featuredArticles  %}				
+                        {% unless pb_matches_found >= pb_matches_req %}
+                                {% assign article_short_handle = article.handle | replace: featuredBlog,  '' %}
+                                {% assign article_short_handle = article_short_handle | replace: '/', '' %}	
+                                {% assign match_score = pb_base_match_value  %}
+                                {% assign post_tags = article.tags %}
+                                {% assign post_title = article.title | split: " " %}
+
+                                {% capture articles_contents %}
+                                        {% include 'pro-blogger.shortcode' load: article.content %}
+                                {% endcapture %}
+
+                                {% assign articles_cont_arr = articles_contents | split: '<!-- excerpt -->' %}
+                                {% if articles_cont_arr.size > 0 %}
+                                        {% assign articles_contents = articles_cont_arr | last %}
+                                {% endif %}
+
+                                {% if post_tags contains prod_handle %}
+                                        {% assign match_score = match_score | plus: pb_handle_match_value %}
+                                {% endif %}
+
+                                {% unless tagweight == 0 %}
+                                        {% for tag in product.tags %}
+                                                {% assign prod_tag_handle = tag | handleize %}																		
+                                                {% if article_short_handle == prod_tag_handle %}
+                                                        {% assign match_score = match_score | plus: pb_handle_match_value %}
+                                                {% endif %}
+                                                {% if post_tags contains tag %}
+                                                        {% assign match_score = match_score | plus: tagweight %}
+                                                {% endif %}
+                                        {% endfor %}
+                                {% endunless %}
+
+
+                                {% unless titleweight == 0 %}
+                                        {% assign art_title_d = article.title | downcase %}
+                                        {% assign art_title_arr = art_title_d | split: " " %}
+
+                                        {% for t in prod_title_arr %}
+                                                {% assign title_s = t | strip %}
+                                                {% if post_tags contains title_s %}
+                                                        {% assign match_score = match_score | plus: titleweight %}
+                                                {% endif %}
+
+                                                {% if art_title_arr contains title_s %}
+                                                        {% assign match_score = match_score | plus: titleweight %}
+                                                {% endif %}
+                                        {% endfor %}
+
+                                        {% if post_tags contains prod_title_d %}
+                                                {% assign match_score = match_score | plus: tagweight %}
+                                        {% endif %}
+                                {% endunless %}
+
+
+                                {% if match_score > 0 %}
+                                        {% capture prod_details %}
+                                                {% include 'pro-blogger.snippet.score_sorting' with score:match_score %}||{{ article.id }}||{{ article.handle }}||{{article.title | escape }}||{{ article.url }}||{{ article.image | img_url: artimagesize }}||{{ articles_contents | strip_html | truncatewords: arttruncate }}
+                                        {% endcapture %}
+                                        {% assign matched_list = matched_list | append: prod_details | append: "://:" %}
+                                        {% assign pb_matches_found = pb_matches_found | plus: 1 %}
+                                {% endif %}
+                        {% endunless %}
+                {% endfor %}
+                {% endpaginate %}
+
+        {% endif %}
+{% endfor %}
+
+
+{% assign match_arr = matched_list | split: "://:" %}
+{% assign match_arr_sorted = match_arr | sort_natural  %}
+
+{{ 'problogger.css' | asset_url | stylesheet_tag }}
+{{ 'problogger-custom.css' | asset_url | stylesheet_tag }}
+
+{% if match_arr_sorted.size == 0 and authdisplay >= 1 %}
+{% else %}
+        <script type="text/javascript">
+
+        var related_product_articles_slider_options = {"enabled": true, "slider_display": 3, "slider_autoplay_enabled": true};
+
+        </script>
+
+        <div id="related_product_articles_header" style="display: none">{{ artheader }}</div>
+        <div id="related_product_articles_slider" class="owl-carousel">
+
+        {% assign Slider_Items = 0 %}
+        {% for Blog_Posts in match_arr_sorted %}
+                {% assign Blog_Post = Blog_Posts | split: "||" %}
+                {% assign articleId = Blog_Post[2] %}
+                {% assign articleHandle = Blog_Post[3] %}
+                {% assign articleTitle = Blog_Post[4] %}
+                {% assign articleURL = Blog_Post[5] %}
+                {% assign articleImg = Blog_Post[6] %}
+                {% assign articleExcerpt = Blog_Post[7] %}
+
+                {% include 'pro-blogger.snippet.related-item' with isarticle:true %}
+
+                {% assign Slider_Items = Slider_Items | plus: 1 %}
+                {% if Slider_Items == authdisplay %}
+                        {% break %}
+                {% endif %}
+        {% endfor %}
+
+        </div>
+{% endif %}

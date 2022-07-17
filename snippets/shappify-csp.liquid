@@ -1,0 +1,85 @@
+{% assign shappify_csp_options = '' %}
+{% assign shappify_csp_options_count = 0 %}
+{% assign csp_variants_exist = 0 %}
+{% assign tag = 'default' %}
+
+{% for variant in product.variants %}
+        {% if customer.tags.size > 0 %}
+     {% if variant.metafields.shappify_csp.csp_groups %}
+         {% assign groups = variant.metafields.shappify_csp.csp_groups | split: ',' %}
+         {% for group in groups %}
+             {% if customer.tags contains group %}
+                 {% assign tag = group %}
+             {% endif %}
+         {% endfor %}
+     {% endif %}
+   {% endif %}
+
+   {% if variant.metafields.shappify_csp.csp_isparent == "1" %}
+       <div style='display:none' id='variant_html_{{variant.id}}'>{{variant.metafields.shappify_csp.pricing_html}}</div>
+                {% if variant.metafields.shappify_csp.csp_tag == tag %}
+           {% assign shappify_csp_options_count = shappify_csp_options_count|plus:1 %}
+           {% assign csp_variants_exist = 1 %}
+       {% endif %}        
+   {% elsif variant.metafields.shappify_csp.csp_isparent == "0" %}
+   {% else %} 
+       {% assign shappify_csp_options_count = product.variants.size %}
+   {% endif %}
+{% endfor %}
+
+<input style='display:none' type="text" id="shapp_tags" value='{{customer.tags|json}}' />
+
+{% if csp_variants_exist == 1 %}
+
+<script>
+var shapp_tags = "{{ tag }}";
+   
+var domLoaded = function (callback) {
+           /* Mozilla, Chrome, Opera */
+       if (document.addEventListener) {
+           document.addEventListener('DOMContentLoaded', callback, false);
+       }
+       /* Safari, iCab, Konqueror */
+       else if (/KHTML|WebKit|iCab/i.test(navigator.userAgent)) {
+           var DOMLoadTimer = setInterval(function () {
+               if (/loaded|complete/i.test(document.readyState)) {
+                   callback();
+                   clearInterval(DOMLoadTimer);
+               }
+           }, 10);
+       }else{
+           /* Other web browsers */
+           window.onload = callback;
+       }
+   };
+
+
+domLoaded(function() {
+ 
+ setTimeout(csp_fix_variants, 1000);
+});
+ 
+ function csp_fix_variants(){
+{% for variant in product.variants %}
+   {% if variant.metafields.shappify_csp.csp_isparent == "1" and variant.metafields.shappify_csp.csp_tag == tag %}{% else %}
+     {% if variant.metafields.shappify_csp.option1 != "" %}
+         jQuery('.single-option-selector option').filter(function() {
+           return jQuery(this).text() == {{ variant.option1 | json }}
+         }).remove();
+     {% endif %}
+     {% if variant.metafields.shappify_csp.option2 != "" %}
+         jQuery('.single-option-selector option').filter(function() {
+           return jQuery(this).text() == {{ variant.option2 | json }}
+         }).remove();
+     {% endif %}
+     {% if variant.metafields.shappify_csp.option3 != "" %}
+         jQuery('.single-option-selector option').filter(function() {
+           return jQuery(this).text() == {{ variant.option3 | json }}
+         }).remove();
+     {% endif %}
+     {% endif %}
+   {% endfor %}
+   jQuery('.single-option-selector').trigger('change');
+ }
+</script>
+{% endif %}

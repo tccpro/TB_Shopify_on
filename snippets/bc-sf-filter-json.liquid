@@ -1,0 +1,24 @@
+{%- assign bc_settings = shop.metafields.bc-sf-filter.settings -%}
+{%- if bc_settings contains 'actionlist' -%}
+{%- assign bc_qv_enable = bc_settings | split: 'qvEnable":' | last | split: ',' | first | strip -%}
+{%- assign bc_atc_enable = bc_settings | split: 'atcEnable":' | last | split: ',' | first | split: '}' | first | strip -%}
+{% if bc_qv_enable == 'true' or bc_atc_enable == 'true' %}
+<script class="bc-sf-filter-product-script" data-id="bc-product-json-{{ product.id }}" type="application/json">
+		{
+    "id": {{ product.id | json }},
+    "title": {{ product.title | json }},
+		"handle": {{ product.handle | json }},
+		"vendor": {{ product.vendor | json }},
+    "variants": {{ product.variants | json }},
+    "url": {{ product.url | json }},
+		"options_with_values": {{ product.options_with_values | json }},
+    "images": {{ product.images | json }},
+    "available": {{ product.available | json }},
+		"price_min": {{ product.price_min | json }},
+		"price_max": {{ product.price_max | json }},
+		"compare_at_price_min": {{ product.compare_at_price_min | json }},
+		"compare_at_price_max": {{ product.compare_at_price_max | json }}
+    }
+</script>
+{% endif %}
+{% endif %}

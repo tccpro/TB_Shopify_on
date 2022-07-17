@@ -1,0 +1,58 @@
+{% if isarticle %}
+   <div>
+     
+     <div class="pb_image_wrapper">   
+       <a style="border : 0px;" href="{{ articleURL }}"><img src="{{ articleImg }}" alt="{{ articleTitle }}" data-pin-nopin="true" /></a>
+     </div>
+      <div class="pb-text-wrapper">
+       <div class="pb-text-title">
+       	<h4 class="pb-text-title-header"><a style="border : 0px;" href="{{ articleURL }}">{{ articleTitle }}</a></h4>
+       </div>
+        {% if articleTruncate == 0 or arttruncate == 0 %}
+        {% else %}
+        <div class="pb-text-excerpt">{{ articleExcerpt }}</div>
+        {% endif %}
+     </div>
+	</div>
+{% else %}
+   <div class="pb_content_wrapper">
+     <div class="pb_image_wrapper">   
+       <a style="border : 0px;" href="{{ ProdURL }}"><img src="{{ ProdImg }}" alt="{{ ProdTitle }}" data-pin-nopin="true"/></a>
+     {% if pb_displayBuynow and pb_displayBuynow_hover %}
+      <div class="pb-image-hover">
+        <form method="post" action="/cart/add">
+        <input type="hidden" name="id" value="{{ all_products[ProdHandle].first_available_variant.id }}" />
+        <input min="1" type="hidden" id="quantity" name="quantity" value="1"/>
+        <input type="submit" value=" {{ pb_BuynowText }} " class="btn" />
+        </form>
+      </div>
+      {% endif %}
+       
+       {% unless ProdComp_Price == '' or pb_show_sale == false %}
+        <div class="pb-image-hover-sale">
+        {% include 'pro-blogger.snippet.sale_icon' %}
+        </div>
+       {% endunless %} 
+     </div>
+   
+     <div class="pb-text-wrapper">
+       <div class="pb-text-title">
+       	<h4 class="pb-text-title-header"><a style="border : 0px;" href="{{ ProdURL }}">{{ ProdTitle }}</a></h4>
+       </div>
+       <div class="pb-text-vendor" {%unless pb_displayVendor %}style="display:none;" {%endunless %}>{{ ProdVendor }}</div>
+       <div class="pb-text-rating" {%unless pb_displayRating %}style="display:none;" {% endunless %}>{% include 'pro-blogger.snippet.related-item-rating' %}</div>
+       <div class="pb-text-price" {%unless pb_displayPrice %}style="display:none;" {% endunless %}>{% unless ProdComp_Price == '' %}<span class="pb_on_sale">{{ ProdComp_Price }}</span>{% endunless %}{{ ProdPrice }}
+       </div>
+       {% if pb_displayBuynow and pb_displayBuynow_hover == false %}
+        <div class="pb-buy-button" >
+        <form method="post" action="/cart/add">
+        <input type="hidden" name="id" value="{{ all_products[ProdHandle].first_available_variant.id }}" />
+        <input min="1" type="hidden" id="quantity" name="quantity" value="1"/>
+        <input type="submit" value="{{ pb_BuynowText }}" class="btn" />
+        </form>
+        </div>
+      {% endif %}
+     </div>
+	</div>
+{% endif %}
+
