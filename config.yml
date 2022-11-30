@@ -1,4 +1,4 @@
 development:
-  password: 
-  theme_id:  
-  store: 
+  password: <access Token>
+  theme_id:  "<your theme ID:Number>"
+  store: <your store URL>
